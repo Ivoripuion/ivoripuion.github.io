@@ -79,11 +79,14 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Ivoripuion&#39;s blog">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;index.html">
+<meta name="description" content="简要分析漏洞存在在del这个函数，该函数将保存chunk的地址作为参数free掉： 123456789void del_4009DE()&amp;#123;  int index; &#x2F;&#x2F; [rsp+Ch] [rbp-4h]  putchar(&amp;apos;&amp;gt;&amp;apos;);  index = readnum_4008A7();  if ( index &amp;gt;= 0 &amp;amp;&amp;amp; index &amp;lt;= 15 )">
+<meta property="og:type" content="article">
+<meta property="og:title" content="noinfowp">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;noinfowp&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="简要分析漏洞存在在del这个函数，该函数将保存chunk的地址作为参数free掉： 123456789void del_4009DE()&amp;#123;  int index; &#x2F;&#x2F; [rsp+Ch] [rbp-4h]  putchar(&amp;apos;&amp;gt;&amp;apos;);  index = readnum_4008A7();  if ( index &amp;gt;= 0 &amp;amp;&amp;amp; index &amp;lt;= 15 )">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-04-16T03:43:34.237Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -114,13 +117,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/04/16/noinfowp/"/>
 
 
 
 
 
-  <title>Ivoripuion's blog</title>
+  <title>noinfowp | Ivoripuion's blog</title>
   
 
 
@@ -139,8 +142,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -213,9 +215,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -245,9 +247,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/16/noinfowp/" itemprop="url">noinfowp</a></h1>
+          <h1 class="post-title" itemprop="name headline">noinfowp</h1>
         
 
         <div class="post-meta">
@@ -297,9 +297,7 @@
       
 
       
-        
-          
-            <h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><p>漏洞存在在del这个函数，该函数将保存chunk的地址作为参数free掉：</p>
+        <h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><p>漏洞存在在del这个函数，该函数将保存chunk的地址作为参数free掉：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">del_4009DE</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> index; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">putchar</span>(<span class="string">'&gt;'</span>);</span><br><span class="line">  index = readnum_4008A7();</span><br><span class="line">  <span class="keyword">if</span> ( index &gt;= <span class="number">0</span> &amp;&amp; index &lt;= <span class="number">15</span> )</span><br><span class="line">    <span class="built_in">free</span>(arr[<span class="number">2</span> * index]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>free之后没有置NULL，存在UAF漏洞。</p>
@@ -331,8 +329,6 @@
 
 <p><a href="https://www.jianshu.com/p/fd18ec207dbf" target="_blank" rel="noopener">Reference Documents</a></p>
 
-          
-        
       
     </div>
     
@@ -349,144 +345,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/18/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ivoripuion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ivoripuion's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/11/18/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-11-18T20:55:16+08:00">
-                2019-11-18
-              </time>
+              <a href="/2019/11/18/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -496,10 +376,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -507,6 +388,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -527,8 +412,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -574,6 +468,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简要分析"><span class="nav-number">1.</span> <span class="nav-text">简要分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#debug"><span class="nav-number">2.</span> <span class="nav-text">debug</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#exploit"><span class="nav-number">3.</span> <span class="nav-text">exploit</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -714,6 +624,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
