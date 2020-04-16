@@ -81,12 +81,12 @@
 
 <meta name="description" content="简要分析漏洞存在在del这个函数，该函数将保存chunk的地址作为参数free掉： 123456789void del_4009DE()&amp;#123;  int index; &#x2F;&#x2F; [rsp+Ch] [rbp-4h]  putchar(&amp;apos;&amp;gt;&amp;apos;);  index = readnum_4008A7();  if ( index &amp;gt;= 0 &amp;amp;&amp;amp; index &amp;lt;= 15 )">
 <meta property="og:type" content="article">
-<meta property="og:title" content="noinfowp">
+<meta property="og:title" content="noinfoleak">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;noinfowp&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
 <meta property="og:description" content="简要分析漏洞存在在del这个函数，该函数将保存chunk的地址作为参数free掉： 123456789void del_4009DE()&amp;#123;  int index; &#x2F;&#x2F; [rsp+Ch] [rbp-4h]  putchar(&amp;apos;&amp;gt;&amp;apos;);  index = readnum_4008A7();  if ( index &amp;gt;= 0 &amp;amp;&amp;amp; index &amp;lt;= 15 )">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-16T03:43:34.237Z">
+<meta property="og:updated_time" content="2020-04-16T11:54:49.477Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -123,7 +123,7 @@
 
 
 
-  <title>noinfowp | Ivoripuion's blog</title>
+  <title>noinfoleak | Ivoripuion's blog</title>
   
 
 
@@ -179,21 +179,21 @@
       
         
         <li class="menu-item menu-item-home">
-          <a href="/%20" rel="section">
+          <a href="/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
             
             Home
           </a>
         </li>
       
         
-        <li class="menu-item menu-item-archives">
-          <a href="/archives/%20" rel="section">
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
             
-            Archives
+            pwn
           </a>
         </li>
       
@@ -247,7 +247,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">noinfowp</h1>
+          <h1 class="post-title" itemprop="name headline">noinfoleak</h1>
         
 
         <div class="post-meta">
@@ -269,6 +269,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -423,7 +445,7 @@
             
               <div class="site-state-item site-state-posts">
               
-                <a href="/archives/%20%7C%7C%20archive">
+                <a href="/archives">
               
                   <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">posts</span>
@@ -431,6 +453,15 @@
               </div>
             
 
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
             
 
             
