@@ -1,3 +1,6 @@
+.headband {
+  display: none;
+}
 /* normalize.css v3.0.2 | MIT License | git.io/normalize */
 html {
   font-family: sans-serif; /* 1 */
@@ -189,7 +192,7 @@ body {
   font-size: 14px;
   line-height: 2;
   color: #555;
-  background: #f5f7f9;
+  background: #eee;
 }
 @media (max-width: 767px) {
   body {
@@ -1823,7 +1826,7 @@ pre .javascript .function {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #62ff66;
+  background: #52ffa1;
 }
 .links-of-blogroll {
   font-size: 13px;
@@ -2618,8 +2621,8 @@ pre .javascript .function {
   padding: 0;
   width: 240px;
   background: #fff;
-  box-shadow: initial;
-  border-radius: initial;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12);
+  border-radius: 15px 15px 15px 15px;
 }
 @media (min-width: 1600px) {
   .container .header-inner {
@@ -2678,8 +2681,8 @@ pre .javascript .function {
   width: 700px;
   background: #fff;
   min-height: 700px;
-  box-shadow: initial;
-  border-radius: initial;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12);
+  border-radius: 15px 15px 15px 15px;
 }
 @media (min-width: 768px) and (max-width: 991px) {
   .content-wrap {
@@ -2701,7 +2704,7 @@ pre .javascript .function {
   float: left;
   margin-top: 300px;
   width: 240px;
-  background: #f5f7f9;
+  background: #eee;
   box-shadow: none;
 }
 @media (min-width: 768px) and (max-width: 991px) {
@@ -2859,8 +2862,8 @@ pre .javascript .function {
   width: 240px;
   color: #555;
   background: #fff;
-  box-shadow: initial;
-  border-radius: initial;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.06), 0 1px 5px 0 rgba(0,0,0,0.12), 0 -1px 0.5px 0 rgba(0,0,0,0.09);
+  border-radius: 15px;
   opacity: 0;
 }
 .sidebar-inner.affix {
