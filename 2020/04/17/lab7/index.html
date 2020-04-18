@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
 <meta property="og:description" content="Lab7-1Q1：当计算机重启之后，这个程序如何保证它继续运行（达到持久化驻留）创建一个Malservice的服务，并且该服务具有开机自启动的权限。 主函数简单跟一下： 12345678910111213int __cdecl main(int argc, const char **argv, const char **envp)&amp;#123;  SERVICE_TABLE_ENTRYA Servi">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-17T15:40:33.273Z">
+<meta property="og:updated_time" content="2020-04-18T06:35:14.488Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -411,7 +411,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DllEntryPoint	<span class="number">100012F</span>A	[main entry]</span><br></pre></td></tr></table></figure>
 
 <p>查看Function call：</p>
-<p>首先开辟函数得栈：</p>
+<p>首先开辟函数的栈：</p>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">call</span>    <span class="built_in">ds</span>:inet_addr</span><br></pre></td></tr></table></figure>
 
 <p>保证程序独享：</p>
@@ -475,7 +475,7 @@
 </ol>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001041</span>                 <span class="keyword">lea</span>     <span class="built_in">edi</span>, [<span class="built_in">esp</span>+<span class="number">1208h</span>+var_FFF]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001048</span>                 <span class="keyword">push</span>    offset Name     <span class="comment">; "SADFHUHF"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">1000104D</span>                 <span class="keyword">rep</span> <span class="keyword">stosd</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="Q3：这个程序的目的是什么？"><a href="#Q3：这个程序的目的是什么？" class="headerlink" title="Q3：这个程序的目的是什么？"></a>Q3：这个程序的目的是什么？</h2><p>将Lab7-3.dll复制到 C:\windows\system32\kerne132.dll，然后将C:盘中的所有exe文件调用kernel32.dll 改为调用kerne132.dll，这样就简介调用了Lab07-3.dll，建立一个与远程服务器的连接，开启一个shell。</p>
+<h2 id="Q3：这个程序的目的是什么？"><a href="#Q3：这个程序的目的是什么？" class="headerlink" title="Q3：这个程序的目的是什么？"></a>Q3：这个程序的目的是什么？</h2><p>将Lab7-3.dll复制到 C:\windows\system32\kerne132.dll，然后将C:盘中的所有exe文件调用kernel32.dll 改为调用kerne132.dll，这样就间接调用了Lab07-3.dll，建立一个与远程服务器的连接，开启一个shell。</p>
 <h2 id="Q4：一旦这个恶意代码被安装，你如何移除它？"><a href="#Q4：一旦这个恶意代码被安装，你如何移除它？" class="headerlink" title="Q4：一旦这个恶意代码被安装，你如何移除它？"></a>Q4：一旦这个恶意代码被安装，你如何移除它？</h2><p>无法直接移除，但是可以间接消除其影响：</p>
 <ol>
 <li><p>通过与sub_4011E0类似的方法，将C:盘中所有exe文件里的kerne132.dll字符串改为kernel32.dll，然后删除<br>C:\windows\system32\kerne132.dll以及C:\Windows\System32\Kernel32.dll；</p>
