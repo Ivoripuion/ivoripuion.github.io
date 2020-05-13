@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）研究原因目前在信息隐藏方面研究最深入成果最丰富的是基于图像的信息隐藏技术而对文本图形动画视频等其他多媒体中的信息隐藏技术研究得还比较少。PE文件是当前最常见的文件之一，使用范围非常广泛因而研究基于Windows下PE文件的信息隐藏有很大的实际意义。 PE文件结构解析在一个操作系统中，可执行代码在装入内存前是以文件的方式存储在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;13&#x2F;%E4%B8%80%E7%A7%8D%E5%9F%BA%E4%BA%8EPE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F%E6%96%B9%E6%B3%95%E7%9A%84%E7%A0%94%E7%A9%B6%E4%B8%8E%E5%AE%9E%E7%8E%B0&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）研究原因目前在信息隐藏方面研究最深入成果最丰富的是基于图像的信息隐藏技术而对文本图形动画视频等其他多媒体中的信息隐藏技术研究得还比较少。PE文件是当前最常见的文件之一，使用范围非常广泛因而研究基于Windows下PE文件的信息隐藏有很大的实际意义。 PE文件结构解析在一个操作系统中，可执行代码在装入内存前是以文件的方式存储在">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-05-13T10:16:18.977Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/13/一种基于PE文件的信息隐藏方法的研究与实现/"/>
+
+
+
+
+
+  <title>一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关） | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/13/%E4%B8%80%E7%A7%8D%E5%9F%BA%E4%BA%8EPE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F%E6%96%B9%E6%B3%95%E7%9A%84%E7%A0%94%E7%A9%B6%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-13T18:15:24+08:00">
+                2020-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E6%83%B3/" itemprop="url" rel="index">
+                    <span itemprop="name">随想</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）"><a href="#研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）" class="headerlink" title="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）"></a>研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）</h1><h2 id="研究原因"><a href="#研究原因" class="headerlink" title="研究原因"></a>研究原因</h2><p>目前在信息隐藏方面研究最深入成果最丰富的是基于图像的信息隐藏技术而对文本图形动画视频等其他多媒体中的信息隐藏技术研究得还比较少。PE文件是当前最常见的文件之一，使用范围非常广泛因而研究基于Windows下PE文件的信息隐藏有很大的实际意义。</p>
+<h2 id="PE文件结构解析"><a href="#PE文件结构解析" class="headerlink" title="PE文件结构解析"></a>PE文件结构解析</h2><p>在一个操作系统中，可执行代码在装入内存前是以文件的方式存储在磁盘上，而在装入内存时需要被程序装载器识别才能正常执行因而需要可执行文件满足特定的格式。在Windows NT6.X系列操作系统中，纯32位操作系统使用PE格式(Portable Executable File Format)。</p>
+<p>在Windows系统中EXE和DLL都是PE文件两者惟一的区别是用一个字段来标识。另外在64位的Windows中. PE文件中的数据字段只是简单的扩展到64位与32位系统相比没有新的结构。论文主要讨论32位PE可执行文件。</p>
+<p>PE文件格式把可执行文件分成若干个数据节（section），不同的资源被存放在不同的节中。<br>一个典型的PE 文件中包含的节如下：</p>
+<ul>
+<li>.text 由编译器产生，存放着二进制的机器代码，也是我们反汇编和调试的对象。</li>
+<li>.data 初始化的数据块，如宏定义、全局变量、静态变量等。</li>
+<li>.idata 可执行文件所使用的动态链接库等外来函数与文件的信息。</li>
+<li>.rsrc 存放程序的资源，如图标、菜单等。</li>
+</ul>
+<p>除此以外，还可能出现的节包括“.reloc”、“.edata”、“.tls”、“.rdata”等。</p>
+<h2 id="PE文件与虚拟内存之间的映射"><a href="#PE文件与虚拟内存之间的映射" class="headerlink" title="PE文件与虚拟内存之间的映射"></a>PE文件与虚拟内存之间的映射</h2><p>在默认情况下，32位系统中，一般PE 文件的0 字节将对映到虚拟内存的0x00400000位置（未开启全局ASLR），这个地址就是所谓的装载基址(Image Base)，映射完成的地址称为VA（虚拟内存地址）。</p>
+<p>文件偏移是相对于文件开始处0 字节的偏移，RVA（相对虚拟地址）则是相对于装载基址0x00400000 处的偏移。由于操作系统在进行装载时“基本”上保持PE 中的各种数据结构，所以文件偏移地址和RVA 有很大的一致性。</p>
+<p>RVA与文件偏移地址的差异是由于文件数据的存放单位与内存数据存放单位不同而造成的。</p>
+<ol>
+<li>PE 文件中的数据按照磁盘数据标准存放，以0x200 字节为基本单位进行组织。当一个数据节（section）不足0x200 字节时，不足的地方将被0x00 填充；当一个数据节超过0x200字节时，下一个0x200 块将分配给这个节使用。因此PE 数据节的大小永远是0x200 的整数倍。</li>
+<li>当代码装入内存后，将按照内存数据标准存放，并以0x1000 字节为基本单位进行组织。类似的，不足将被补全，若超出将分配下一个0x1000 为其所用。因此，内存中的节总是0x1000 的整数倍。</li>
+</ol>
+<p>文件偏移地址 = 虚拟内存地址（VA）−装载基址（Image Base）−节偏移 = RVA -节偏移</p>
+<h2 id="PE文件冗余空间分析"><a href="#PE文件冗余空间分析" class="headerlink" title="PE文件冗余空间分析"></a>PE文件冗余空间分析</h2><ol>
+<li>PE文件的结构本身的冗余；</li>
+<li>RVA与文件偏移地址差异的冗余；</li>
+<li>人为制造一个新的节来存放隐藏的信息；</li>
+</ol>
+<p>针对（2），实则就是在内存中大量的’\x00’的空间内存放秘密数据，这样不会破坏原有程序的完整性。</p>
+<h2 id="实现方案"><a href="#实现方案" class="headerlink" title="实现方案"></a>实现方案</h2><p>论文使用的是mfc，基于WINNT.H这个头文件解析PE文件的，实际实现使用了Python的pefile库解析PE文件。</p>
+<p>简单Demo代码：</p>
+<p>encrypt:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> pefile</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"></span><br><span class="line">pe_path=<span class="string">".\\fortest_patch.exe"</span></span><br><span class="line">pe=pefile.PE(pe_path)</span><br><span class="line"></span><br><span class="line">raw_msg=<span class="string">"hello,how old are you"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#加密</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">encrypt</span><span class="params">(m)</span>:</span></span><br><span class="line">    (pubkey, privkey) = rsa.newkeys(<span class="number">1024</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'public.pem'</span>,<span class="string">'w+'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(pubkey.save_pkcs1().decode())</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'private.pem'</span>,<span class="string">'w+'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(privkey.save_pkcs1().decode())</span><br><span class="line"></span><br><span class="line">    c = rsa.encrypt(m.encode(), pubkey)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> c</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#找到某个段中可以存放秘密的空间</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">find_avaliable_addr</span><span class="params">(msg)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> section <span class="keyword">in</span> pe.sections:</span><br><span class="line"></span><br><span class="line">        <span class="comment">#print (section.Name, hex(section.VirtualAddress),hex(section.Misc_VirtualSize), section.SizeOfRawData)</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> section.Name==<span class="string">b'.data\x00\x00\x00'</span>:</span><br><span class="line">            data_rva=section.VirtualAddress</span><br><span class="line">            print(<span class="string">"find avaliable address blow .data address:"</span>,hex(data_rva))</span><br><span class="line">    </span><br><span class="line">    print(<span class="string">"msg length is: "</span>,len(msg))</span><br><span class="line">    addr=data_rva-len(msg)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(msg)):</span><br><span class="line">        <span class="keyword">if</span> pe.get_data(addr+i,<span class="number">1</span>)!=<span class="string">b'\x00'</span>:</span><br><span class="line">            print(<span class="string">"please find another section!"</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line"></span><br><span class="line">    print(<span class="string">"address "</span>,hex(addr),<span class="string">"is avaliable!"</span>)</span><br><span class="line">    <span class="keyword">return</span> addr</span><br><span class="line">    </span><br><span class="line"><span class="comment">#插入秘密信息</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">insert_msg</span><span class="params">(addr,msg)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> addr!=<span class="number">-1</span>:</span><br><span class="line">        index=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> cur_str <span class="keyword">in</span> msg:</span><br><span class="line">            pe.set_dword_at_rva(addr+index,cur_str)</span><br><span class="line">            index=index+<span class="number">1</span></span><br><span class="line">            </span><br><span class="line"></span><br><span class="line">        print(<span class="string">"inset data: "</span>,binascii.b2a_hex(pe.get_data(addr,len(msg))))</span><br><span class="line"></span><br><span class="line">        pe.write(filename=<span class="string">'.\\file_to_write1.exe'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        print(<span class="string">"address is not valid"</span>)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">    encrypted_msg=encrypt(raw_msg)</span><br><span class="line">    addr=find_avaliable_addr(encrypted_msg)</span><br><span class="line">    insert_msg(addr,encrypted_msg)</span><br></pre></td></tr></table></figure>
+
+<p>decrypt:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> pefile</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> rsa</span><br><span class="line"></span><br><span class="line">pe_path=<span class="string">".\\file_to_write1.exe"</span></span><br><span class="line">pe=pefile.PE(pe_path)</span><br><span class="line">msg_length=<span class="number">128</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'private.pem'</span>,<span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    privkey = rsa.PrivateKey.load_pkcs1(f.read().encode())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_addr</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">for</span> section <span class="keyword">in</span> pe.sections:</span><br><span class="line">        <span class="keyword">if</span> section.Name==<span class="string">b'.data\x00\x00\x00'</span>:</span><br><span class="line">            data_addr=section.VirtualAddress<span class="number">-128</span></span><br><span class="line">            <span class="keyword">return</span> data_addr</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">            </span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line"></span><br><span class="line">    addr=get_addr()</span><br><span class="line"></span><br><span class="line">    msg=pe.get_data(addr,msg_length)</span><br><span class="line"></span><br><span class="line">    message = rsa.decrypt(msg, privkey).decode()</span><br><span class="line"></span><br><span class="line">    print(<span class="string">"inseted data: "</span>,message)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/08/%E6%90%AD%E5%BB%BAtor%E6%A1%A5/" rel="next" title="搭建tor桥">
+                <i class="fa fa-chevron-left"></i> 搭建tor桥
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）"><span class="nav-number">1.</span> <span class="nav-text">研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#研究原因"><span class="nav-number">1.1.</span> <span class="nav-text">研究原因</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PE文件结构解析"><span class="nav-number">1.2.</span> <span class="nav-text">PE文件结构解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PE文件与虚拟内存之间的映射"><span class="nav-number">1.3.</span> <span class="nav-text">PE文件与虚拟内存之间的映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PE文件冗余空间分析"><span class="nav-number">1.4.</span> <span class="nav-text">PE文件冗余空间分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现方案"><span class="nav-number">1.5.</span> <span class="nav-text">实现方案</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
