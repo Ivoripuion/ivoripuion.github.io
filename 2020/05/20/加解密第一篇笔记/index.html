@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="note about chapter 11.1.2逆向工程定义：  软件使用限制的去除或者软件功能的添加。 软件源代码的再获得。 硬件的复制和模拟。  动态分析注意点：  对软件进行粗跟踪 对关键部分进行细跟踪  1.3.2 SysWOW64与System3264位系统如何兼容32位程序的： System32存放64位映像文件，SysWOW63存放32位系统文件。 32位程序加载时，WOW64建立">
+<meta property="og:type" content="article">
+<meta property="og:title" content="加密与解密第一篇笔记">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;20&#x2F;%E5%8A%A0%E8%A7%A3%E5%AF%86%E7%AC%AC%E4%B8%80%E7%AF%87%E7%AC%94%E8%AE%B0&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="note about chapter 11.1.2逆向工程定义：  软件使用限制的去除或者软件功能的添加。 软件源代码的再获得。 硬件的复制和模拟。  动态分析注意点：  对软件进行粗跟踪 对关键部分进行细跟踪  1.3.2 SysWOW64与System3264位系统如何兼容32位程序的： System32存放64位映像文件，SysWOW63存放32位系统文件。 32位程序加载时，WOW64建立">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-05-19T16:07:52.174Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/20/加解密第一篇笔记/"/>
+
+
+
+
+
+  <title>加密与解密第一篇笔记 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/20/%E5%8A%A0%E8%A7%A3%E5%AF%86%E7%AC%AC%E4%B8%80%E7%AF%87%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">加密与解密第一篇笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-20T00:07:15+08:00">
+                2020-05-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/reverse/" itemprop="url" rel="index">
+                    <span itemprop="name">reverse</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="note-about-chapter-1"><a href="#note-about-chapter-1" class="headerlink" title="note about chapter 1"></a>note about chapter 1</h1><h2 id="1-1-2"><a href="#1-1-2" class="headerlink" title="1.1.2"></a>1.1.2</h2><p>逆向工程定义：</p>
+<ul>
+<li>软件使用限制的去除或者软件功能的添加。</li>
+<li>软件源代码的再获得。</li>
+<li>硬件的复制和模拟。</li>
+</ul>
+<p>动态分析注意点：</p>
+<ul>
+<li>对软件进行粗跟踪</li>
+<li>对关键部分进行细跟踪</li>
+</ul>
+<h2 id="1-3-2-SysWOW64与System32"><a href="#1-3-2-SysWOW64与System32" class="headerlink" title="1.3.2 SysWOW64与System32"></a>1.3.2 SysWOW64与System32</h2><p>64位系统如何兼容32位程序的：</p>
+<p>System32存放64位映像文件，SysWOW63存放32位系统文件。</p>
+<p>32位程序加载时，WOW64建立32位ntdll.dll所要求的启动环境，将CPU模式切换至32位，并开始执行32位加载器，就如同该进程运行在原生的32位系统上一样。</p>
+<h2 id="1-3-4-虚拟内存相关"><a href="#1-3-4-虚拟内存相关" class="headerlink" title="1.3.4 虚拟内存相关"></a>1.3.4 虚拟内存相关</h2><p>虚拟内存的过程：</p>
+<ol>
+<li>一个程序启动，系统创建一个进程，并给该进程分配2GB虚拟地址；</li>
+<li>虚拟内存管理器讲应用程序的指令映射到那个程序的虚拟地址中某个位置，并给当前需要的代码读入物理内存；</li>
+<li>如果使用了DLL，DLL也会被映射到虚拟地址空间中，在需要的时候才会被读入物理内存；</li>
+<li>其他项目的空间是从物理内存中分配的，并被映射到虚拟地址空间中；</li>
+<li>应用程序通过使用其虚拟地址空间中的地址开始执行。然后，虚拟内存管理器把每次内存访问映射到物理空间；</li>
+</ol>
+<h1 id="note-about-chapter-2"><a href="#note-about-chapter-2" class="headerlink" title="note about chapter 2"></a>note about chapter 2</h1><h2 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h2><p>alt+f9：进入程序领空；</p>
+<p>ctrl+f9：运行到下一个ret；</p>
+<p>有个小题目，认识下GetDlgItemTextA这个函数即可。</p>
+<h2 id="2-1-4-常用断点"><a href="#2-1-4-常用断点" class="headerlink" title="2.1.4 常用断点"></a>2.1.4 常用断点</h2><h3 id="int3断点"><a href="#int3断点" class="headerlink" title="int3断点"></a>int3断点</h3><p>断点处的指令被替换成了0xCC，调试器捕捉该异常，运行到这里后恢复原有指令。</p>
+<p>防止该断点的方法，检测调用的api是否被改成了0xCC：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">IsCC</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> WINAPI <span class="title">WinMain</span> <span class="params">(HINSTANCE hInstance, HINSTANCE hPrevInstance,</span></span></span><br><span class="line"><span class="function"><span class="params">                    PSTR szCmdLine, <span class="keyword">int</span> iCmdShow)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>( IsCC() )</span><br><span class="line">		MessageBox(<span class="literal">NULL</span>,TEXT (<span class="string">"Found Debug!"</span>),TEXT (<span class="string">"OK"</span>),MB_ICONEXCLAMATION);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">    	MessageBox(<span class="literal">NULL</span>,TEXT (<span class="string">"No Debug!"</span>),TEXT (<span class="string">"Error"</span>),MB_ICONEXCLAMATION);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//////////////////////////////////////////////////////////////////////</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">IsCC</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	FARPROC Uaddr ;</span><br><span class="line">	BYTE Mark = <span class="number">0</span>;P</span><br><span class="line">	(FARPROC&amp;) Uaddr =GetProcAddress ( LoadLibrary(<span class="string">"user32.dll"</span>),<span class="string">"MessageBoxA"</span>);</span><br><span class="line">	Mark = *((BYTE*)Uaddr);   <span class="comment">// 取MessageBoxA函数第一字节</span></span><br><span class="line">	<span class="keyword">if</span>(Mark ==<span class="number">0xCC</span>)           <span class="comment">// 如该字节为CC，则认为MessageBoxA函数被下断</span></span><br><span class="line">		<span class="keyword">return</span> TRUE;</span><br><span class="line">	<span class="keyword">else</span>	</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>躲避方法，断点设在被检测指令的下一条指令就行了。</p>
+<h3 id="硬件断点"><a href="#硬件断点" class="headerlink" title="硬件断点"></a>硬件断点</h3><p>一共可以设置四个硬件断点。</p>
+<p>原理：将被设置断点的指令的地址存储在DR0-DR3寄存器中的一个，然后再DR7寄存器中设置相应的控制位。</p>
+<p>Olldbg F4的原理就是设置一个硬件断点，运行到指定EIP后删除该硬件断点。</p>
+<h3 id="内存断点"><a href="#内存断点" class="headerlink" title="内存断点"></a>内存断点</h3><p>内存访问断点或者内存写入断点。</p>
+<p>原理：对所设置的地址赋予不可写/访问的权限，这样方法/写时就会造成异常，Ollydbg就会捕获这种异常，并比较是否为断点地址，是则中断。</p>
+<p>该断点因为每次遇到上述异常都会进行判断是否为断点地址，所以会造成程序运行速度变慢。</p>
+<p>由于内存执行，一定会有内存访问，所以可以设置内存访问断点避开对0xCC指令的检查。</p>
+<h3 id="内存访问一次性断点"><a href="#内存访问一次性断点" class="headerlink" title="内存访问一次性断点"></a>内存访问一次性断点</h3><p>当想捕捉调用或返回某个模块，可以使用该类断点，在M页面F2。</p>
+<h3 id="消息断点"><a href="#消息断点" class="headerlink" title="消息断点"></a>消息断点</h3><h3 id="条件断点"><a href="#条件断点" class="headerlink" title="条件断点"></a>条件断点</h3><ol>
+<li>按照寄存器条件设置断点；</li>
+<li>按照存储器条件设置断点；</li>
+</ol>
+<h3 id="条件记录断点"><a href="#条件记录断点" class="headerlink" title="条件记录断点"></a>条件记录断点</h3><h2 id="2-1-6"><a href="#2-1-6" class="headerlink" title="2.1.6"></a>2.1.6</h2><p>Run Trace的使用。</p>
+<h1 id="note-about-chapter-3"><a href="#note-about-chapter-3" class="headerlink" title="note about chapter 3"></a>note about chapter 3</h1><h2 id="3-3-16"><a href="#3-3-16" class="headerlink" title="3.3.16"></a>3.3.16</h2><p>提供了一个定位.idata中输入表的脚本：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="comment">##《加密与解密》第四版</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">GetImportSeg</span><span class="params">()</span>:</span></span><br><span class="line">    ea=FirstSeg()</span><br><span class="line">    next=ea</span><br><span class="line">    count=<span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> next != BADADDR:  <span class="comment">#判断是否为".idata"段</span></span><br><span class="line">        next=NextSeg(next)</span><br><span class="line">        name=SegName(next)</span><br><span class="line">        <span class="keyword">if</span> name[<span class="number">0</span>:<span class="number">6</span>]==<span class="string">'.idata'</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    <span class="keyword">return</span> next</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    BytePtr=SegStart(GetImportSeg()) <span class="comment">#确定idata段VA</span></span><br><span class="line">    EndImports=SegEnd(BytePtr)</span><br><span class="line">    print(<span class="string">'\n Parsing import table...'</span>) </span><br><span class="line">    <span class="keyword">while</span>  BytePtr&lt;EndImports:</span><br><span class="line">        <span class="keyword">if</span> LineA(BytePtr,<span class="number">1</span>):</span><br><span class="line">            print( <span class="string">'__'</span>+LineA(BytePtr,<span class="number">1</span>)+<span class="string">'__'</span>)</span><br><span class="line">        <span class="keyword">if</span> Name(BytePtr): </span><br><span class="line">            print(Name(BytePtr)+<span class="string">'\n'</span>)  <span class="comment">#显示当前地址的函数名</span></span><br><span class="line">        BytePtr=NextAddr(BytePtr)</span><br><span class="line">    print(<span class="string">'Import table parsing complete\n'</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+<p>一种SMC的解密：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;idc.idc&gt;</span><br><span class="line">static decrypt(from, size, key ) &#123; </span><br><span class="line">   auto i, x; </span><br><span class="line">   for ( i=0; i &lt; size; i=i+1 ) &#123; </span><br><span class="line">      x = Byte(from); </span><br><span class="line">      x = (x^key); </span><br><span class="line">      PatchByte(from,x); </span><br><span class="line">      from = from + 1;</span><br><span class="line">   &#125; </span><br><span class="line"> Message(&quot;\n&quot; + &quot;Decrypt Complete\n&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/13/%E4%B8%80%E7%A7%8D%E5%9F%BA%E4%BA%8EPE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F%E6%96%B9%E6%B3%95%E7%9A%84%E7%A0%94%E7%A9%B6%E4%B8%8E%E5%AE%9E%E7%8E%B0/" rel="next" title="一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）">
+                <i class="fa fa-chevron-left"></i> 一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#note-about-chapter-1"><span class="nav-number">1.</span> <span class="nav-text">note about chapter 1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-2"><span class="nav-number">1.1.</span> <span class="nav-text">1.1.2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-2-SysWOW64与System32"><span class="nav-number">1.2.</span> <span class="nav-text">1.3.2 SysWOW64与System32</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-4-虚拟内存相关"><span class="nav-number">1.3.</span> <span class="nav-text">1.3.4 虚拟内存相关</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#note-about-chapter-2"><span class="nav-number">2.</span> <span class="nav-text">note about chapter 2</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本操作"><span class="nav-number">2.1.</span> <span class="nav-text">基本操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-4-常用断点"><span class="nav-number">2.2.</span> <span class="nav-text">2.1.4 常用断点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#int3断点"><span class="nav-number">2.2.1.</span> <span class="nav-text">int3断点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#硬件断点"><span class="nav-number">2.2.2.</span> <span class="nav-text">硬件断点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存断点"><span class="nav-number">2.2.3.</span> <span class="nav-text">内存断点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存访问一次性断点"><span class="nav-number">2.2.4.</span> <span class="nav-text">内存访问一次性断点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#消息断点"><span class="nav-number">2.2.5.</span> <span class="nav-text">消息断点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件断点"><span class="nav-number">2.2.6.</span> <span class="nav-text">条件断点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#条件记录断点"><span class="nav-number">2.2.7.</span> <span class="nav-text">条件记录断点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-6"><span class="nav-number">2.3.</span> <span class="nav-text">2.1.6</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#note-about-chapter-3"><span class="nav-number">3.</span> <span class="nav-text">note about chapter 3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-16"><span class="nav-number">3.1.</span> <span class="nav-text">3.3.16</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
