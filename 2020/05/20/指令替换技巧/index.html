@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="MIXI’s blog for disclosing his secrets">
-<meta property="og:type" content="website">
-<meta property="og:title" content="about">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;about&#x2F;index.html">
+<meta name="description" content="指令替换技巧 from 《加密与解密》   功能 指令 机器码 指令长度(byte)    替换1字节 nop 90 1   替换2字节 nopnop 9090 11   替换2字节 mov edi,edi 8B FF 2   替换2字节 push eaxpop eax 5058 11   替换2字节 inc eaxdec eax 4048 11   替换2字节 jmp xx eb00 2   寄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="指令替换技巧">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;20&#x2F;%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
-<meta property="og:description" content="MIXI’s blog for disclosing his secrets">
+<meta property="og:description" content="指令替换技巧 from 《加密与解密》   功能 指令 机器码 指令长度(byte)    替换1字节 nop 90 1   替换2字节 nopnop 9090 11   替换2字节 mov edi,edi 8B FF 2   替换2字节 push eaxpop eax 5058 11   替换2字节 inc eaxdec eax 4048 11   替换2字节 jmp xx eb00 2   寄">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-11-24T07:42:01.117Z">
+<meta property="og:updated_time" content="2020-05-20T13:41:23.230Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -117,13 +117,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/about/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/05/20/指令替换技巧/"/>
 
 
 
 
 
-  <title>about | Ivoripuion's blog</title>
+  <title>指令替换技巧 | Ivoripuion's blog</title>
   
 
 
@@ -248,33 +248,265 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">about</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <h2 id="MIXI’s-blog-for-disclosing-his-secrets"><a href="#MIXI’s-blog-for-disclosing-his-secrets" class="headerlink" title="MIXI’s blog for disclosing his secrets"></a>MIXI’s blog for disclosing his secrets</h2>
+          <h1 class="post-title" itemprop="name headline">指令替换技巧</h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-20T21:19:44+08:00">
+                2020-05-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E6%83%B3/" itemprop="url" rel="index">
+                    <span itemprop="name">随想</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <h2 id="指令替换技巧-from-《加密与解密》"><a href="#指令替换技巧-from-《加密与解密》" class="headerlink" title="指令替换技巧 from 《加密与解密》"></a>指令替换技巧 from 《加密与解密》</h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>指令</th>
+<th>机器码</th>
+<th>指令长度(byte)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>替换1字节</td>
+<td>nop</td>
+<td>90</td>
+<td>1</td>
+</tr>
+<tr>
+<td>替换2字节</td>
+<td>nop<br>nop</td>
+<td>90<br>90</td>
+<td>1<br>1</td>
+</tr>
+<tr>
+<td>替换2字节</td>
+<td>mov edi,edi</td>
+<td>8B FF</td>
+<td>2</td>
+</tr>
+<tr>
+<td>替换2字节</td>
+<td>push eax<br>pop eax</td>
+<td>50<br>58</td>
+<td>1<br>1</td>
+</tr>
+<tr>
+<td>替换2字节</td>
+<td>inc eax<br>dec eax</td>
+<td>40<br>48</td>
+<td>1<br>1</td>
+</tr>
+<tr>
+<td>替换2字节</td>
+<td>jmp xx</td>
+<td>eb00</td>
+<td>2</td>
+</tr>
+<tr>
+<td>寄存器清零</td>
+<td>mov eax,0x00000000</td>
+<td>B8 00 00 00 00</td>
+<td>5</td>
+</tr>
+<tr>
+<td>寄存器清零</td>
+<td>push 0<br>pop eax</td>
+<td>6A 00<br>58</td>
+<td>2<br>1</td>
+</tr>
+<tr>
+<td>寄存器清零</td>
+<td>sub eax,eax/xor eax,eax</td>
+<td>2B C0/33 C0</td>
+<td>2</td>
+</tr>
+<tr>
+<td>测试寄存器的值是否为0</td>
+<td>cmp eax,0x00000000<br>je <em>label</em></td>
+<td>83 F8 00<br>74xx/0F84xxxxxxxx</td>
+<td>3<br>2/6</td>
+</tr>
+<tr>
+<td>测试寄存器的值是否为0</td>
+<td>or eax,eax/test eax,eax<br>je <em>label</em></td>
+<td>0B C0/85 C0<br>74xx/0F84xxxxxxxx</td>
+<td>2<br>2/6</td>
+</tr>
+<tr>
+<td>置寄存器为0xFFFFFFFF</td>
+<td>mov eax,0xffffffff</td>
+<td>B8 FF FF FF FF</td>
+<td>5</td>
+</tr>
+<tr>
+<td>置寄存器为0xFFFFFFFF</td>
+<td>xor eax,eax/sub eax,eax<br>dec eax</td>
+<td>33 C0/2B C0<br>48</td>
+<td>2<br>1</td>
+</tr>
+<tr>
+<td>置寄存器为0xFFFFFFFF</td>
+<td>stc<br>sbb eax,eax</td>
+<td>F9<br>2B C0</td>
+<td>1<br>2</td>
+</tr>
+<tr>
+<td>转移指令</td>
+<td>jmp <em>label</em></td>
+<td>EBxx/E9xxxxxxxx</td>
+<td>2/5</td>
+</tr>
+<tr>
+<td>转移指令</td>
+<td>push <em>label</em><br>ret</td>
+<td>68 xx xx xx xx<br>C3</td>
+<td>5<br>1</td>
+</tr>
+</tbody></table>
+
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/20/%E5%8A%A0%E8%A7%A3%E5%AF%86%E7%AC%AC%E4%B8%80%E7%AF%87%E7%AC%94%E8%AE%B0/" rel="next" title="加密与解密第一篇笔记">
+                <i class="fa fa-chevron-left"></i> 加密与解密第一篇笔记
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -382,7 +614,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MIXI’s-blog-for-disclosing-his-secrets"><span class="nav-number">1.</span> <span class="nav-text">MIXI’s blog for disclosing his secrets</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#指令替换技巧-from-《加密与解密》"><span class="nav-number">1.</span> <span class="nav-text">指令替换技巧 from 《加密与解密》</span></a></li></ol></div>
             
 
           </div>
