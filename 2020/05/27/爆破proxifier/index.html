@@ -79,15 +79,22 @@
 
 
 
-<meta name="description" content="指令替换技巧 from 《加密与解密》   功能 指令 机器码 指令长度(byte)    替换1字节 nop 90 1   替换2字节 nopnop 9090 11   替换2字节 mov edi,edi 8B FF 2   替换2字节 push eaxpop eax 5058 11   替换2字节 inc eaxdec eax 4048 11   替换2字节 jmp xx eb00 2   寄">
+<meta name="description" content="爆破全局代理工具proxifier最近白嫖了一个gta5，联网模式得开全局代理配合v2ray之类的代理工具才能流畅游玩，结果打开电脑里老的proxifier说什么试用过期，得重新注册啥的，索性去官网下了个最新的正版，简单查看了下没有壳，那越过注册功能就是逆向入门级的一个爆破，简单记录下。 修改的点首先搜索下字符串，找到注册功能的判断函数：   这里判断函数的内存地址为0x00E85790。 然后是">
 <meta property="og:type" content="article">
-<meta property="og:title" content="指令替换技巧">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;20&#x2F;%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7&#x2F;index.html">
+<meta property="og:title" content="爆破全局代理工具proxifier">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;27&#x2F;%E7%88%86%E7%A0%B4proxifier&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
-<meta property="og:description" content="指令替换技巧 from 《加密与解密》   功能 指令 机器码 指令长度(byte)    替换1字节 nop 90 1   替换2字节 nopnop 9090 11   替换2字节 mov edi,edi 8B FF 2   替换2字节 push eaxpop eax 5058 11   替换2字节 inc eaxdec eax 4048 11   替换2字节 jmp xx eb00 2   寄">
+<meta property="og:description" content="爆破全局代理工具proxifier最近白嫖了一个gta5，联网模式得开全局代理配合v2ray之类的代理工具才能流畅游玩，结果打开电脑里老的proxifier说什么试用过期，得重新注册啥的，索性去官网下了个最新的正版，简单查看了下没有壳，那越过注册功能就是逆向入门级的一个爆破，简单记录下。 修改的点首先搜索下字符串，找到注册功能的判断函数：   这里判断函数的内存地址为0x00E85790。 然后是">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-20T13:41:23.230Z">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;27&#x2F;%E7%88%86%E7%A0%B4proxifier&#x2F;dbg1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;27&#x2F;%E7%88%86%E7%A0%B4proxifier&#x2F;dbg2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;27&#x2F;%E7%88%86%E7%A0%B4proxifier&#x2F;dbg3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;27&#x2F;%E7%88%86%E7%A0%B4proxifier&#x2F;dbg4.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;27&#x2F;%E7%88%86%E7%A0%B4proxifier&#x2F;dbg5.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;27&#x2F;%E7%88%86%E7%A0%B4proxifier&#x2F;dbg6.JPG">
+<meta property="og:updated_time" content="2020-05-27T13:51:25.368Z">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;27&#x2F;%E7%88%86%E7%A0%B4proxifier&#x2F;dbg1.JPG">
 
 
 
@@ -117,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/05/20/指令替换技巧/"/>
+  <link rel="canonical" href="http://yoursite.com/2020/05/27/爆破proxifier/"/>
 
 
 
 
 
-  <title>指令替换技巧 | Ivoripuion's blog</title>
+  <title>爆破全局代理工具proxifier | Ivoripuion's blog</title>
   
 
 
@@ -260,7 +267,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/27/%E7%88%86%E7%A0%B4proxifier/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -277,7 +284,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">指令替换技巧</h1>
+          <h1 class="post-title" itemprop="name headline">爆破全局代理工具proxifier</h1>
         
 
         <div class="post-meta">
@@ -289,8 +296,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-20T21:19:44+08:00">
-                2020-05-20
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-27T21:00:56+08:00">
+                2020-05-27
               </time>
             
 
@@ -312,8 +319,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E6%83%B3/" itemprop="url" rel="index">
-                    <span itemprop="name">随想</span>
+                  <a href="/categories/reverse/" itemprop="url" rel="index">
+                    <span itemprop="name">reverse</span>
                   </a>
                 </span>
 
@@ -349,112 +356,44 @@
       
 
       
-        <h2 id="指令替换技巧-from-《加密与解密》"><a href="#指令替换技巧-from-《加密与解密》" class="headerlink" title="指令替换技巧 from 《加密与解密》"></a>指令替换技巧 from 《加密与解密》</h2><table>
-<thead>
-<tr>
-<th>功能</th>
-<th>指令</th>
-<th>机器码</th>
-<th>指令长度(byte)</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>替换1字节</td>
-<td>nop</td>
-<td>90</td>
-<td>1</td>
-</tr>
-<tr>
-<td>替换2字节</td>
-<td>nop<br>nop</td>
-<td>90<br>90</td>
-<td>1<br>1</td>
-</tr>
-<tr>
-<td>替换2字节</td>
-<td>mov edi,edi</td>
-<td>8B FF</td>
-<td>2</td>
-</tr>
-<tr>
-<td>替换2字节</td>
-<td>push eax<br>pop eax</td>
-<td>50<br>58</td>
-<td>1<br>1</td>
-</tr>
-<tr>
-<td>替换2字节</td>
-<td>inc eax<br>dec eax</td>
-<td>40<br>48</td>
-<td>1<br>1</td>
-</tr>
-<tr>
-<td>替换2字节</td>
-<td>jmp xx</td>
-<td>eb00</td>
-<td>2</td>
-</tr>
-<tr>
-<td>寄存器清零</td>
-<td>mov eax,0x00000000</td>
-<td>B8 00 00 00 00</td>
-<td>5</td>
-</tr>
-<tr>
-<td>寄存器清零</td>
-<td>push 0<br>pop eax</td>
-<td>6A 00<br>58</td>
-<td>2<br>1</td>
-</tr>
-<tr>
-<td>寄存器清零</td>
-<td>sub eax,eax/xor eax,eax</td>
-<td>2B C0/33 C0</td>
-<td>2</td>
-</tr>
-<tr>
-<td>测试寄存器的值是否为0</td>
-<td>cmp eax,0x00000000<br>je <em>label</em></td>
-<td>83 F8 00<br>74xx/0F84xxxxxxxx</td>
-<td>3<br>2/6</td>
-</tr>
-<tr>
-<td>测试寄存器的值是否为0</td>
-<td>or eax,eax/test eax,eax<br>je <em>label</em></td>
-<td>0B C0/85 C0<br>74xx/0F84xxxxxxxx</td>
-<td>2<br>2/6</td>
-</tr>
-<tr>
-<td>置寄存器为0xFFFFFFFF</td>
-<td>mov eax,0xffffffff</td>
-<td>B8 FF FF FF FF</td>
-<td>5</td>
-</tr>
-<tr>
-<td>置寄存器为0xFFFFFFFF</td>
-<td>xor eax,eax/sub eax,eax<br>dec eax</td>
-<td>33 C0/2B C0<br>48</td>
-<td>2<br>1</td>
-</tr>
-<tr>
-<td>置寄存器为0xFFFFFFFF</td>
-<td>stc<br>sbb eax,eax</td>
-<td>F9<br>2B C0</td>
-<td>1<br>2</td>
-</tr>
-<tr>
-<td>转移指令</td>
-<td>jmp <em>label</em></td>
-<td>EBxx/E9xxxxxxxx</td>
-<td>2/5</td>
-</tr>
-<tr>
-<td>转移指令</td>
-<td>push <em>label</em><br>ret</td>
-<td>68 xx xx xx xx<br>C3</td>
-<td>5<br>1</td>
-</tr>
-</tbody></table>
+        <h1 id="爆破全局代理工具proxifier"><a href="#爆破全局代理工具proxifier" class="headerlink" title="爆破全局代理工具proxifier"></a>爆破全局代理工具proxifier</h1><p>最近白嫖了一个gta5，联网模式得开全局代理配合v2ray之类的代理工具才能流畅游玩，结果打开电脑里老的proxifier说什么试用过期，得重新注册啥的，索性去官网下了个最新的正版，简单查看了下没有壳，那越过注册功能就是逆向入门级的一个爆破，简单记录下。</p>
+<h2 id="修改的点"><a href="#修改的点" class="headerlink" title="修改的点"></a>修改的点</h2><p>首先搜索下字符串，找到注册功能的判断函数：</p>
+<p><img src="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/dbg1.JPG" alt></p>
+<p><img src="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/dbg2.JPG" alt></p>
+<p>这里判断函数的内存地址为0x00E85790。</p>
+<p>然后是几个跳过的点：</p>
+<ol>
+<li>判断1，注册码格式：</li>
+</ol>
+<p><code>00E85851  |. /75 34         jnz short Proxifie.00E85887</code></p>
+<p>改为</p>
+<p><code>00E85851     /EB 34         jmp short Proxifie.00E85887</code></p>
+<ol start="2">
+<li>判断2，是否执行退出函数：</li>
+</ol>
+<p><code>00E8588F  |. /73 05         jnb short Proxifie.00E85896</code></p>
+<p>改为</p>
+<p><code>00E8588F     /EB 05         jmp short Proxifie.00E85896</code></p>
+<ol start="3">
+<li>判断3，注册码是否正确：</li>
+</ol>
+<p><code>00E85940  |. /75 0F         jnz short Proxifie.00E85951</code></p>
+<p>改为</p>
+<p><code>00E85940     /EB 0F         jmp short Proxifie.00E85951</code></p>
+<ol start="4">
+<li>判断5，注册码版本是否正确：</li>
+</ol>
+<p><code>00E85AE6  |. /73 22         jnb short Proxifie.00E85B0A</code></p>
+<p>改为</p>
+<p><code>00E85AE6     /EB 22         jmp short Proxifie.00E85B0A</code></p>
+<p>改完就可以看到弹出注册成功的窗口了：</p>
+<p><img src="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/dbg3.JPG" alt></p>
+<p>初次注册完，程序下面有红字：</p>
+<p><img src="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/dbg4.JPG" alt></p>
+<p>再进一次就可以用了：</p>
+<p><img src="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/dbg5.JPG" alt></p>
+<p><img src="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/dbg6.JPG" alt></p>
+<p>附上改完的版本：<a href="https://quqi.gblhgk.com/s/563947/1uBWkN6bhtyGvDKw" target="_blank" rel="noopener">https://quqi.gblhgk.com/s/563947/1uBWkN6bhtyGvDKw</a></p>
 
       
     </div>
@@ -479,8 +418,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/05/20/%E5%8A%A0%E8%A7%A3%E5%AF%86%E7%AC%AC%E4%B8%80%E7%AF%87%E7%AC%94%E8%AE%B0/" rel="next" title="加密与解密第一篇笔记">
-                <i class="fa fa-chevron-left"></i> 加密与解密第一篇笔记
+              <a href="/2020/05/26/lab10/" rel="next" title="恶意代码分析实战 Lab10">
+                <i class="fa fa-chevron-left"></i> 恶意代码分析实战 Lab10
               </a>
             
           </div>
@@ -488,10 +427,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/05/26/lab10/" rel="prev" title="恶意代码分析实战 Lab10">
-                恶意代码分析实战 Lab10 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -618,7 +553,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#指令替换技巧-from-《加密与解密》"><span class="nav-number">1.</span> <span class="nav-text">指令替换技巧 from 《加密与解密》</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#爆破全局代理工具proxifier"><span class="nav-number">1.</span> <span class="nav-text">爆破全局代理工具proxifier</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#修改的点"><span class="nav-number">1.1.</span> <span class="nav-text">修改的点</span></a></li></ol></li></ol></div>
             
 
           </div>
