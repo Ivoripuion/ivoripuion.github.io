@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="notes from chapter 4x86-64函数调用约定VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。  参数1：RCX； 参数2：RDX； 参数3：R8； 参数4：R9；  任何大于8字节或者不是1字节、2字节、4字节、8字节的参数必须由引用来传递（地址传递）。所有浮点参数的传递都是使用XMM寄存器完成的，它们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note20200604">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="notes from chapter 4x86-64函数调用约定VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。  参数1：RCX； 参数2：RDX； 参数3：R8； 参数4：R9；  任何大于8字节或者不是1字节、2字节、4字节、8字节的参数必须由引用来传递（地址传递）。所有浮点参数的传递都是使用XMM寄存器完成的，它们">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;dbg1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;record1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;dbg2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;dbg3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;record2.JPG">
+<meta property="og:updated_time" content="2020-06-04T14:36:30.196Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;dbg1.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/04/note20200604/"/>
+
+
+
+
+
+  <title>note20200604 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/04/note20200604/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">note20200604</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-04T22:34:21+08:00">
+                2020-06-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/reverse/" itemprop="url" rel="index">
+                    <span itemprop="name">reverse</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="notes-from-chapter-4"><a href="#notes-from-chapter-4" class="headerlink" title="notes from chapter 4"></a>notes from chapter 4</h1><h2 id="x86-64函数调用约定"><a href="#x86-64函数调用约定" class="headerlink" title="x86-64函数调用约定"></a>x86-64函数调用约定</h2><p>VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。</p>
+<ul>
+<li>参数1：RCX；</li>
+<li>参数2：RDX；</li>
+<li>参数3：R8；</li>
+<li>参数4：R9；</li>
+</ul>
+<p>任何大于8字节或者不是1字节、2字节、4字节、8字节的参数必须由引用来传递（地址传递）。所有浮点参数的传递都是使用XMM寄存器完成的，它们在XMM0、XMM1、XMM2和XMM3中传递。</p>
+<ul>
+<li>参数1：XMM0；</li>
+<li>参数2：XMM1；</li>
+<li>参数3：XMM2；</li>
+<li>参数4：XMM3；</li>
+</ul>
+<blockquote>
+<p>如果参数既有浮点类型，又有整数类型，例如”void fun(float, int, float,int)”, 那么参数传递顺序为笫1个参数(XMM0)、笫2个参数(RDX)、 笫3个参数(XMM2)、笫4个参数(R9)。</p>
+</blockquote>
+<p>如果参数是结构体且大于8字节，在传递参数时，会先把结构内容复制到栈空间中，再把结构体地址当成函数的参数来传递（引用传递）。</p>
+<p>类的函数中，由于rcx寄存器保存了this指针，所以函数的参数调用从rdx开始使用。</p>
+<h2 id="虚函数相关"><a href="#虚函数相关" class="headerlink" title="虚函数相关"></a>虚函数相关</h2><p>判断一个函数为构造函数或者析构函数：</p>
+<blockquote>
+<p>函数的栈初始化完毕后，使用”lea reg, off_l40007970”和”mov[reg], reg”特征初始化虚表，且返回值为this指针，就可以怀疑这个函数是一个构造函数或者析构函数，这里的off_l40007970就是虚表指针。</p>
+</blockquote>
+<p>多重继承时，一个类中会有多个虚表。</p>
+<p>于纯虚函数没有实现代码，编译器默认填充了_purecall函数的地址。_purecall函数的功能就是显示一个错误信息并退出程序。这是识别抽象类的一个依据。</p>
+<p>在逆向分析中，如果发现一个类的虚表里面有_purecall虚表项，就可以怀疑这个类是抽象类。</p>
+<h1 id="notes-from-chapter-5"><a href="#notes-from-chapter-5" class="headerlink" title="notes from chapter 5"></a>notes from chapter 5</h1><h2 id="一些验证产品序列号的方法"><a href="#一些验证产品序列号的方法" class="headerlink" title="一些验证产品序列号的方法"></a>一些验证产品序列号的方法</h2><h3 id="将用户名等信息作为自变量，通过函数F变换之后得到注册码"><a href="#将用户名等信息作为自变量，通过函数F变换之后得到注册码" class="headerlink" title="将用户名等信息作为自变量，通过函数F变换之后得到注册码"></a>将用户名等信息作为自变量，通过函数F变换之后得到注册码</h3><p>使用的变换：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">序列号=F(用户名)</span><br></pre></td></tr></table></figure>
+
+<p>通过该方法计算出来的序列号是以明文形式在内存中出现的，所以很容易就能在内存中找到它，从而获得注册码。</p>
+<h3 id="通过注册码验证用户名的正确性"><a href="#通过注册码验证用户名的正确性" class="headerlink" title="通过注册码验证用户名的正确性"></a>通过注册码验证用户名的正确性</h3><p>使用的变换：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">序列号=F(用户名)</span><br></pre></td></tr></table></figure>
+
+<p>这里要求F是一个可逆变换。而软件在检查注册码的时候，是利用F的逆变换G对用户输入的注册码进行变换的。如果变换的结果和用户名相同，则说明是正确的注册码，即：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户名=G(序列号)</span><br></pre></td></tr></table></figure>
+
+<p>破解这种注册码检查方法时，除了可以采用修改比较指令的办法（爆破），还有如下考虑：</p>
+<ol>
+<li>通过G(x)得出F(x)，从而得到注册机；</li>
+<li>给定一个用户名，通过穷举法找到一个G(x)；</li>
+<li>给定一个序列号，通过穷举法找到一个G(x)；</li>
+</ol>
+<h3 id="通过对等函数检查注册码"><a href="#通过对等函数检查注册码" class="headerlink" title="通过对等函数检查注册码"></a>通过对等函数检查注册码</h3><p>使用的变换：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">F1(用户名)=F2(序列号)</span><br></pre></td></tr></table></figure>
+
+<h3 id="同时将用户名和注册码作为自变量（即采用二元函数）"><a href="#同时将用户名和注册码作为自变量（即采用二元函数）" class="headerlink" title="同时将用户名和注册码作为自变量（即采用二元函数）"></a>同时将用户名和注册码作为自变量（即采用二元函数）</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">特定值=F(用户名,序列号)</span><br></pre></td></tr></table></figure>
+
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>注册码的复杂性问题归根到底是一个数学问题。</p>
+<h2 id="如何攻击序列号保护机制"><a href="#如何攻击序列号保护机制" class="headerlink" title="如何攻击序列号保护机制"></a>如何攻击序列号保护机制</h2><h3 id="数据约束性原则"><a href="#数据约束性原则" class="headerlink" title="数据约束性原则"></a>数据约束性原则</h3><p>在序列保护号程序中，正确的序列号会在某一时刻出现在内存中。</p>
+<p><img src="/2020/06/04/note20200604/dbg1.JPG" alt></p>
+<p>“12121212”为输入的序列号，2470为正确的序列号。</p>
+<h3 id="hmemecpy函数"><a href="#hmemecpy函数" class="headerlink" title="hmemecpy函数"></a>hmemecpy函数</h3><p>即万能断点。</p>
+<h3 id="利用提示信息"><a href="#利用提示信息" class="headerlink" title="利用提示信息"></a>利用提示信息</h3><p>智能搜索-&gt;查找ascii。</p>
+<h2 id="注册机制作"><a href="#注册机制作" class="headerlink" title="注册机制作"></a>注册机制作</h2><h3 id="keymake"><a href="#keymake" class="headerlink" title="keymake"></a>keymake</h3><p>一般断点设置：</p>
+<ol>
+<li>进入注册码生成函数（call xxxxxxxx）断点一次；</li>
+<li>进行比较时断点一次，断在push正确注册码时（push xxxx call strcmp）；</li>
+</ol>
+<p>点内存方式，寄存器设置为上面push的寄存器。</p>
+<h3 id="F1-用户名-F2-密码-型注册机时"><a href="#F1-用户名-F2-密码-型注册机时" class="headerlink" title="F1(用户名)=F2(密码)型注册机时"></a>F1(用户名)=F2(密码)型注册机时</h3><p>需要分析出F1逆函数G，用用户名=G(F2(密码))的方式制作注册机。</p>
+<h2 id="破解nag"><a href="#破解nag" class="headerlink" title="破解nag"></a>破解nag</h2><p>找到<code>DialogBoxParam</code>函数，将对话框处理函数指针指向的函数中的第一行指令改为<code>jmp</code>到配合前面打开窗口的关闭窗口函数<code>EndDialog</code>的下一行指令。</p>
+<h2 id="菜单功能限制"><a href="#菜单功能限制" class="headerlink" title="菜单功能限制"></a>菜单功能限制</h2><p>找到<code>EnableMenultem()</code>或者<code>EnableWindow</code>函数进行修改。</p>
+<h2 id="KeyFile"><a href="#KeyFile" class="headerlink" title="KeyFile"></a>KeyFile</h2><h3 id="破解思路"><a href="#破解思路" class="headerlink" title="破解思路"></a>破解思路</h3><p><img src="/2020/06/04/note20200604/record1.JPG" alt></p>
+<h3 id="破解过程"><a href="#破解过程" class="headerlink" title="破解过程"></a>破解过程</h3><p>创建的文件名”KwazyWeb.bit”：</p>
+<p><img src="/2020/06/04/note20200604/dbg2.JPG" alt></p>
+<p>程序根据”KwazyWeb.bit”的内容跑迷宫，碰到”X”就算成功：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">signed</span> <span class="keyword">int</span> __usercall problem_401033@&lt;eax&gt;(<span class="keyword">char</span> a1@&lt;al&gt;)</span><br><span class="line">&#123;</span><br><span class="line">  _BYTE *v2; <span class="comment">// [esp+4h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  v2 = left_403184;</span><br><span class="line">  <span class="keyword">if</span> ( a1 )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( a1 == <span class="number">1</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      left_403184 = left_403184 + <span class="number">1</span>;            <span class="comment">// right</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( a1 == <span class="number">2</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      left_403184 = left_403184 + <span class="number">16</span>;           <span class="comment">// down</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      left_403184 = left_403184 - <span class="number">1</span>;            <span class="comment">// left</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    left_403184 = left_403184 - <span class="number">16</span>;             <span class="comment">// down</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( *left_403184 == <span class="string">'*'</span> )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> ( *left_403184 == <span class="string">'X'</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    MessageBoxA(<span class="number">0</span>, Text, Caption, <span class="number">0</span>);</span><br><span class="line">    SetWindowTextA(hWnd, <span class="keyword">String</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  *left_403184 = <span class="number">67</span>;</span><br><span class="line">  *v2 = <span class="number">32</span>;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>迷宫：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">****************</span><br><span class="line">C*......*...****</span><br><span class="line">.*.****...*....*</span><br><span class="line">.*..**********.*</span><br><span class="line">..*....*...*...*</span><br><span class="line">*.****.*.*...***</span><br><span class="line">*.*....*.*******</span><br><span class="line">..*.***..*.....*</span><br><span class="line">.*..***.**.***.*</span><br><span class="line">...****....*X..*</span><br><span class="line">****************</span><br></pre></td></tr></table></figure>
+
+<p>答案：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">222122232211010011100333030011111211011211122332330332223221110011112233</span><br></pre></td></tr></table></figure>
+
+<p>16进制：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A9 AB A5 10 54 3F 30 55 65 16 56 BE F3 EA E9 50 55 AF</span><br></pre></td></tr></table></figure>
+
+<p>最终答案：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">04 6d 69 78 69 1e 1c 12 a7 e3 88 87 e2 d2 a1 e1 9 44 5d 5e e7 e2 18</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">raw=[<span class="number">0xA9</span>,<span class="number">0xAB</span>,<span class="number">0xA5</span>,<span class="number">0x10</span>,<span class="number">0x54</span>,<span class="number">0x3F</span>,<span class="number">0x30</span>,<span class="number">0x55</span>,<span class="number">0x65</span>,<span class="number">0x16</span>,<span class="number">0x56</span>,<span class="number">0xBE</span>,<span class="number">0xF3</span>,<span class="number">0xEA</span>,<span class="number">0xE9</span>,<span class="number">0x50</span>,<span class="number">0x55</span>,<span class="number">0xAF</span>]</span><br><span class="line"></span><br><span class="line">flag=<span class="number">0xB7</span></span><br><span class="line"></span><br><span class="line">output=[]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> raw:</span><br><span class="line">    output.append(flag^i)</span><br><span class="line"></span><br><span class="line">f=open(<span class="string">"my.bit"</span>,<span class="string">"wb+"</span>)</span><br><span class="line"></span><br><span class="line">o1=[<span class="number">0x04</span>,<span class="number">0x6d</span>,<span class="number">0x69</span>,<span class="number">0x78</span>,<span class="number">0x69</span>]</span><br><span class="line">o1.extend(output)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> o1:</span><br><span class="line">    f.write(bytes([i]))</span><br><span class="line">    print(hex(i)[<span class="number">2</span>:],end=<span class="string">" "</span>)</span><br><span class="line"></span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
+
+<p>check：</p>
+<p><img src="/2020/06/04/note20200604/dbg3.JPG" alt></p>
+<h2 id="只运行运行一个实例"><a href="#只运行运行一个实例" class="headerlink" title="只运行运行一个实例"></a>只运行运行一个实例</h2><h3 id="实现方法"><a href="#实现方法" class="headerlink" title="实现方法"></a>实现方法</h3><h4 id="查找窗口法"><a href="#查找窗口法" class="headerlink" title="查找窗口法"></a>查找窗口法</h4><p>使用的api：<code>findWindowA</code>。</p>
+<h4 id="互斥对象法"><a href="#互斥对象法" class="headerlink" title="互斥对象法"></a>互斥对象法</h4><p>使用的api：<code>CreateMutexA</code>。</p>
+<h4 id="使用共享内存块法"><a href="#使用共享内存块法" class="headerlink" title="使用共享内存块法"></a>使用共享内存块法</h4><p>题目修改点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CODE:0040101A 74 01                                   jz     short loc_40101D</span><br></pre></td></tr></table></figure>
+
+<p>改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CODE:0040101A EB 01                                   jmp     short loc_40101D</span><br></pre></td></tr></table></figure>
+
+<h2 id="5-9-常用断点集合"><a href="#5-9-常用断点集合" class="headerlink" title="5.9 常用断点集合"></a>5.9 常用断点集合</h2><p><img src="/2020/06/04/note20200604/record2.JPG" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/" rel="next" title="爆破全局代理工具proxifier">
+                <i class="fa fa-chevron-left"></i> 爆破全局代理工具proxifier
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">22</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#notes-from-chapter-4"><span class="nav-number">1.</span> <span class="nav-text">notes from chapter 4</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#x86-64函数调用约定"><span class="nav-number">1.1.</span> <span class="nav-text">x86-64函数调用约定</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#虚函数相关"><span class="nav-number">1.2.</span> <span class="nav-text">虚函数相关</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#notes-from-chapter-5"><span class="nav-number">2.</span> <span class="nav-text">notes from chapter 5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一些验证产品序列号的方法"><span class="nav-number">2.1.</span> <span class="nav-text">一些验证产品序列号的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#将用户名等信息作为自变量，通过函数F变换之后得到注册码"><span class="nav-number">2.1.1.</span> <span class="nav-text">将用户名等信息作为自变量，通过函数F变换之后得到注册码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过注册码验证用户名的正确性"><span class="nav-number">2.1.2.</span> <span class="nav-text">通过注册码验证用户名的正确性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过对等函数检查注册码"><span class="nav-number">2.1.3.</span> <span class="nav-text">通过对等函数检查注册码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同时将用户名和注册码作为自变量（即采用二元函数）"><span class="nav-number">2.1.4.</span> <span class="nav-text">同时将用户名和注册码作为自变量（即采用二元函数）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">2.1.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何攻击序列号保护机制"><span class="nav-number">2.2.</span> <span class="nav-text">如何攻击序列号保护机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据约束性原则"><span class="nav-number">2.2.1.</span> <span class="nav-text">数据约束性原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hmemecpy函数"><span class="nav-number">2.2.2.</span> <span class="nav-text">hmemecpy函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用提示信息"><span class="nav-number">2.2.3.</span> <span class="nav-text">利用提示信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册机制作"><span class="nav-number">2.3.</span> <span class="nav-text">注册机制作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#keymake"><span class="nav-number">2.3.1.</span> <span class="nav-text">keymake</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#F1-用户名-F2-密码-型注册机时"><span class="nav-number">2.3.2.</span> <span class="nav-text">F1(用户名)=F2(密码)型注册机时</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#破解nag"><span class="nav-number">2.4.</span> <span class="nav-text">破解nag</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#菜单功能限制"><span class="nav-number">2.5.</span> <span class="nav-text">菜单功能限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KeyFile"><span class="nav-number">2.6.</span> <span class="nav-text">KeyFile</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#破解思路"><span class="nav-number">2.6.1.</span> <span class="nav-text">破解思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#破解过程"><span class="nav-number">2.6.2.</span> <span class="nav-text">破解过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#只运行运行一个实例"><span class="nav-number">2.7.</span> <span class="nav-text">只运行运行一个实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现方法"><span class="nav-number">2.7.1.</span> <span class="nav-text">实现方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#查找窗口法"><span class="nav-number">2.7.1.1.</span> <span class="nav-text">查找窗口法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#互斥对象法"><span class="nav-number">2.7.1.2.</span> <span class="nav-text">互斥对象法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用共享内存块法"><span class="nav-number">2.7.1.3.</span> <span class="nav-text">使用共享内存块法</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-9-常用断点集合"><span class="nav-number">2.8.</span> <span class="nav-text">5.9 常用断点集合</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
