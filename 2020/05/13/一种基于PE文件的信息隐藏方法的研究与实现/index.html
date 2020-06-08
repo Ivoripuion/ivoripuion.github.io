@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）研究原因目前在信息隐藏方面研究最深入成果最丰富的是基于图像的信息隐藏技术而对文本图形动画视频等其他多媒体中的信息隐藏技术研究得还比较少。PE文件是当前最常见的文件之一，使用范围非常广泛因而研究基于Windows下PE文件的信息隐藏有很大的实际意义。 PE文件结构解析在一个操作系统中，可执行代码在装入内存前是以文件的方式存储在">
+<meta name="description" content="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）研究原因目前在信息隐藏方面研究最深入成果最丰富的是基于图像的信息隐藏技术而对文本图形动画视频等其他多媒体中的信息隐藏技术研究得还比较少。PE文件是当前最常见的文件之一，使用范围非常广泛因而研究基于Windows下PE文件的信息隐藏有很大的实际意义。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;13&#x2F;%E4%B8%80%E7%A7%8D%E5%9F%BA%E4%BA%8EPE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F%E6%96%B9%E6%B3%95%E7%9A%84%E7%A0%94%E7%A9%B6%E4%B8%8E%E5%AE%9E%E7%8E%B0&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
-<meta property="og:description" content="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）研究原因目前在信息隐藏方面研究最深入成果最丰富的是基于图像的信息隐藏技术而对文本图形动画视频等其他多媒体中的信息隐藏技术研究得还比较少。PE文件是当前最常见的文件之一，使用范围非常广泛因而研究基于Windows下PE文件的信息隐藏有很大的实际意义。 PE文件结构解析在一个操作系统中，可执行代码在装入内存前是以文件的方式存储在">
+<meta property="og:description" content="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）研究原因目前在信息隐藏方面研究最深入成果最丰富的是基于图像的信息隐藏技术而对文本图形动画视频等其他多媒体中的信息隐藏技术研究得还比较少。PE文件是当前最常见的文件之一，使用范围非常广泛因而研究基于Windows下PE文件的信息隐藏有很大的实际意义。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-14T10:06:13.319Z">
+<meta property="og:updated_time" content="2020-06-08T02:58:29.704Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -350,6 +350,8 @@
 
       
         <h1 id="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）"><a href="#研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）" class="headerlink" title="研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）"></a>研读文献————一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）</h1><h2 id="研究原因"><a href="#研究原因" class="headerlink" title="研究原因"></a>研究原因</h2><p>目前在信息隐藏方面研究最深入成果最丰富的是基于图像的信息隐藏技术而对文本图形动画视频等其他多媒体中的信息隐藏技术研究得还比较少。PE文件是当前最常见的文件之一，使用范围非常广泛因而研究基于Windows下PE文件的信息隐藏有很大的实际意义。</p>
+<a id="more"></a>
+
 <h2 id="PE文件结构解析"><a href="#PE文件结构解析" class="headerlink" title="PE文件结构解析"></a>PE文件结构解析</h2><p>在一个操作系统中，可执行代码在装入内存前是以文件的方式存储在磁盘上，而在装入内存时需要被程序装载器识别才能正常执行因而需要可执行文件满足特定的格式。在Windows NT6.X系列操作系统中，纯32位操作系统使用PE格式(Portable Executable File Format)。</p>
 <p>在Windows系统中EXE和DLL都是PE文件两者惟一的区别是用一个字段来标识。另外在64位的Windows中. PE文件中的数据字段只是简单的扩展到64位与32位系统相比没有新的结构。论文主要讨论32位PE可执行文件。</p>
 <p>PE文件格式把可执行文件分成若干个数据节（section），不同的资源被存放在不同的节中。<br>一个典型的PE 文件中包含的节如下：</p>

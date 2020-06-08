@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="Glibc Heap ExpGlibc Heap OverviewGLibc Heap 负责维护动态分配memory的结构称为Heap Libc里比较常用的部分是malloc，free，realloc C++的new，delete，底层是上述几个   配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]  Heap相关的漏洞利用 UAF Double free Heap o">
+<meta name="description" content="Glibc Heap ExpGlibc Heap OverviewGLibc Heap 负责维护动态分配memory的结构称为Heap  Libc里比较常用的部分是malloc，free，realloc  C++的new，delete，底层是上述几个   配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Glibc Heap Exp">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;19&#x2F;glibcHeapExp&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
-<meta property="og:description" content="Glibc Heap ExpGlibc Heap OverviewGLibc Heap 负责维护动态分配memory的结构称为Heap Libc里比较常用的部分是malloc，free，realloc C++的new，delete，底层是上述几个   配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]  Heap相关的漏洞利用 UAF Double free Heap o">
+<meta property="og:description" content="Glibc Heap ExpGlibc Heap OverviewGLibc Heap 负责维护动态分配memory的结构称为Heap  Libc里比较常用的部分是malloc，free，realloc  C++的new，delete，底层是上述几个   配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-21T13:02:49.059Z">
+<meta property="og:updated_time" content="2020-06-08T02:55:43.085Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -350,17 +350,22 @@
 
       
         <h1 id="Glibc-Heap-Exp"><a href="#Glibc-Heap-Exp" class="headerlink" title="Glibc Heap Exp"></a>Glibc Heap Exp</h1><h2 id="Glibc-Heap-Overview"><a href="#Glibc-Heap-Overview" class="headerlink" title="Glibc Heap Overview"></a>Glibc Heap Overview</h2><h3 id="GLibc-Heap"><a href="#GLibc-Heap" class="headerlink" title="GLibc Heap"></a>GLibc Heap</h3><ul>
-<li>负责维护动态分配memory的结构称为Heap</li>
-<li>Libc里比较常用的部分是malloc，free，realloc<ul>
+<li><p>负责维护动态分配memory的结构称为Heap</p>
+</li>
+<li><p>Libc里比较常用的部分是malloc，free，realloc</p>
+<ul>
 <li>C++的new，delete，底层是上述几个</li>
 </ul>
 </li>
-<li>配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]</li>
-</ul>
-<h3 id="Heap相关的漏洞利用"><a href="#Heap相关的漏洞利用" class="headerlink" title="Heap相关的漏洞利用"></a>Heap相关的漏洞利用</h3><ul>
-<li>UAF</li>
-<li>Double free</li>
-<li>Heap overflow</li>
+<li><p>配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]</p>
+<a id="more"></a>
+<h3 id="Heap相关的漏洞利用"><a href="#Heap相关的漏洞利用" class="headerlink" title="Heap相关的漏洞利用"></a>Heap相关的漏洞利用</h3></li>
+<li><p>UAF</p>
+</li>
+<li><p>Double free</p>
+</li>
+<li><p>Heap overflow</p>
+</li>
 </ul>
 <h3 id="Glibc-Heap相关概念"><a href="#Glibc-Heap相关概念" class="headerlink" title="Glibc Heap相关概念"></a>Glibc Heap相关概念</h3><ul>
 <li>glibc/malloc/malloc.c</li>

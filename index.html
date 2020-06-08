@@ -350,10 +350,8 @@
 
       
         
-          
-          Lab11-01简要分析程序的主要流程如下：
-123456789101
-          ...
+          <h1 id="Lab11-01"><a href="#Lab11-01" class="headerlink" title="Lab11-01"></a>Lab11-01</h1><h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><p>程序的主要流程如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  HMODULE hModule; <span class="comment">// [esp+Ch] [ebp-11Ch]</span></span><br><span class="line">  CHAR Filename; <span class="comment">// [esp+10h] [ebp-118h]</span></span><br><span class="line">  <span class="keyword">char</span> v6; <span class="comment">// [esp+11h] [ebp-117h]</span></span><br><span class="line">  <span class="keyword">char</span> v7; <span class="comment">// [esp+11Dh] [ebp-Bh]</span></span><br><span class="line">  <span class="keyword">char</span> *v8; <span class="comment">// [esp+120h] [ebp-8h]</span></span><br><span class="line">  LPVOID v9; <span class="comment">// [esp+124h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  hModule = GetModuleHandleA(<span class="number">0</span>);</span><br><span class="line">  Filename = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">memset</span>(&amp;v6, <span class="number">0</span>, <span class="number">0x10C</span>u);</span><br><span class="line">  v7 = <span class="number">0</span>;</span><br><span class="line">  v9 = get_dll_401080(hModule);                 <span class="comment">// //加载dll</span></span><br><span class="line">  GetModuleFileNameA(<span class="number">0</span>, &amp;Filename, <span class="number">0x10E</span>u);</span><br><span class="line">  v8 = <span class="built_in">strrchr</span>(&amp;Filename, <span class="number">92</span>);</span><br><span class="line">  *v8 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">strcat</span>(&amp;Filename, aMsgina32Dll_0);</span><br><span class="line">  set_reg_401000(&amp;Filename, <span class="number">0x104</span>u);            <span class="comment">// 设置注册表</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/06/07/lab11/#more" rel="contents">
@@ -499,9 +497,15 @@
 
       
         
-          
-          notes from chapter 4x86-64函数调用约定VS编
-          ...
+          <h1 id="notes-from-chapter-4"><a href="#notes-from-chapter-4" class="headerlink" title="notes from chapter 4"></a>notes from chapter 4</h1><h2 id="x86-64函数调用约定"><a href="#x86-64函数调用约定" class="headerlink" title="x86-64函数调用约定"></a>x86-64函数调用约定</h2><p>VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。</p>
+<ul>
+<li><p>参数1：RCX；</p>
+</li>
+<li><p>参数2：RDX；</p>
+</li>
+<li><p>参数3：R8；</p>
+</li>
+<li><p>参数4：R9；</p></li></ul>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/06/04/note20200604/#more" rel="contents">
@@ -647,9 +651,7 @@
 
       
         
-          
-          爆破全局代理工具proxifier最近白嫖了一个gta5，联网模式得开
-          ...
+          <h1 id="爆破全局代理工具proxifier"><a href="#爆破全局代理工具proxifier" class="headerlink" title="爆破全局代理工具proxifier"></a>爆破全局代理工具proxifier</h1><p>最近白嫖了一个gta5，联网模式得开全局代理配合v2ray之类的代理工具才能流畅游玩，结果打开电脑里老的proxifier说什么试用过期，得重新注册啥的，索性去官网下了个最新的正版，简单查看了下没有壳，那越过注册功能就是逆向入门级的一个爆破，简单记录下。</p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/#more" rel="contents">
@@ -795,11 +797,8 @@
 
       
         
-          
-          Lab10-01静态分析查看程序的导入函数：
-
-该程序创建一个服务，控
-          ...
+          <h1 id="Lab10-01"><a href="#Lab10-01" class="headerlink" title="Lab10-01"></a>Lab10-01</h1><h2 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h2><p>查看程序的导入函数：</p>
+<p><img src="/2020/05/26/lab10/dbg1.JPG" alt></p>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/26/lab10/#more" rel="contents">
@@ -945,15 +944,7 @@
 
       
         
-          
-          指令替换技巧 from 《加密与解密》
-
-
-功能
-指令
-机器码
-指令长
-          ...
+          <h2 id="指令替换技巧-from-《加密与解密》"><a href="#指令替换技巧-from-《加密与解密》" class="headerlink" title="指令替换技巧 from 《加密与解密》"></a>指令替换技巧 from 《加密与解密》</h2>
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/#more" rel="contents">

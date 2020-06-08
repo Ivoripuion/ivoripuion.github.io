@@ -79,19 +79,19 @@
 
 
 
-<meta name="description" content="notes from chapter 4x86-64函数调用约定VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。  参数1：RCX； 参数2：RDX； 参数3：R8； 参数4：R9；  任何大于8字节或者不是1字节、2字节、4字节、8字节的参数必须由引用来传递（地址传递）。所有浮点参数的传递都是使用XMM寄存器完成的，它们">
+<meta name="description" content="notes from chapter 4x86-64函数调用约定VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。  参数1：RCX；  参数2：RDX；  参数3：R8；  参数4：R9；">
 <meta property="og:type" content="article">
 <meta property="og:title" content="note20200604">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
-<meta property="og:description" content="notes from chapter 4x86-64函数调用约定VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。  参数1：RCX； 参数2：RDX； 参数3：R8； 参数4：R9；  任何大于8字节或者不是1字节、2字节、4字节、8字节的参数必须由引用来传递（地址传递）。所有浮点参数的传递都是使用XMM寄存器完成的，它们">
+<meta property="og:description" content="notes from chapter 4x86-64函数调用约定VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。  参数1：RCX；  参数2：RDX；  参数3：R8；  参数4：R9；">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;dbg1.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;record1.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;dbg2.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;dbg3.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;record2.JPG">
-<meta property="og:updated_time" content="2020-06-04T14:36:30.196Z">
+<meta property="og:updated_time" content="2020-06-08T02:57:13.166Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;04&#x2F;note20200604&#x2F;dbg1.JPG">
 
@@ -357,17 +357,24 @@
       
         <h1 id="notes-from-chapter-4"><a href="#notes-from-chapter-4" class="headerlink" title="notes from chapter 4"></a>notes from chapter 4</h1><h2 id="x86-64函数调用约定"><a href="#x86-64函数调用约定" class="headerlink" title="x86-64函数调用约定"></a>x86-64函数调用约定</h2><p>VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。</p>
 <ul>
-<li>参数1：RCX；</li>
-<li>参数2：RDX；</li>
-<li>参数3：R8；</li>
-<li>参数4：R9；</li>
-</ul>
+<li><p>参数1：RCX；</p>
+</li>
+<li><p>参数2：RDX；</p>
+</li>
+<li><p>参数3：R8；</p>
+</li>
+<li><p>参数4：R9；</p>
+<a id="more"></a>
 <p>任何大于8字节或者不是1字节、2字节、4字节、8字节的参数必须由引用来传递（地址传递）。所有浮点参数的传递都是使用XMM寄存器完成的，它们在XMM0、XMM1、XMM2和XMM3中传递。</p>
-<ul>
-<li>参数1：XMM0；</li>
-<li>参数2：XMM1；</li>
-<li>参数3：XMM2；</li>
-<li>参数4：XMM3；</li>
+</li>
+<li><p>参数1：XMM0；</p>
+</li>
+<li><p>参数2：XMM1；</p>
+</li>
+<li><p>参数3：XMM2；</p>
+</li>
+<li><p>参数4：XMM3；</p>
+</li>
 </ul>
 <blockquote>
 <p>如果参数既有浮点类型，又有整数类型，例如”void fun(float, int, float,int)”, 那么参数传递顺序为笫1个参数(XMM0)、笫2个参数(RDX)、 笫3个参数(XMM2)、笫4个参数(R9)。</p>

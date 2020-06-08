@@ -92,7 +92,7 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;dbg4.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;success1.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;dbg5.JPG">
-<meta property="og:updated_time" content="2020-04-16T14:38:42.338Z">
+<meta property="og:updated_time" content="2020-06-08T02:56:43.407Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;ms06-040%E5%88%86%E6%9E%90&#x2F;dbg1.JPG">
 
@@ -358,7 +358,7 @@
       
         <h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><p>漏洞点存在为netapi32.dll中的NetpwPathCanonicalize()导出函数，NetpwPathCanonicalize()是netapi32.dll的一个导出函数，用于格式化网络路径字符串，它的原型如下：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int NetpwPathCanonicalize (</span><br><span class="line">uint16 path[ ], // [in] path name</span><br><span class="line">uint8 can_path[ ], // [out] canonicalized path</span><br><span class="line">uint32 maxbuf, // [in] max size of can_path</span><br><span class="line">uint16 prefix[ ], // [in] path prefix</span><br><span class="line">uint32* pathtype, // [in out] path type</span><br><span class="line">uint32 pathflags // [in] path flags, 0 or 1</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
+<a id="more"></a>
 <p>这是一个Unicode字符串处理函数，大体功能是：如果prefix串非空，将prefix串与path串用‘\’相连，并复制到输出串can_path中，输出串的容量为maxbuf字节大小：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">can_path=prefix+&quot;\&quot;+path</span><br></pre></td></tr></table></figure>
 

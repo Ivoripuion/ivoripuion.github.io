@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="Lab10-01静态分析查看程序的导入函数：  该程序创建一个服务，控制一个服务，启动一个服务。  存在获取程序命令行参数，写文件，载入库，内存管理等相关操作。 驱动的导入函数：  存在注册表的修改操作。 Lab10-01.exe首先调用OpenSCManagerA获取服务管理器句柄： 123456.text:00401000                 sub     esp, 1Ch.te">
+<meta name="description" content="Lab10-01静态分析查看程序的导入函数：">
 <meta property="og:type" content="article">
 <meta property="og:title" content="恶意代码分析实战 Lab10">
 <meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;26&#x2F;lab10&#x2F;index.html">
 <meta property="og:site_name" content="Ivoripuion&#39;s blog">
-<meta property="og:description" content="Lab10-01静态分析查看程序的导入函数：  该程序创建一个服务，控制一个服务，启动一个服务。  存在获取程序命令行参数，写文件，载入库，内存管理等相关操作。 驱动的导入函数：  存在注册表的修改操作。 Lab10-01.exe首先调用OpenSCManagerA获取服务管理器句柄： 123456.text:00401000                 sub     esp, 1Ch.te">
+<meta property="og:description" content="Lab10-01静态分析查看程序的导入函数：">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;26&#x2F;lab10&#x2F;dbg1.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;26&#x2F;lab10&#x2F;dbg2.JPG">
@@ -103,7 +103,7 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;26&#x2F;lab10&#x2F;dbg14.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;26&#x2F;lab10&#x2F;dbg15.JPG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;26&#x2F;lab10&#x2F;dbg16.JPG">
-<meta property="og:updated_time" content="2020-05-26T15:08:50.763Z">
+<meta property="og:updated_time" content="2020-06-08T02:56:33.354Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;05&#x2F;26&#x2F;lab10&#x2F;dbg1.JPG">
 
@@ -369,6 +369,7 @@
       
         <h1 id="Lab10-01"><a href="#Lab10-01" class="headerlink" title="Lab10-01"></a>Lab10-01</h1><h2 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h2><p>查看程序的导入函数：</p>
 <p><img src="/2020/05/26/lab10/dbg1.JPG" alt></p>
+<a id="more"></a>
 <p>该程序创建一个服务，控制一个服务，启动一个服务。</p>
 <p><img src="/2020/05/26/lab10/dbg2.JPG" alt></p>
 <p>存在获取程序命令行参数，写文件，载入库，内存管理等相关操作。</p>
