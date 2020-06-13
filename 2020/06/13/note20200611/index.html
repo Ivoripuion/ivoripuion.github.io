@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="notes about chapter 66.1 单项散列算法（hash）不可逆运算。 MD5原理 填充  填充消息使得其与448模512同余，即使本身已经满足长度也需要填充，填充方法：首先附加1个1，然后使用0填充。至少填充一位，至多填充512位（即本身已经满足的）。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note20200611">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;13&#x2F;note20200611&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="notes about chapter 66.1 单项散列算法（hash）不可逆运算。 MD5原理 填充  填充消息使得其与448模512同余，即使本身已经满足长度也需要填充，填充方法：首先附加1个1，然后使用0填充。至少填充一位，至多填充512位（即本身已经满足的）。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;13&#x2F;note20200611&#x2F;record1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;13&#x2F;note20200611&#x2F;record2.JPG">
+<meta property="og:updated_time" content="2020-06-13T14:01:38.211Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;06&#x2F;13&#x2F;note20200611&#x2F;record1.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/06/13/note20200611/"/>
+
+
+
+
+
+  <title>note20200611 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/13/note20200611/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">note20200611</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-13T22:01:03+08:00">
+                2020-06-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="notes-about-chapter-6"><a href="#notes-about-chapter-6" class="headerlink" title="notes about chapter 6"></a>notes about chapter 6</h1><h2 id="6-1-单项散列算法（hash）"><a href="#6-1-单项散列算法（hash）" class="headerlink" title="6.1 单项散列算法（hash）"></a>6.1 单项散列算法（hash）</h2><p>不可逆运算。</p>
+<h3 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><ol>
+<li>填充</li>
+</ol>
+<p>填充消息使得其与448模512同余，即使本身已经满足长度也需要填充，填充方法：首先附加1个1，然后使用0填充。至少填充一位，至多填充512位（即本身已经满足的）。</p>
+<a id="more"></a>
+
+<ol start="2">
+<li>添加长度</li>
+</ol>
+<p>在上一步的结果后附加63位的消息长度，如果填充前消息长度大于2^64，则只使用其低64位。添加填充位和消息长度后，最终消息正好是512的倍数。</p>
+<ol start="3">
+<li>初始化变量</li>
+</ol>
+<p>使用4个变量来计算消息摘要。</p>
+<p>A=0x1234567</p>
+<p>B=89abcdefh</p>
+<p>C=0xhfedcba98</p>
+<p>D=0x7654321</p>
+<ol start="4">
+<li>数据处理</li>
+</ol>
+<p><img src="/2020/06/13/note20200611/record1.JPG" alt></p>
+<p><img src="/2020/06/13/note20200611/record2.JPG" alt></p>
+<ol start="5">
+<li>输出</li>
+</ol>
+<p>将ABCD的级联作为MD5的输出结果。</p>
+<h4 id="样例"><a href="#样例" class="headerlink" title="样例"></a>样例</h4><p>输入的name与”<a href="http://www.pediy.com&quot;拼接后md5的值。" target="_blank" rel="noopener">www.pediy.com&quot;拼接后md5的值。</a></p>
+<p>校验函数：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>0040125C                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; lpString2</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040125D</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span>             <span class="comment">; lpString1</span></span><br><span class="line"><span class="symbol">.text:</span>0040125E                 <span class="keyword">call</span>    <span class="built_in">ds</span>:lstrcmpA</span><br></pre></td></tr></table></figure>
+
+<h3 id="SHA1"><a href="#SHA1" class="headerlink" title="SHA1"></a>SHA1</h3><h4 id="标志"><a href="#标志" class="headerlink" title="标志"></a>标志</h4><p>标准SHA1初始化标志：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401011</span>                 <span class="keyword">mov</span>     [<span class="built_in">edx</span>+<span class="number">4</span>], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401014</span>                 <span class="keyword">mov</span>     [<span class="built_in">edx</span>], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401016</span>                 <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>+<span class="number">8</span>], <span class="number">67452301h</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040101D</span>                 <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>+<span class="number">0Ch</span>], <span class="number">0EFCDAB89h</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401024</span>                 <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>+<span class="number">10h</span>], <span class="number">98BADCFEh</span></span><br><span class="line"><span class="symbol">.text:</span>0040102B                 <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>+<span class="number">14h</span>], <span class="number">10325476h</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401032</span>                 <span class="keyword">mov</span>     <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">edx</span>+<span class="number">18h</span>], <span class="number">0C3D2E1F0h</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401039</span>                 <span class="keyword">pop</span>     <span class="built_in">edi</span></span><br><span class="line"><span class="symbol">.text:</span>0040103A                 <span class="keyword">retn</span></span><br><span class="line"><span class="symbol">.text:</span>0040103A sub_401000      endp</span><br></pre></td></tr></table></figure>
+
+<h4 id="样例-1"><a href="#样例-1" class="headerlink" title="样例"></a>样例</h4><p>比较函数：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">004015BD  |.  <span class="number">51</span>            <span class="keyword">push</span> <span class="built_in">ecx</span>                                 <span class="comment">; /String2 = "aaa"</span></span><br><span class="line">004015BE  |.  <span class="number">52</span>            <span class="keyword">push</span> <span class="built_in">edx</span>                                 <span class="comment">; |String1 = "90E10439F996A975450C"</span></span><br><span class="line">004015BF  |.  FF15 <span class="number">00504000</span> <span class="keyword">call</span> <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ds</span>:[&lt;&amp;KERNEL32<span class="number">.</span>lstrcmpA&gt;] <span class="comment">; \lstrcmpA</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="对称加密算法"><a href="#对称加密算法" class="headerlink" title="对称加密算法"></a>对称加密算法</h2><h3 id="RC4算法"><a href="#RC4算法" class="headerlink" title="RC4算法"></a>RC4算法</h3><h4 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h4><p>RC4生产密钥流（伪随机数），与明文进行异或运算，解密时与密文进行异或运算。密钥流分为两部分：KSA，PRGA。</p>
+<p>RC4首先使用KSA完成对大小256字节的数组S的初始化以及替换，在替换时使用密钥。密钥长度为5-16字节，即40-128位，也可以更长，通常不超过256字节。先使用0-255初始化数组s，然后使用密钥进行替换，伪代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">for i in range(0,256):</span><br><span class="line">    s[i]=i</span><br><span class="line">j=0</span><br><span class="line">for i in range(0,256):</span><br><span class="line">    j=(j+s[i]+key[i mod keylength]) mod 256</span><br><span class="line">    swap(s[i],s[j])</span><br></pre></td></tr></table></figure>
+
+<p>数组s完成初始化以后，不再使用输入的密钥。密钥流生成时从s[0]到s[255]。对每个s[i]，根据当前的s的值，将s[i]与s中的另一个字节置换。在s[255]完成转换后，操作重复执行，伪代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">i,j=0</span><br><span class="line">while(明文未结束):</span><br><span class="line">    i=(i+1) mod 256</span><br><span class="line">    j=(j+s[i]) mod 256</span><br><span class="line">    swap(s[i],s[j])</span><br><span class="line">    t=(s[i]+s[j]) mod 256</span><br><span class="line">    k=s[t]</span><br></pre></td></tr></table></figure>
+
+<p>简单实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"></span><br><span class="line">S=[]</span><br><span class="line">key=<span class="string">"abcdef"</span></span><br><span class="line">keylength=len(key)</span><br><span class="line">child_key=[]</span><br><span class="line">plaintext=<span class="string">"hello who are you"</span></span><br><span class="line">ciphertext=[]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">KSA</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">        S.append(i)</span><br><span class="line"></span><br><span class="line">    j=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">        j=(j+S[i]+ord(key[i%keylength]))%<span class="number">256</span></span><br><span class="line">        S[j],S[i]=S[i],S[j]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">PRGA</span><span class="params">()</span>:</span></span><br><span class="line">    i=<span class="number">0</span></span><br><span class="line">    j=<span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> m <span class="keyword">in</span> plaintext:</span><br><span class="line">        i=(i+<span class="number">1</span>)%<span class="number">256</span></span><br><span class="line">        j=(j+S[i])%<span class="number">256</span></span><br><span class="line">        S[i],S[j]=S[j],S[i]</span><br><span class="line">        t=(S[i]+S[j])%<span class="number">256</span></span><br><span class="line">        k=S[t]</span><br><span class="line">        child_key.append(k)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">encrypt</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"加密："</span>,end=<span class="string">""</span>)</span><br><span class="line">    <span class="keyword">for</span> (m,n) <span class="keyword">in</span> zip(plaintext,child_key):</span><br><span class="line">        ciphertext.append(ord(m)^n)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> ciphertext:</span><br><span class="line">        print(i,end=<span class="string">","</span>)</span><br><span class="line">    print()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decrypt</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">"解密："</span>,end=<span class="string">""</span>)</span><br><span class="line">    <span class="keyword">for</span> (m,n) <span class="keyword">in</span> zip(ciphertext,child_key):</span><br><span class="line">        print(chr(m^n),end=<span class="string">""</span>)</span><br><span class="line">    print()</span><br><span class="line"></span><br><span class="line">KSA()</span><br><span class="line">PRGA()</span><br><span class="line">print(<span class="string">"子密钥流："</span>,child_key)</span><br><span class="line">encrypt()</span><br><span class="line">decrypt()</span><br></pre></td></tr></table></figure>
+
+<h3 id="TEA算法"><a href="#TEA算法" class="headerlink" title="TEA算法"></a>TEA算法</h3><h3 id="IDEA算法"><a href="#IDEA算法" class="headerlink" title="IDEA算法"></a>IDEA算法</h3><h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><ol>
+<li>使用peid查算法类型；</li>
+<li>判断算法类型（如使用了哪种初始化条件）；</li>
+<li>判断加密模式；</li>
+</ol>
+<h2 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h2><p>基于NP完全问题的加密算法，公钥私钥不同的加密算法。</p>
+<h3 id="RSA加密算法"><a href="#RSA加密算法" class="headerlink" title="RSA加密算法"></a>RSA加密算法</h3><h4 id="算法原理"><a href="#算法原理" class="headerlink" title="算法原理"></a>算法原理</h4><ol>
+<li>选取两个大素数p，q；</li>
+<li>计算n=p*q；</li>
+<li>由于p，q均为素数，计算n欧拉函数g(n)=(p-1)*(q-1)；</li>
+<li>选取e，是的e与g(n)互素；</li>
+<li>求e模(p-1)(q-1)的逆元d，e为公钥，d为私钥；</li>
+<li>加密：c = m^e mod n；解密：m = c^d mod n；</li>
+</ol>
+<h3 id="椭圆曲线密码编码"><a href="#椭圆曲线密码编码" class="headerlink" title="椭圆曲线密码编码"></a>椭圆曲线密码编码</h3><h2 id="小节"><a href="#小节" class="headerlink" title="小节"></a>小节</h2><p>这玩意太烦了，当初上课上的稀里糊涂的，现在看还是很烦。主要每个算法后面都包含很多的信安数学基础知识，以及一些算法（比如festiel网络）都是需要密码学设计的课程学习的。。。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/09/lab12/" rel="next" title="恶意代码分析实战 Lab12">
+                <i class="fa fa-chevron-left"></i> 恶意代码分析实战 Lab12
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#notes-about-chapter-6"><span class="nav-number">1.</span> <span class="nav-text">notes about chapter 6</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-1-单项散列算法（hash）"><span class="nav-number">1.1.</span> <span class="nav-text">6.1 单项散列算法（hash）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MD5"><span class="nav-number">1.1.1.</span> <span class="nav-text">MD5</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原理"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#样例"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">样例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SHA1"><span class="nav-number">1.1.2.</span> <span class="nav-text">SHA1</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#标志"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">标志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#样例-1"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">样例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#对称加密算法"><span class="nav-number">1.2.</span> <span class="nav-text">对称加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RC4算法"><span class="nav-number">1.2.1.</span> <span class="nav-text">RC4算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#原理-1"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TEA算法"><span class="nav-number">1.2.2.</span> <span class="nav-text">TEA算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IDEA算法"><span class="nav-number">1.2.3.</span> <span class="nav-text">IDEA算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.2.4.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非对称加密算法"><span class="nav-number">1.3.</span> <span class="nav-text">非对称加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RSA加密算法"><span class="nav-number">1.3.1.</span> <span class="nav-text">RSA加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#算法原理"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">算法原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#椭圆曲线密码编码"><span class="nav-number">1.3.2.</span> <span class="nav-text">椭圆曲线密码编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小节"><span class="nav-number">1.4.</span> <span class="nav-text">小节</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
