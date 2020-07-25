@@ -108,7 +108,7 @@
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record20.PNG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record21.PNG">
 <meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record22.PNG">
-<meta property="og:updated_time" content="2020-07-18T09:44:57.665Z">
+<meta property="og:updated_time" content="2020-07-25T16:04:04.583Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;07&#x2F;18&#x2F;%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90&#x2F;record1.PNG">
 
@@ -397,7 +397,7 @@
 <p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record9.PNG" alt></p>
 <p>恶意代码存在自定义的<code>baidu</code>段：</p>
 <p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record11.PNG" alt></p>
-<p>内部使用了RC4/5算法进行加/解密：</p>
+<p>内部使用了RC5算法进行加/解密：</p>
 <p><img src="/2020/07/18/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/record10.PNG" alt></p>
 <p>程序最开始使用<code>GetStartupInfoA</code>进行简单的反调试：</p>
 <figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>00401F9A                 <span class="keyword">lea</span>     <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+StartupInfo]</span><br><span class="line"><span class="symbol">.text:</span>00401F9D                 <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; lpStartupInfo</span></span><br><span class="line"><span class="symbol">.text:</span>00401F9E                 <span class="keyword">call</span>    <span class="built_in">ds</span>:GetStartupInfoA</span><br><span class="line"><span class="symbol">.text:</span>00401FA4                 <span class="keyword">call</span>    __wincmdln</span><br><span class="line"><span class="symbol">.text:</span>00401FA9                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+lpCmdLine], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>00401FAC                 <span class="keyword">test</span>    <span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>+StartupInfo<span class="number">.</span>dwFlags], <span class="number">1</span></span><br><span class="line"><span class="symbol">.text:</span>00401FB0                 <span class="keyword">jz</span>      short loc_401FB8</span><br><span class="line"><span class="symbol">.text:</span>00401FB2                 <span class="keyword">movzx</span>   <span class="built_in">eax</span>, [<span class="built_in">ebp</span>+StartupInfo<span class="number">.</span>wShowWindow]</span><br><span class="line"><span class="symbol">.text:</span>00401FB6                 <span class="keyword">jmp</span>     short loc_401FBB</span><br></pre></td></tr></table></figure>
