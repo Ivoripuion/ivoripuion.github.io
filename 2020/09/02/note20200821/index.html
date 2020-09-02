@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Hook的分类Address Hook即修改某些函数的地址，他们可能存放在某个函数表中，可能是存在例程中，可能是在MSR寄存器中，也可能是某个特点函数指针。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note20200821">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;09&#x2F;02&#x2F;note20200821&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="Hook的分类Address Hook即修改某些函数的地址，他们可能存放在某个函数表中，可能是存在例程中，可能是在MSR寄存器中，也可能是某个特点函数指针。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;09&#x2F;02&#x2F;note20200821&#x2F;success1.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;09&#x2F;02&#x2F;note20200821&#x2F;success2.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;09&#x2F;02&#x2F;note20200821&#x2F;success3.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;09&#x2F;02&#x2F;note20200821&#x2F;success4.PNG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;09&#x2F;02&#x2F;note20200821&#x2F;success5.PNG">
+<meta property="og:updated_time" content="2020-09-02T14:32:52.394Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2020&#x2F;09&#x2F;02&#x2F;note20200821&#x2F;success1.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/09/02/note20200821/"/>
+
+
+
+
+
+  <title>note20200821 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/02/note20200821/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">note20200821</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-09-02T22:27:32+08:00">
+                2020-09-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/reverse/" itemprop="url" rel="index">
+                    <span itemprop="name">reverse</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Hook的分类"><a href="#Hook的分类" class="headerlink" title="Hook的分类"></a>Hook的分类</h1><h2 id="Address-Hook"><a href="#Address-Hook" class="headerlink" title="Address Hook"></a>Address Hook</h2><p>即修改某些函数的地址，他们可能存放在某个函数表中，可能是存在例程中，可能是在MSR寄存器中，也可能是某个特点函数指针。</p>
+<a id="more"></a>
+
+<h3 id="各类表中的地址"><a href="#各类表中的地址" class="headerlink" title="各类表中的地址"></a>各类表中的地址</h3><ol>
+<li>PE的IAT</li>
+</ol>
+<p>仅针对某个PE的模块的IAT进行Hook，想要对加载的所有模块起作用就必须变量进程内模块，对目标API进行Hook。</p>
+<ol start="2">
+<li>PE的EAT</li>
+</ol>
+<p>EAT存放的是函数地址的偏移，所以想要使用针对EAT的Hook，就需要计算目标函数与修改后函数地址的偏。该方式的Hook进行后，所有试图通过输入表获取函数地址的行为都会收到影响。</p>
+<ol start="3">
+<li>user32.dll的回调函数表</li>
+</ol>
+<p>user32.dll中的UER32!apfnDispatch的回调函数表存放了各种用于GUI的回调函数，当修改了这里的函数地址后，就可以进行Hook。</p>
+<ol start="4">
+<li>IDT</li>
+</ol>
+<p>IDT即系统中断ID，IDT的基址存放在idtr寄存器中，表内项目数存放在idtl寄存器中，每个中断项的中断处理例程成为ISR。</p>
+<ol start="5">
+<li>SSDT以及Shadow SSDT</li>
+</ol>
+<p>SSDT表即系统服务描述符表，在API调用系统服务处理时使用。Shadow SSDT表用于处理各种GUI服务。</p>
+<ol start="6">
+<li>C++类的虚函数表</li>
+</ol>
+<p>即类中第一个地址，该地址为虚函数表的地址。</p>
+<ol start="7">
+<li>COM接口的功能函数表</li>
+</ol>
+<p>COM接口函数都放在一个函数中，与虚函数表类似。</p>
+<h3 id="处理例程地址"><a href="#处理例程地址" class="headerlink" title="处理例程地址"></a>处理例程地址</h3><ol>
+<li>DRIVER_OBJECT的MajorFunction及FastIo派遣例程地址。</li>
+</ol>
+<p>windows 7 x86调试结果：</p>
+<p>ntfs的DRIVER_OBJECT：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>: kd&gt; !drvobj ntfs</span><br><span class="line">Driver object (86e1c660) is for:</span><br><span class="line"> \FileSystem\Ntfs</span><br><span class="line"></span><br><span class="line">Driver Extension List: (id , addr)</span><br><span class="line"></span><br><span class="line">Device Object list:</span><br><span class="line">8789c020  8723b638  </span><br><span class="line"><span class="number">2</span>: kd&gt; <span class="built_in">dt</span> _DRIVER_OBJECT 86e1c660</span><br><span class="line">nt!_DRIVER_OBJECT</span><br><span class="line">   +<span class="number">0x000</span> Type             : 0n4</span><br><span class="line">   +<span class="number">0x002</span> Size             : 0n168</span><br><span class="line">   +<span class="number">0x004</span> DeviceObject     : <span class="number">0x8789c020</span> _DEVICE_OBJECT</span><br><span class="line">   +<span class="number">0x008</span> Flags            : <span class="number">0x92</span></span><br><span class="line">   +<span class="number">0x00c</span> DriverStart      : <span class="number">0x890b0000</span> Void</span><br><span class="line">   +<span class="number">0x010</span> DriverSize       : <span class="number">0x12f000</span></span><br><span class="line">   +<span class="number">0x014</span> DriverSection    : <span class="number">0x8633b2b8</span> Void</span><br><span class="line">   +<span class="number">0x018</span> DriverExtension  : <span class="number">0x86e1c708</span> _DRIVER_EXTENSION</span><br><span class="line">   +<span class="number">0x01c</span> DriverName       : _UNICODE_STRING <span class="string">"\FileSystem\Ntfs"</span></span><br><span class="line">   +<span class="number">0x024</span> HardwareDatabase : <span class="number">0x841b3250</span> _UNICODE_STRING <span class="string">"\REGISTRY\MACHINE\HARDWARE\DESCRIPTION\SYSTEM"</span></span><br><span class="line">   +<span class="number">0x028</span> FastIoDispatch   : <span class="number">0x890ef900</span> _FAST_IO_DISPATCH</span><br><span class="line">   +<span class="number">0x02c</span> DriverInit       : <span class="number">0x891b39fa</span>     long  Ntfs!GsDriverEntry+<span class="number">0</span></span><br><span class="line">   +<span class="number">0x030</span> DriverStartIo    : (null) </span><br><span class="line">   +<span class="number">0x034</span> DriverUnload     : (null) </span><br><span class="line">   +<span class="number">0x038</span> MajorFunction    : [<span class="number">28</span>] <span class="number">0x8915a832</span>     long  Ntfs!NtfsFsdCreate+<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p><code>MajorFunction</code>函数表：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>: kd&gt; dds <span class="number">0x86e1c660</span>+<span class="number">0x38</span></span><br><span class="line">86e1c698  8915a832 Ntfs!NtfsFsdCreate</span><br><span class="line">86e1c69c  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6a0  8915b3d3 Ntfs!NtfsFsdClose</span><br><span class="line">86e1c6a4  890c3a7e Ntfs!NtfsFsdRead</span><br><span class="line">86e1c6a8  890c4599 Ntfs!NtfsFsdWrite</span><br><span class="line">86e1c6ac  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c6b0  890be078 Ntfs!NtfsFsdSetInformation</span><br><span class="line">86e1c6b4  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c6b8  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c6bc  8912fc7b Ntfs!NtfsFsdFlushBuffers</span><br><span class="line">86e1c6c0  8915600e Ntfs!NtfsFsdDispatch</span><br><span class="line">86e1c6c4  8915600e Ntfs!NtfsFsdDispatch</span><br><span class="line">86e1c6c8  8915ed28 Ntfs!NtfsFsdDirectoryControl</span><br><span class="line">86e1c6cc  <span class="number">89146244</span> Ntfs!NtfsFsdFileSystemControl</span><br><span class="line">86e1c6d0  8914fefd Ntfs!NtfsFsdDeviceControl</span><br><span class="line">86e1c6d4  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6d8  <span class="number">89190847</span> Ntfs!NtfsFsdShutdown</span><br><span class="line">86e1c6dc  890cd49d Ntfs!NtfsFsdLockControl</span><br><span class="line">86e1c6e0  8915bc9e Ntfs!NtfsFsdCleanup</span><br><span class="line">86e1c6e4  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6e8  8915600e Ntfs!NtfsFsdDispatch</span><br><span class="line">86e1c6ec  8915600e Ntfs!NtfsFsdDispatch</span><br><span class="line">86e1c6f0  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6f4  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6f8  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6fc  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c700  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c704  <span class="number">89120517</span> Ntfs!NtfsFsdPnp</span><br><span class="line">86e1c708  86e1c660</span><br><span class="line">86e1c70c  <span class="number">00000000</span></span><br><span class="line">86e1c710  <span class="number">00000001</span></span><br><span class="line">86e1c714  000a0008</span><br></pre></td></tr></table></figure>
+
+<p><code>FastIo</code>函数表：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>: kd&gt; dds <span class="number">0x86e1c660</span>+<span class="number">0x28</span></span><br><span class="line">86e1c688  890ef900 Ntfs!NtfsFastIoDispatch</span><br><span class="line">86e1c68c  891b39fa Ntfs!GsDriverEntry</span><br><span class="line">86e1c690  <span class="number">00000000</span></span><br><span class="line">86e1c694  <span class="number">00000000</span></span><br><span class="line">86e1c698  8915a832 Ntfs!NtfsFsdCreate</span><br><span class="line">86e1c69c  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6a0  8915b3d3 Ntfs!NtfsFsdClose</span><br><span class="line">86e1c6a4  890c3a7e Ntfs!NtfsFsdRead</span><br><span class="line">86e1c6a8  890c4599 Ntfs!NtfsFsdWrite</span><br><span class="line">86e1c6ac  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c6b0  890be078 Ntfs!NtfsFsdSetInformation</span><br><span class="line">86e1c6b4  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c6b8  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c6bc  8912fc7b Ntfs!NtfsFsdFlushBuffers</span><br><span class="line">86e1c6c0  8915600e Ntfs!NtfsFsdDispatch</span><br><span class="line">86e1c6c4  8915600e Ntfs!NtfsFsdDispatch</span><br><span class="line">86e1c6c8  8915ed28 Ntfs!NtfsFsdDirectoryControl</span><br><span class="line">86e1c6cc  <span class="number">89146244</span> Ntfs!NtfsFsdFileSystemControl</span><br><span class="line">86e1c6d0  8914fefd Ntfs!NtfsFsdDeviceControl</span><br><span class="line">86e1c6d4  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6d8  <span class="number">89190847</span> Ntfs!NtfsFsdShutdown</span><br><span class="line">86e1c6dc  890cd49d Ntfs!NtfsFsdLockControl</span><br><span class="line">86e1c6e0  8915bc9e Ntfs!NtfsFsdCleanup</span><br><span class="line">86e1c6e4  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6e8  8915600e Ntfs!NtfsFsdDispatch</span><br><span class="line">86e1c6ec  8915600e Ntfs!NtfsFsdDispatch</span><br><span class="line">86e1c6f0  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6f4  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6f8  83efcda3 nt!IopInvalidDeviceRequest</span><br><span class="line">86e1c6fc  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c700  891557af Ntfs!NtfsFsdDispatchWait</span><br><span class="line">86e1c704  <span class="number">89120517</span> Ntfs!NtfsFsdPnp</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>StartIo等特殊例程的地址。</li>
+</ol>
+<p><code>StartIo</code>在<code>atapi</code>对象中：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2</span>: kd&gt; !drvobj atapi</span><br><span class="line">Driver object (874c6840) is for:</span><br><span class="line"> \Driver\atapi</span><br><span class="line"></span><br><span class="line">Driver Extension List: (id , addr)</span><br><span class="line">(88db2006 86d89418)  </span><br><span class="line">Device Object list:</span><br><span class="line">874bb030  8749e028  <span class="number">87495028</span>  8748c028</span><br><span class="line"><span class="number">87483028</span>  8747a028  <span class="number">87471028</span>  <span class="number">87468028</span></span><br><span class="line"><span class="number">87461028</span>  <span class="number">87455028</span>  8744c028  <span class="number">87443028</span></span><br><span class="line">8743a028  <span class="number">87431028</span>  <span class="number">87428028</span>  8741f028</span><br><span class="line"><span class="number">87416028</span>  8740d028  <span class="number">87404028</span>  873fb028</span><br><span class="line">873f2028  873e9028  873e0028  873d7028</span><br><span class="line">873ce028  873c5028  873bc028  873b3028</span><br><span class="line">873aa028  873a3028  8739c028  863da028</span><br><span class="line">863de028  </span><br><span class="line"><span class="number">2</span>: kd&gt; <span class="built_in">dt</span> _DRIVER_OBJECT 874c6840</span><br><span class="line">nt!_DRIVER_OBJECT</span><br><span class="line">   +<span class="number">0x000</span> Type             : 0n4</span><br><span class="line">   +<span class="number">0x002</span> Size             : 0n168</span><br><span class="line">   +<span class="number">0x004</span> DeviceObject     : <span class="number">0x874bb030</span> _DEVICE_OBJECT</span><br><span class="line">   +<span class="number">0x008</span> Flags            : <span class="number">0x12</span></span><br><span class="line">   +<span class="number">0x00c</span> DriverStart      : <span class="number">0x88e13000</span> Void</span><br><span class="line">   +<span class="number">0x010</span> DriverSize       : <span class="number">0x9000</span></span><br><span class="line">   +<span class="number">0x014</span> DriverSection    : <span class="number">0x8633b6b0</span> Void</span><br><span class="line">   +<span class="number">0x018</span> DriverExtension  : <span class="number">0x874c68e8</span> _DRIVER_EXTENSION</span><br><span class="line">   +<span class="number">0x01c</span> DriverName       : _UNICODE_STRING <span class="string">"\Driver\atapi"</span></span><br><span class="line">   +<span class="number">0x024</span> HardwareDatabase : <span class="number">0x841b3250</span> _UNICODE_STRING <span class="string">"\REGISTRY\MACHINE\HARDWARE\DESCRIPTION\SYSTEM"</span></span><br><span class="line">   +<span class="number">0x028</span> FastIoDispatch   : (null) </span><br><span class="line">   +<span class="number">0x02c</span> DriverInit       : <span class="number">0x88e1903e</span>     long  atapi!GsDriverEntry+<span class="number">0</span></span><br><span class="line">   +<span class="number">0x030</span> DriverStartIo    : (null) </span><br><span class="line">   +<span class="number">0x034</span> DriverUnload     : <span class="number">0x88daade6</span>     void  ataport!IdePortUnload+<span class="number">0</span></span><br><span class="line">   +<span class="number">0x038</span> MajorFunction    : [<span class="number">28</span>] <span class="number">0x88daf8cc</span>     long  ataport!PortWdmAlwaysStatusSuccessIrp+<span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>OBJECT_TYPE中_OBJECT_TYOE_INITIALIZER包含的各种处理过程。</li>
+</ol>
+<h3 id="特殊基础器中的地址"><a href="#特殊基础器中的地址" class="headerlink" title="特殊基础器中的地址"></a>特殊基础器中的地址</h3><p>Windows使用MSR寄存器组中的IA32_SYSNTER_EIP的值作为内核调用的入口，当在ntdll中调用汇编指令sysenter进入内核时，CPU会首先执行到这里。可以修改MSR寄存器中保存的快速调用入口函数地址。</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; <span class="keyword">rdmsr</span> <span class="number">0x176</span></span><br><span class="line">msr[<span class="number">176</span>] = <span class="number">00000000</span><span class="string">`83e790c0</span></span><br><span class="line"><span class="string">0: kd&gt; u 83e790c0</span></span><br><span class="line"><span class="string">nt!KiFastCallEntry:</span></span><br><span class="line"><span class="string">83e790c0 b923000000      mov     ecx,23h</span></span><br><span class="line"><span class="string">83e790c5 6a30            push    30h</span></span><br><span class="line"><span class="string">83e790c7 0fa1            pop     fs</span></span><br><span class="line"><span class="string">83e790c9 8ed9            mov     ds,cx</span></span><br><span class="line"><span class="string">83e790cb 8ec1            mov     es,cx</span></span><br><span class="line"><span class="string">83e790cd 648b0d40000000  mov     ecx,dword ptr fs:[40h]</span></span><br><span class="line"><span class="string">83e790d4 8b6104          mov     esp,dword ptr [ecx+4]</span></span><br><span class="line"><span class="string">83e790d7 6a23            push    23h</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="特定的函数指针"><a href="#特定的函数指针" class="headerlink" title="特定的函数指针"></a>特定的函数指针</h3><p>特定的函数指针存放在一个已知的地址中，如<code>nt!IoCompleteRequest</code>：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; u nt!IoCompleteRequest</span><br><span class="line">nt!IoCompleteRequest:</span><br><span class="line">83f14401 8bff            <span class="keyword">mov</span>     <span class="built_in">edi</span>,<span class="built_in">edi</span></span><br><span class="line">83f14403 <span class="number">55</span>              <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line">83f14404 8bec            <span class="keyword">mov</span>     <span class="built_in">ebp</span>,<span class="built_in">esp</span></span><br><span class="line">83f14406 8a550c          <span class="keyword">mov</span>     <span class="built_in">dl</span>,<span class="built_in">byte</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>+<span class="number">0Ch</span>]</span><br><span class="line">83f14409 8b4d08          <span class="keyword">mov</span>     <span class="built_in">ecx</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span>+<span class="number">8</span>]</span><br><span class="line">83f1440c ff15605afa83    <span class="keyword">call</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [nt!pIofCompleteRequest (83fa5a60)]<span class="comment">;函数存在指针中</span></span><br><span class="line">83f14412 <span class="number">5d</span>              <span class="keyword">pop</span>     <span class="built_in">ebp</span></span><br><span class="line">83f14413 c20800          <span class="keyword">ret</span>     <span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; <span class="built_in">dd</span> nt!pIofCompleteRequest</span><br><span class="line">83fa5a60  83eb3809 83ec0eed 83ecf3a5 <span class="number">00000003</span></span><br><span class="line">83fa5a70  <span class="number">86545000</span> <span class="number">86546000</span> <span class="number">00000120</span> ffffffff</span><br><span class="line">83fa5a80  <span class="number">00000001</span> <span class="number">00000000</span> <span class="number">00000002</span> <span class="number">00000000</span></span><br><span class="line">83fa5a90  <span class="number">00000004</span> <span class="number">00000000</span> <span class="number">00000008</span> <span class="number">00000000</span></span><br><span class="line">83fa5aa0  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line">83fa5ab0  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line">83fa5ac0  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line">83fa5ad0  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; uu 83eb3809</span><br><span class="line">nt!IopfCompleteRequest:</span><br><span class="line">83eb3809 8bff            <span class="keyword">mov</span>     <span class="built_in">edi</span>,<span class="built_in">edi</span></span><br><span class="line">83eb380b <span class="number">55</span>              <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line">83eb380c 8bec            <span class="keyword">mov</span>     <span class="built_in">ebp</span>,<span class="built_in">esp</span></span><br><span class="line">83eb380e 83e4f8          <span class="keyword">and</span>     <span class="built_in">esp</span>,<span class="number">0FFFFFFF8h</span></span><br><span class="line">83eb3811 83ec24          <span class="keyword">sub</span>     <span class="built_in">esp</span>,<span class="number">24h</span></span><br><span class="line">83eb3814 <span class="number">53</span>              <span class="keyword">push</span>    <span class="built_in">ebx</span></span><br><span class="line">83eb3815 <span class="number">56</span>              <span class="keyword">push</span>    <span class="built_in">esi</span></span><br><span class="line">83eb3816 8bf1            <span class="keyword">mov</span>     <span class="built_in">esi</span>,<span class="built_in">ecx</span></span><br></pre></td></tr></table></figure>
+
+<p>这些函数都与IRP处理有关。</p>
+<h2 id="Inline-Hook"><a href="#Inline-Hook" class="headerlink" title="Inline Hook"></a>Inline Hook</h2><p>直接修改指令的Hook。</p>
+<p>一般有5种模式。</p>
+<h3 id="jmp-xxxxxxxx-5字节"><a href="#jmp-xxxxxxxx-5字节" class="headerlink" title="jmp xxxxxxxx(5字节)"></a>jmp xxxxxxxx(5字节)</h3><p>直接跳转<code>xxxxxxxx</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E9 xx xx xx xx</span><br></pre></td></tr></table></figure>
+
+<h3 id="push-xxxxxxxx-ret-6字节"><a href="#push-xxxxxxxx-ret-6字节" class="headerlink" title="push xxxxxxxx/ret(6字节)"></a>push xxxxxxxx/ret(6字节)</h3><p>通过压栈返回实现跳转到<code>xxxxxxxx</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">68 xx xx xx xx</span><br><span class="line">c3</span><br></pre></td></tr></table></figure>
+
+<h3 id="mov-eax-xxxxxxx-jmp-eax-7字节"><a href="#mov-eax-xxxxxxx-jmp-eax-7字节" class="headerlink" title="mov eax,xxxxxxx/jmp eax(7字节)"></a>mov eax,xxxxxxx/jmp eax(7字节)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">B8 xx xx xx 00</span><br><span class="line">FF E0</span><br></pre></td></tr></table></figure>
+
+<h3 id="call-Hook-更换指令或输入表"><a href="#call-Hook-更换指令或输入表" class="headerlink" title="call Hook(更换指令或输入表)"></a>call Hook(更换指令或输入表)</h3><p>类似Address Hook只不过是直接修改CPU中的指令<code>call</code>指向的函数地址。</p>
+<p>如：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e8 <span class="number">09</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
+
+<p>Hook为：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">e8 <span class="number">10</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="HotPatch-Hook"><a href="#HotPatch-Hook" class="headerlink" title="HotPatch Hook"></a>HotPatch Hook</h3><p>一个短跳加一个长跳(7个字节)。</p>
+<p>如：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">90</span></span><br><span class="line"><span class="number">90</span> </span><br><span class="line"><span class="number">90</span></span><br><span class="line"><span class="number">90</span></span><br><span class="line"><span class="number">90</span></span><br><span class="line"><span class="number">90</span></span><br><span class="line">8b ff<span class="comment">;入口地址</span></span><br></pre></td></tr></table></figure>
+
+<p>改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">e9 66 08 66 89</span><br><span class="line">eb f9;入口地址，跳转到上一条长跳</span><br></pre></td></tr></table></figure>
+
+<p>可以通用hook不管有没有SEH的api入口。</p>
+<h2 id="基于异常处理的Hook"><a href="#基于异常处理的Hook" class="headerlink" title="基于异常处理的Hook"></a>基于异常处理的Hook</h2><p>其实就是修改SEH或者VEH链中存放SEH或者VEH处理函数的地址。</p>
+<h2 id="一些不是Hook的Hook"><a href="#一些不是Hook的Hook" class="headerlink" title="一些不是Hook的Hook"></a>一些不是Hook的Hook</h2><h3 id="PE文件被感染，导致OEP被修改"><a href="#PE文件被感染，导致OEP被修改" class="headerlink" title="PE文件被感染，导致OEP被修改"></a>PE文件被感染，导致OEP被修改</h3><h3 id="系统回调机制和分层模型"><a href="#系统回调机制和分层模型" class="headerlink" title="系统回调机制和分层模型"></a>系统回调机制和分层模型</h3><ol>
+<li>各种回调机制；</li>
+</ol>
+<p>如消息钩子以及内核中各种回调。</p>
+<ol start="2">
+<li>分层服务和过滤驱动模型；</li>
+</ol>
+<p>如LSP服务提供者以及驱动模型（Class/Port/MiniPort）。</p>
+<h1 id="Hook位置的挑选"><a href="#Hook位置的挑选" class="headerlink" title="Hook位置的挑选"></a>Hook位置的挑选</h1><p>从用户程序到端口驱动，越往下Hook得到的控制权就越晚，也越难被绕过。应用层上，对API Hook就已经够用了；内核中，一般Hook SSDT和SSDT Shaodow以及用于切换ring0 ring3的<code>KiFastCallEntry</code>比较方便。</p>
+<h1 id="Hook的典型过程"><a href="#Hook的典型过程" class="headerlink" title="Hook的典型过程"></a>Hook的典型过程</h1><p>Inline Hook以及Address Hook都需要定义一个Detour函数替代被Hook的函数，其原型，调用约定以及返回值都需要与原函数一样。以<code>MessageBoxA</code>为例，自定义Detour函数如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> WINAPI <span class="title">My_MessageBoxA</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">   HWMD hWnd,</span></span></span><br><span class="line"><span class="function"><span class="params">   LPCTSTR lpText,</span></span></span><br><span class="line"><span class="function"><span class="params">   LPCTSTR lpCaption,</span></span></span><br><span class="line"><span class="function"><span class="params">   UINT uType</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>这里使用<code>WINAPI</code>来显示定义Detour函数与被Hook函数调用约定一样，为<code>__stdcall</code>，否则在VC++默认编译时，对函数默认调用约定为<code>__cdecl</code>。</p>
+<p>如果在Detour函数中调用原函数来实现功能，就需要某种方式调用原函数，这里Address Hook与Inline Hook方式是不一样的。</p>
+<h2 id="Address-Hook实施过程"><a href="#Address-Hook实施过程" class="headerlink" title="Address Hook实施过程"></a>Address Hook实施过程</h2><p>处理定义Detour函数，还需要定义一个与被Hook函数原型一致的函数指针，指向原始函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">int</span> <span class="params">(WINAPI* POI_MessageBoxA)</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	HWND hWnd,</span></span></span><br><span class="line"><span class="function"><span class="params">	LPCTSTR lpText,</span></span></span><br><span class="line"><span class="function"><span class="params">	LPCTSTR lpCaption,</span></span></span><br><span class="line"><span class="function"><span class="params">	UINT uType</span></span></span><br><span class="line"><span class="function"><span class="params"> 	)</span></span>;</span><br><span class="line">POI_MessageBoxA oldMessageBox = <span class="literal">NULL</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后查表替换原地址，关闭写保护，以及写入Detour函数地址。</p>
+<h3 id="IAT-Hook"><a href="#IAT-Hook" class="headerlink" title="IAT Hook"></a>IAT Hook</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">InstallModuleIATHook</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	HMODULE hModToHook,</span></span></span><br><span class="line"><span class="function"><span class="params">	<span class="keyword">char</span>* szModuleName,</span></span></span><br><span class="line"><span class="function"><span class="params">	<span class="keyword">char</span>* szFuncName,</span></span></span><br><span class="line"><span class="function"><span class="params">	PVOID DetourFunc,</span></span></span><br><span class="line"><span class="function"><span class="params">	PULONG* pThunkPointer,</span></span></span><br><span class="line"><span class="function"><span class="params">	ULONG* pOriginalFuncAddr</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	PIMAGE_IMPORT_DESCRIPTOR pImportDescriptor;</span><br><span class="line">	PIMAGE_THUNK_DATA pThunkData;</span><br><span class="line">	ULONG ulSize;</span><br><span class="line">	HMODULE hModule = <span class="number">0</span>;</span><br><span class="line">	ULONG TargetFunAddr;</span><br><span class="line">	PULONG lpAddr;</span><br><span class="line">	<span class="keyword">char</span>* szModName;</span><br><span class="line">	BOOL result = FALSE;</span><br><span class="line">	BOOL bRetn	= FALSE;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取目标函数地址</span></span><br><span class="line">	hModule = LoadLibrary(szModuleName);</span><br><span class="line">	TargetFunAddr = (ULONG)GetProcAddress(hModule, szFuncName);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//获取待Hook模块输入表的起始地址</span></span><br><span class="line">	pImportDescriptor = (PIMAGE_IMPORT_DESCRIPTOR)ImageDirectoryEntryToData(hModToHook,TRUE,IMAGE_DIRECTORY_ENTRY_IMPORT,&amp;ulSize);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (pImportDescriptor-&gt;FirstThunk)<span class="comment">//FirstThunk里存储的就是IAT的RVA</span></span><br><span class="line">	&#123;</span><br><span class="line">		szModName = (<span class="keyword">char</span>*)((PBYTE)hModToHook+pImportDescriptor-&gt;Name);<span class="comment">//找到需要Hook的模块</span></span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"当前模块名称："</span> &lt;&lt; szModName &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="keyword">if</span> (stricmp(szModName, szModuleName)!= <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">"不是需求匹配的模块！"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">			pImportDescriptor++;</span><br><span class="line">			<span class="keyword">continue</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		pThunkData = (PIMAGE_THUNK_DATA)((BYTE*)hModToHook + pImportDescriptor-&gt;FirstThunk);</span><br><span class="line">		<span class="keyword">while</span> (pThunkData-&gt;u1.Function)</span><br><span class="line">		&#123;</span><br><span class="line">			lpAddr = (ULONG*)pThunkData;</span><br><span class="line">			<span class="keyword">if</span> ((*lpAddr) == TargetFunAddr)</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="built_in">cout</span> &lt;&lt; <span class="string">"找到目标地址！"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">				<span class="comment">//修改输入表内存页为可写</span></span><br><span class="line">				DWORD dwOldProtect;</span><br><span class="line">				MEMORY_BASIC_INFORMATION mbi;<span class="comment">//存放虚拟页</span></span><br><span class="line">				VirtualQuery(lpAddr, &amp;mbi, <span class="keyword">sizeof</span>(mbi));<span class="comment">//找到目标虚拟页</span></span><br><span class="line">				bRetn = VirtualProtect(mbi.BaseAddress, mbi.RegionSize, PAGE_EXECUTE_READWRITE, &amp;dwOldProtect);<span class="comment">//将虚拟页修改为可wrx</span></span><br><span class="line">				<span class="keyword">if</span> (bRetn) &#123;</span><br><span class="line">					<span class="keyword">if</span> (pThunkData != <span class="literal">NULL</span>) &#123;<span class="comment">//修改成功</span></span><br><span class="line">						*pThunkPointer = lpAddr;</span><br><span class="line">					&#125;</span><br><span class="line">					<span class="keyword">if</span> (pOriginalFuncAddr != <span class="literal">NULL</span>) &#123;</span><br><span class="line">						*pOriginalFuncAddr = *lpAddr;</span><br><span class="line">					&#125;</span><br><span class="line">					*lpAddr = (ULONG)DetourFunc;<span class="comment">//修改地址</span></span><br><span class="line">					result = TRUE;</span><br><span class="line">					<span class="comment">//恢复内存地址</span></span><br><span class="line">					VirtualProtect(mbi.BaseAddress, mbi.RegionSize, dwOldProtect, <span class="number">0</span>);</span><br><span class="line">					<span class="built_in">cout</span> &lt;&lt; <span class="string">"目标函数："</span> &lt;&lt; szFuncName &lt;&lt; <span class="string">"地址被Hook为"</span> &lt;&lt; DetourFunc &lt;&lt;<span class="string">"。"</span>&lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">					</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			pThunkData++;</span><br><span class="line">		&#125;</span><br><span class="line">		pImportDescriptor++;</span><br><span class="line">	&#125;</span><br><span class="line">	FreeLibrary(hModule);</span><br><span class="line"></span><br><span class="line">	oldMessageBox = (POI_MessageBoxA)pOriginalFuncAddr;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实验结果：</p>
+<p><img src="/2020/09/02/note20200821/success1.PNG" alt></p>
+<p><img src="/2020/09/02/note20200821/success2.PNG" alt></p>
+<h3 id="虚函数Hook"><a href="#虚函数Hook" class="headerlink" title="虚函数Hook"></a>虚函数Hook</h3><p>几个注意点：</p>
+<ol>
+<li>确定目标函数在目标雷中的位置以及函数原型；</li>
+<li>定义DetourClass和TrampolineClass；</li>
+<li>修改虚函数表实现Hook；</li>
+</ol>
+<h3 id="SSDT-Hook"><a href="#SSDT-Hook" class="headerlink" title="SSDT Hook"></a>SSDT Hook</h3><ol>
+<li>定义Detour函数以及一个函数指针；</li>
+<li>通过硬编码方式检索系统版本，找出SSDT索引；</li>
+<li>去掉虚拟页写保护，这里可以通过清楚CPU控制寄存器cr0；</li>
+<li>安装Hook；</li>
+</ol>
+<h2 id="Inline-Hook实施过程"><a href="#Inline-Hook实施过程" class="headerlink" title="Inline Hook实施过程"></a>Inline Hook实施过程</h2><p>几个概念：</p>
+<ol>
+<li>TargetFun：用被Hook的目标函数；</li>
+<li>DetourFun：用于替代TargrtFun的自定义函数；</li>
+<li>TrampolineFun：调用函数的入口。在该函数中要执行的TargetFun中被替换的前几条指令；</li>
+</ol>
+<h3 id="具体过程"><a href="#具体过程" class="headerlink" title="具体过程"></a>具体过程</h3><p>这里针对<code>MessageBoxA</code>进行实验。</p>
+<ol>
+<li>确定Hook方式以及在TrampolineFun中使用的指令；</li>
+</ol>
+<p>可以观察到<code>MessageBoxA</code>函数开头如下：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">763E13D0    8BFF            <span class="keyword">mov</span> <span class="built_in">edi</span>,<span class="built_in">edi</span></span><br><span class="line">763E13D2    <span class="number">55</span>              <span class="keyword">push</span> <span class="built_in">ebp</span></span><br><span class="line">763E13D3    8BEC            <span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></span><br></pre></td></tr></table></figure>
+
+<p>正好是5个字节，使用长跳的机器码进行Inline Hook，即将这几个字节修改为如下形式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">E9 xx xx xx xx</span><br></pre></td></tr></table></figure>
+
+<p>当Detour函数执行完毕，需要使用TrampolineFun调用这三条指令来正常调用原函数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov edi,edi</span><br><span class="line">push ebp</span><br><span class="line">mov ebp,esp</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>设置TrampolineFun函数；</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">PBYTE AddrMessageBoxA = </span><br><span class="line">(PBYTE)GetProcAddress(GetModuleHandle(<span class="string">"user32.dll"</span>), <span class="string">"MessageBoxA"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//TrampolineFun，保存原函数正常执行</span></span><br><span class="line">__declspec(naked)</span><br><span class="line"><span class="function"><span class="keyword">int</span> WINAPI <span class="title">OriginalMessageBox</span><span class="params">(HWND hWnd, LPCTSTR lpText, LPCTSTR lpCaption, UINT uType)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	_asm &#123;</span><br><span class="line">		mov edi,edi</span><br><span class="line">		push ebp</span><br><span class="line">		mov ebp,esp</span><br><span class="line">		jmp g_JmpBackAddr</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>将jmp指令写入，并设置TrampolineFun即可；</li>
+</ol>
+<p>这里为了方便显示Hook的结果，写了个小程序：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">"windows.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="built_in">std</span>::<span class="built_in">cout</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="built_in">std</span>::<span class="built_in">cin</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show_msg</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show_several_bytes</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show_byte</span><span class="params">(ULONG addr, <span class="keyword">int</span> length = <span class="number">1</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"TEST YOUR HOOK"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"1.show messagebox;"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"2.show several bytes of the api;"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"input the index:"</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="keyword">char</span> input;</span><br><span class="line">		<span class="built_in">cin</span> &gt;&gt; input;</span><br><span class="line">		<span class="keyword">if</span> (input == <span class="string">'1'</span>) &#123;</span><br><span class="line">			show_msg();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (input == <span class="string">'2'</span>) &#123;</span><br><span class="line">			show_several_bytes();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">"WRONG INPUT!\n"</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show_msg</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	MessageBox(<span class="literal">NULL</span>, <span class="string">"pop-ups"</span>, <span class="string">"pop-ups"</span>, MB_OK);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show_several_bytes</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	HMODULE user32_mod = GetModuleHandle(<span class="string">"user32.dll"</span>);</span><br><span class="line">	ULONG msgbox_addr = (ULONG)GetProcAddress(user32_mod, <span class="string">"MessageBoxA"</span>);</span><br><span class="line">	show_byte(msgbox_addr, <span class="number">5</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show_byte</span><span class="params">(ULONG addr, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"0x%p 开始的 %d 个字节："</span>, addr, length);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">		BYTE t;</span><br><span class="line">		__asm &#123;</span><br><span class="line">			mov		eax, addr</span><br><span class="line">			mov		al, <span class="keyword">byte</span> ptr[eax]</span><br><span class="line">			mov		t, al</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"%x "</span>, t);</span><br><span class="line">		addr = addr + <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试结果（这里由于没有对源代码的一部分进行修改导致了地址的错误，这里就演示一下字节的修改）：</p>
+<p>Hook前：</p>
+<p><img src="/2020/09/02/note20200821/success3.PNG" alt></p>
+<p>Hook后：</p>
+<p><img src="/2020/09/02/note20200821/success4.PNG" alt></p>
+<p><img src="/2020/09/02/note20200821/success5.PNG" alt></p>
+<h3 id="tips"><a href="#tips" class="headerlink" title="tips"></a>tips</h3><ol>
+<li>使用<code>ReadProcessMemory</code>以及<code>WriteProcessMemory</code>函数可以方便的读写内存；</li>
+<li>方便的显示指定地址字节的内容的函数设计：</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show_byte</span><span class="params">(ULONG addr, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"0x%p 开始的 %d 个字节："</span>, addr, length);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; length; i++) &#123;</span><br><span class="line">		BYTE t;</span><br><span class="line">		__asm &#123;</span><br><span class="line">			mov		eax, addr</span><br><span class="line">			mov		al, <span class="keyword">byte</span> ptr[eax]</span><br><span class="line">			mov		t, al</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"%x "</span>, t);</span><br><span class="line">		addr = addr + <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Hook的检测"><a href="#Hook的检测" class="headerlink" title="Hook的检测"></a>Hook的检测</h1><h2 id="Address-Hook检测"><a href="#Address-Hook检测" class="headerlink" title="Address Hook检测"></a>Address Hook检测</h2><p>寻找原始的Address,与当前Address进行对比。 </p>
+<ol>
+<li>IAT Hook：加载待检测的PE模块，然后对IAT进行对比。</li>
+<li>SSDT Hook，Shadow SSDT Hook：将内核文件加载，手动计算实际地址，然后进行对比。</li>
+<li>一些无法获取确切地址的Hook，检测Address是否再这个驱动模块的地址范围。</li>
+</ol>
+<h2 id="Inline-Hook检测"><a href="#Inline-Hook检测" class="headerlink" title="Inline Hook检测"></a>Inline Hook检测</h2><p>步骤如下：</p>
+<ol>
+<li>加载待检测的PE映像，根据实际地址进行重定位。</li>
+<li>对代码所在的节进行检查和比对。</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/08/07/CVE-2017-11882%E5%88%86%E6%9E%90/" rel="next" title="CVE-2017-11882分析">
+                <i class="fa fa-chevron-left"></i> CVE-2017-11882分析
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Ivoripuion" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1711268@mail.nankai.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Hook的分类"><span class="nav-number">1.</span> <span class="nav-text">Hook的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Address-Hook"><span class="nav-number">1.1.</span> <span class="nav-text">Address Hook</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#各类表中的地址"><span class="nav-number">1.1.1.</span> <span class="nav-text">各类表中的地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理例程地址"><span class="nav-number">1.1.2.</span> <span class="nav-text">处理例程地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特殊基础器中的地址"><span class="nav-number">1.1.3.</span> <span class="nav-text">特殊基础器中的地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特定的函数指针"><span class="nav-number">1.1.4.</span> <span class="nav-text">特定的函数指针</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inline-Hook"><span class="nav-number">1.2.</span> <span class="nav-text">Inline Hook</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#jmp-xxxxxxxx-5字节"><span class="nav-number">1.2.1.</span> <span class="nav-text">jmp xxxxxxxx(5字节)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#push-xxxxxxxx-ret-6字节"><span class="nav-number">1.2.2.</span> <span class="nav-text">push xxxxxxxx/ret(6字节)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mov-eax-xxxxxxx-jmp-eax-7字节"><span class="nav-number">1.2.3.</span> <span class="nav-text">mov eax,xxxxxxx/jmp eax(7字节)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#call-Hook-更换指令或输入表"><span class="nav-number">1.2.4.</span> <span class="nav-text">call Hook(更换指令或输入表)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HotPatch-Hook"><span class="nav-number">1.2.5.</span> <span class="nav-text">HotPatch Hook</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于异常处理的Hook"><span class="nav-number">1.3.</span> <span class="nav-text">基于异常处理的Hook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一些不是Hook的Hook"><span class="nav-number">1.4.</span> <span class="nav-text">一些不是Hook的Hook</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PE文件被感染，导致OEP被修改"><span class="nav-number">1.4.1.</span> <span class="nav-text">PE文件被感染，导致OEP被修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统回调机制和分层模型"><span class="nav-number">1.4.2.</span> <span class="nav-text">系统回调机制和分层模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hook位置的挑选"><span class="nav-number">2.</span> <span class="nav-text">Hook位置的挑选</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hook的典型过程"><span class="nav-number">3.</span> <span class="nav-text">Hook的典型过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Address-Hook实施过程"><span class="nav-number">3.1.</span> <span class="nav-text">Address Hook实施过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IAT-Hook"><span class="nav-number">3.1.1.</span> <span class="nav-text">IAT Hook</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚函数Hook"><span class="nav-number">3.1.2.</span> <span class="nav-text">虚函数Hook</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSDT-Hook"><span class="nav-number">3.1.3.</span> <span class="nav-text">SSDT Hook</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inline-Hook实施过程"><span class="nav-number">3.2.</span> <span class="nav-text">Inline Hook实施过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#具体过程"><span class="nav-number">3.2.1.</span> <span class="nav-text">具体过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tips"><span class="nav-number">3.2.2.</span> <span class="nav-text">tips</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hook的检测"><span class="nav-number">4.</span> <span class="nav-text">Hook的检测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Address-Hook检测"><span class="nav-number">4.1.</span> <span class="nav-text">Address Hook检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inline-Hook检测"><span class="nav-number">4.2.</span> <span class="nav-text">Inline Hook检测</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
