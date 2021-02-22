@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="notes about chapter 5from 5.1堆的一些特征：  堆是一种在程序运行时动态分配的内存。动态内存即是程序设计时不能预先决定的，需要在程序时用户给出。 堆在使用时由程序员用专用的函数进行申请，如：malloc，new等。对内存有可能申请成功，也可能失败。 一般用一个指针来使用申请得到的内存。 使用完毕后，需要把堆指针传给堆释放函数回收这片内存，不然就会导致内存泄漏。释放函数如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note chapter 5">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="notes about chapter 5from 5.1堆的一些特征：  堆是一种在程序运行时动态分配的内存。动态内存即是程序设计时不能预先决定的，需要在程序时用户给出。 堆在使用时由程序员用专用的函数进行申请，如：malloc，new等。对内存有可能申请成功，也可能失败。 一般用一个指针来使用申请得到的内存。 使用完毕后，需要把堆指针传给堆释放函数回收这片内存，不然就会导致内存泄漏。释放函数如">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;heap_page.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;freelist.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;lookaside.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;freelist1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;weidui1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;weikuai2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;weikuai3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;freelist3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;bing_chunk.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;freelist4.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;weikuaisuoying.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;lookaside1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;ds_1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;ds_2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;ds_3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;ds_4.JPG">
+<meta property="og:updated_time" content="2021-02-22T07:49:22.809Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-5&#x2F;heap_page.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/02/22/0day-5/"/>
+
+
+
+
+
+  <title>note chapter 5 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《0-day》笔记">
+          <a href="/categories/note1" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《0 day》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《加密与解密》笔记">
+          <a href="/categories/note2" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《加密与解密》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/22/0day-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">note chapter 5</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-02-22T15:44:28+08:00">
+                2021-02-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/note1/" itemprop="url" rel="index">
+                    <span itemprop="name">note1</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="notes-about-chapter-5"><a href="#notes-about-chapter-5" class="headerlink" title="notes about chapter 5"></a>notes about chapter 5</h1><h2 id="from-5-1"><a href="#from-5-1" class="headerlink" title="from 5.1"></a>from 5.1</h2><p>堆的一些特征：</p>
+<ol>
+<li>堆是一种在程序运行时动态分配的内存。动态内存即是程序设计时不能预先决定的，需要在程序时用户给出。</li>
+<li>堆在使用时由程序员用专用的函数进行申请，如：malloc，new等。对内存有可能申请成功，也可能失败。</li>
+<li>一般用一个指针来使用申请得到的内存。</li>
+<li>使用完毕后，需要把堆指针传给堆释放函数回收这片内存，不然就会导致内存泄漏。释放函数如：free，delete等。</li>
+</ol>
+<a id="more"></a>
+
+<p>现代操作系统处于一些基本的要求，将堆数据结构分为堆块以及堆表：</p>
+<ol>
+<li><strong>堆块</strong>：堆块分为两个部分：块首和块身。块首是一个堆块头部的几个字节，用来标识这个堆块自身的信息，如块的大小，本块的空闲情况；块身是紧跟在块首后面的部分，也是最终分配给用户使用的数据区。</li>
+<li><strong>堆表</strong>：堆表位于堆区的起始位置，用于索引堆区中所有的堆块的重要信息，包括堆块的的位置，堆块的大小，空闲还是占用等。堆表的数据结构在设计时可能会考虑平衡二叉树等高级数据结构用于快速查找，现代操作系统的堆表往往不止一种数据结构。</li>
+</ol>
+<p>内存的分布大致如下：<br><img src="/2021/02/22/0day-5/heap_page.JPG" alt="堆区"></p>
+<p>Windows中，占用态的堆块被使用其的程序索引，堆表只索引空闲态的堆表。最重要的堆表有两种：</p>
+<ol>
+<li>空闲双向链表Freelist（空表）。  </li>
+<li>快速单向链表Lookaside（快表）。</li>
+</ol>
+<h3 id="空表"><a href="#空表" class="headerlink" title="空表"></a>空表</h3><p>空表的分布情况：<br><img src="/2021/02/22/0day-5/freelist.JPG" alt="freelist">  </p>
+<p>按照堆块的大小，空表被分成有128条。<br>空闲堆块的大小=索引项*8<br>把空闲堆块按照大小的不同链入不同的空表，可以方便堆管理系统高效检索指定大小的空闲堆块。需要注意的是，空表索引的第一项（free[0]）所标识的空表相对比较特殊。这条双向链表链入了所有大于等于1024 字节的堆块（小于512KB）。这些堆块按照各自的大小在零号空表中升序地依次排列下去。</p>
+<h3 id="快表"><a href="#快表" class="headerlink" title="快表"></a>快表</h3><p><img src="/2021/02/22/0day-5/lookaside.JPG" alt="lookaside">  </p>
+<p>堆块的大小=索引项*8<br>快表不会发送堆块合并，空闲块的块首被设置为占用态，用来防止堆块合并。<br>快表总是被初始化为空，而且每条快表最多只有 4 个结点。</p>
+<h3 id="堆块分配"><a href="#堆块分配" class="headerlink" title="堆块分配"></a>堆块分配</h3><ol>
+<li>快表分配：从快表中找到大小匹配的空闲堆块，将其设置为占用态，将其从堆表中链出，返回一个指向堆块块身的指针给程序使用。</li>
+<li>普通空表分配：首先寻找最优的空闲块分配，若失败，则寻找次优的空闲块分配，即最小的能够满足要求的空闲块。</li>
+<li>零号空表分配：在零号空表中逆序寻找块（在free[0]中反向查找最后一个块），若满足需求则正向搜索能够满足需求的空闲堆块进行分配。（若最大都不满足就肯定没有满足的了）</li>
+</ol>
+<p>堆块分配中的“找零钱”现象：在空表中若无法找到匹配的“最优”堆块，一个稍大的块被用于分配，即从大块中按请求大小精确的割出一块进行分配，然后给剩下的部分重新标注块首，链入空表。而块表由于只在精确匹配时分配，所以不存在上述现象。</p>
+<h3 id="堆块释放"><a href="#堆块释放" class="headerlink" title="堆块释放"></a>堆块释放</h3><p>将堆块状态改为空闲，链入相应的堆表。所有的释放块都链入堆表的末尾，分配的时候也先从堆表末尾拿。<br>这里强调了一下：快表最多只有4项。</p>
+<h3 id="堆块合并"><a href="#堆块合并" class="headerlink" title="堆块合并"></a>堆块合并</h3><p>当堆管理系统发现两个空闲堆块彼此相邻时，就会进行堆块合并操作：将两个块从空闲链表链出，合并堆块，调整合并后的大块的块首，将新块重新链入空闲链表。</p>
+<p>具体的堆块的分配以及释放，根据内存大小的不同，Windows采取的策略也不同。内存按照大小分为三类：</p>
+<ul>
+<li>小块：SIZE&lt;1KB</li>
+<li>大块：1KB&lt;SIZE&lt;512KB</li>
+<li>巨块：SIZE&gt;512KB</li>
+</ul>
+<p>不同的堆块对应上述的不同的堆分配和释放方式：     </p>
+<table>
+<thead>
+<tr>
+<th>堆类型</th>
+<th>分配</th>
+<th>释放</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>小块</td>
+<td>首先进行快表分配；若快表分配失败，进行普通空表分配；若普通空表分配失败尝试堆缓存分配；若堆缓存分配失败，进行零号空表分配；若零号空表分配失败，进行内存紧缩后再尝试分配；若仍然无法分配，返回NULL。</td>
+<td>优先链入快表；若快表满，将其链入空表。</td>
+</tr>
+<tr>
+<td>大块</td>
+<td>首先进行堆缓存进行分配；若分配失败，使用零号空表分配。</td>
+<td>优先链入堆缓存；若堆缓存满，链入零号空表。</td>
+</tr>
+<tr>
+<td>巨块</td>
+<td>用到虚分配（不是从堆区分配，本书不涉及）</td>
+<td>直接释放，无链入操作。</td>
+</tr>
+</tbody></table>
+<p><strong>几个核心</strong>：  </p>
+<ol>
+<li>快表中的空闲快被设置为占用态，不会发送堆块合并。  </li>
+<li>快表只有精确匹配才会分配，不存在搜索“次优解”以及“找零钱”现象。</li>
+<li>快表是单链表，操作比双链表简单，插入以及删除都很少用到很多指令。</li>
+<li>分配以及释放使优先使用块表，失败时才使用空表。</li>
+<li>快表有4项，容易被填满。</li>
+</ol>
+<p>本节概念性的内容居多。</p>
+<h2 id="from-5-2"><a href="#from-5-2" class="headerlink" title="from 5.2"></a>from 5.2</h2><p>所有的堆分配函数最终都是使用位于ntdll.dll的RtlAllocateHeap()函数进行分配。</p>
+<p>占用态快的样子：</p>
+<p>(self_size(2bytes)+previouschunk_size(2bytes)+segment_index(1bytes)+flags(1bytes)+unused_bytes(1bytes)+tag_index(1bytes))(块首部)+data    </p>
+<p>空闲态块的样子：</p>
+<p>(self_size(2bytes)+previouschunk_size(2bytes)+segment_index(1bytes)+flags(1bytes)+unused_bytes(1bytes)+tag_index(1bytes)+flink(4bytes)+blink(4bytes))(块首部)+data</p>
+<p>一些其余的细节：</p>
+<ol>
+<li>堆块的大小包括了块首在内，若请求32字节，实际会分配40字节：8字节块首+32字节块身</li>
+<li>堆块单位为8字节，不足8字节的部分按8字节分配</li>
+<li>初始时不存在精确分配，所以将使用“次优块”分配，这个次优块就是尾快。</li>
+<li>次优块分配发生后，调整尾块块首信息，并将freelist[0]指向新的快尾。（即两处修改，这里主要修改的尾块块首里的大小信息，以及将freelist[0]指向的地址后移）</li>
+</ol>
+<h3 id="exp-空表分配"><a href="#exp-空表分配" class="headerlink" title="exp 空表分配"></a>exp 空表分配</h3><p>空表位于偏移堆区的0x178处：<br><img src="/2021/02/22/0day-5/freelist1.JPG" alt="freelist">  </p>
+<p>可以看到除了第一个双字节字节的（8bytes）双向指针指向了一个堆块，别的双向指针都指向了自身，即这些空闲链表为空，第一个即Freelist[0]指向了堆中唯一的一个块，即尾块。<br>定位到偏移0x688的地方看尾堆：  </p>
+<p><img src="/2021/02/22/0day-5/weidui1.JPG" alt="weidui"></p>
+<p>这里的堆块其实从0x680的偏移处就开始了，不过链表会自动跳过8字节的块首。这个块的大小通过块首可以看到：0x130。<br>六次分配以后，这些分配的块都是从尾块的开头不停地截取出来的。此时偏移0x688的状态：  </p>
+<p><img src="/2021/02/22/0day-5/weikuai2.JPG" alt="weikuai"> </p>
+<p>可以看到块首信息的大小即为分配实际分配的大小（字节）/4字节=堆单位。<br>此时尾块大小为：0x130-0x2<em>4+0x4</em>2=0x120。  </p>
+<p><img src="/2021/02/22/0day-5/weikuai3.JPG" alt="weikuai"></p>
+<p>当三次堆块释放掉以后，被释放的堆块就会被链入空表：</p>
+<p><img src="/2021/02/22/0day-5/freelist3.JPG" alt="freelist">  </p>
+<p>此时，0x00390688指向h1释放后的块，0x003906A8指向h3释放后的块，0x003906C8指向h5释放后的空闲块。<br>再释放h4后，此时h3,4,5就是相邻的空闲块，发生堆块合并：</p>
+<p><img src="/2021/02/22/0day-5/bing_chunk.JPG" alt="合并堆">  </p>
+<p>合并后的堆大小：0x2+0x2+0x4=0x8  </p>
+<p><img src="/2021/02/22/0day-5/freelist4.JPG" alt="空表"></p>
+<p>合并后的空闲堆的空表节点：freelist[8]</p>
+<h3 id="exp-快表分配"><a href="#exp-快表分配" class="headerlink" title="exp 快表分配"></a>exp 快表分配</h3><p>使用快表时，尾块会往后偏移，原先存放初始尾块的地方存放的是空表（偏移0x688）,此时查看空表的freelist[0]，可以看到尾块偏移变成了0x1E90：</p>
+<p><img src="/2021/02/22/0day-5/weikuaisuoying.JPG" alt="weikuaisuoying">  </p>
+<p>此时的偏移0x680的地方存放的是空表。  </p>
+<p>将创建的堆块释放以后（这里有个疑惑，链入块表的表从哪里切割下来的，这里调试发现不是尾块）。<br>可以看到链入快表的堆块是处于占用态的防止空闲块的合并：  </p>
+<p><img src="/2021/02/22/0day-5/lookaside1.JPG" alt="lookaside1">  </p>
+<h2 id="from-5-3"><a href="#from-5-3" class="headerlink" title="from 5.3"></a>from 5.3</h2><h3 id="dword-shoot"><a href="#dword-shoot" class="headerlink" title="dword shoot"></a>dword shoot</h3><p>dword shoot攻击核心就是覆盖空闲块的8字节的指向后一个块和前一个块的指针。这样就可以实现任意地址填充，将伪造的flink填充到blink指向的地址。</p>
+<p>原理：</p>
+<blockquote>
+<p>在堆块的使用的时候，即将块从空闲态变成占用态，将块的节点从块表中卸下时大致发生的函数：<br>int remove (ListNode * node)<br>{<br>    node -&gt; blink -&gt; flink = node -&gt; flink;<br>    node -&gt; flink -&gt; blink = node -&gt; blink;<br>    return 0;<br>}  </p>
+</blockquote>
+<h3 id="exp-from-P191（dword-shoot）"><a href="#exp-from-P191（dword-shoot）" class="headerlink" title="exp from P191（dword shoot）"></a>exp from P191（dword shoot）</h3><p>三次释放以后的堆块状态：<br><img src="/2021/02/22/0day-5/ds_1.JPG" alt="ds1"><br>h1,h2,h3,h4,h5,h6状态如下：  </p>
+<table>
+<thead>
+<tr>
+<th>index</th>
+<th>addr</th>
+<th>size(8bytes)</th>
+<th>flag</th>
+<th>flink</th>
+<th>blink</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>h1</td>
+<td>0x00390680</td>
+<td>2</td>
+<td>空闲</td>
+<td>0x003906A8</td>
+<td>0x00390188</td>
+</tr>
+<tr>
+<td>h2</td>
+<td>0x00390690</td>
+<td>2</td>
+<td>占用</td>
+<td>————</td>
+<td>————</td>
+</tr>
+<tr>
+<td>h3</td>
+<td>0x003906A0</td>
+<td>2</td>
+<td>空闲</td>
+<td>0x003906C8</td>
+<td>0x00390688</td>
+</tr>
+<tr>
+<td>h4</td>
+<td>0x003906B0</td>
+<td>2</td>
+<td>占用</td>
+<td>————</td>
+<td>————</td>
+</tr>
+<tr>
+<td>h5</td>
+<td>0x003906C0</td>
+<td>2</td>
+<td>空闲</td>
+<td>0x00380188</td>
+<td>0x003906A8</td>
+</tr>
+<tr>
+<td>h6</td>
+<td>0x003906D0</td>
+<td>2</td>
+<td>占用</td>
+<td>————</td>
+<td>————</td>
+</tr>
+</tbody></table>
+<p>几个说明：</p>
+<ol>
+<li>这里的flink虽然叫前向指针但是指向的是下一个空闲堆块+8的地址，blink虽然叫后向指针但是指向前一个空闲堆块的地址+8的地址，这应该与其是双向链表有关。</li>
+<li>最后一个空闲块（h5）的下一个空闲块即使最开始的空闲块（双向链表）。</li>
+</ol>
+<p>此时在分配一次8bytes的块，就会将最后一个空闲块链出，并将其前后空闲块的flink，blink变动：</p>
+<p><img src="/2021/02/22/0day-5/ds_2.JPG" alt="ds2">  </p>
+<p>回到分配堆块之前，将h5的flink和blink进行改动造成dword shoot： </p>
+<p><img src="/2021/02/22/0day-5/ds_3.JPG" alt="ds3">  </p>
+<p>此时再分配就会造成：  </p>
+<p>h5-&gt;blink-&gt;flink=h5-&gt;flink<br>即将h5flink的值写入blink地址指向的地方，即向0x00000000指向的地方写入0x44444444。  </p>
+<p><img src="/2021/02/22/0day-5/ds_4.JPG" alt="ds4">  </p>
+<p>显然这里0x00000000不会指向啥，所以就出错了。  </p>
+<h2 id="from-5-4"><a href="#from-5-4" class="headerlink" title="from 5.4"></a>from 5.4</h2><h3 id="一些常见的可以利用dword-shoot攻击的地方（常见目标）"><a href="#一些常见的可以利用dword-shoot攻击的地方（常见目标）" class="headerlink" title="一些常见的可以利用dword shoot攻击的地方（常见目标）"></a>一些常见的可以利用dword shoot攻击的地方（常见目标）</h3><ol>
+<li>内存变量。将某个变量的地址写入flink。</li>
+<li>代码逻辑。</li>
+<li>函数返回地址。覆盖返回地址。</li>
+<li>攻击异常处理机制。</li>
+<li>函数指针。</li>
+<li>PEB中线程同步函数。</li>
+</ol>
+<p>5.5需要win2000环境，在本地的win2003环境无法做实验，待后续再说。</p>
+<p>至此第5章学习完毕。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/22/0day-4/" rel="next" title="note chapter 4">
+                <i class="fa fa-chevron-left"></i> note chapter 4
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/22/0day-6/" rel="prev" title="note chapter 6">
+                note chapter 6 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Ivoripuion" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1711268@mail.nankai.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#notes-about-chapter-5"><span class="nav-number">1.</span> <span class="nav-text">notes about chapter 5</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#from-5-1"><span class="nav-number">1.1.</span> <span class="nav-text">from 5.1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#空表"><span class="nav-number">1.1.1.</span> <span class="nav-text">空表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快表"><span class="nav-number">1.1.2.</span> <span class="nav-text">快表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆块分配"><span class="nav-number">1.1.3.</span> <span class="nav-text">堆块分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆块释放"><span class="nav-number">1.1.4.</span> <span class="nav-text">堆块释放</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆块合并"><span class="nav-number">1.1.5.</span> <span class="nav-text">堆块合并</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-5-2"><span class="nav-number">1.2.</span> <span class="nav-text">from 5.2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-空表分配"><span class="nav-number">1.2.1.</span> <span class="nav-text">exp 空表分配</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-快表分配"><span class="nav-number">1.2.2.</span> <span class="nav-text">exp 快表分配</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-5-3"><span class="nav-number">1.3.</span> <span class="nav-text">from 5.3</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dword-shoot"><span class="nav-number">1.3.1.</span> <span class="nav-text">dword shoot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-from-P191（dword-shoot）"><span class="nav-number">1.3.2.</span> <span class="nav-text">exp from P191（dword shoot）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-5-4"><span class="nav-number">1.4.</span> <span class="nav-text">from 5.4</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一些常见的可以利用dword-shoot攻击的地方（常见目标）"><span class="nav-number">1.4.1.</span> <span class="nav-text">一些常见的可以利用dword shoot攻击的地方（常见目标）</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

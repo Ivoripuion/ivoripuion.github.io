@@ -216,6 +216,26 @@
         </li>
       
         
+        <li class="menu-item menu-item-《0-day》笔记">
+          <a href="/categories/note1" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《0 day》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《加密与解密》笔记">
+          <a href="/categories/note2" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《加密与解密》笔记
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-随想">
           <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
             
@@ -258,7 +278,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/lab6/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/04/lab9/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -277,7 +297,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/04/16/lab6/" itemprop="url">恶意代码分析实战 Lab6</a></h1>
+                <a class="post-title-link" href="/2020/05/04/lab9/" itemprop="url">恶意代码分析实战 Lab9</a></h1>
         
 
         <div class="post-meta">
@@ -289,8 +309,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T20:22:40+08:00">
-                2020-04-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-04T14:18:19+08:00">
+                2020-05-04
               </time>
             
 
@@ -350,11 +370,10 @@
 
       
         
-          <h1 id="Lab6-1"><a href="#Lab6-1" class="headerlink" title="Lab6-1"></a>Lab6-1</h1><h2 id="Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"><a href="#Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？" class="headerlink" title="Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？"></a>Q1：在main函数调用的唯一子过程中发现的主要代码结构是什么？</h2><p>主要是对0x401000处的函数返回值进行一个if判断。</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401040</span>                 <span class="keyword">push</span>    <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401041</span>                 <span class="keyword">mov</span>     <span class="built_in">ebp</span>, <span class="built_in">esp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401043</span>                 <span class="keyword">push</span>    <span class="built_in">ecx</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401044</span>                 <span class="keyword">call</span>    sub_401000</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401049</span>                 <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+var_4], <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>0040104C                 <span class="keyword">cmp</span>     [<span class="built_in">ebp</span>+var_4], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401050</span>                 <span class="keyword">jnz</span>     short loc_401056</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401052</span>                 <span class="keyword">xor</span>     <span class="built_in">eax</span>, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401054</span>                 <span class="keyword">jmp</span>     short loc_40105B</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401056</span> loc_401056:                             <span class="comment">; CODE XREF: _main+10↑j</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401056</span>                 <span class="keyword">mov</span>     <span class="built_in">eax</span>, <span class="number">1</span></span><br><span class="line"><span class="symbol">.text:</span>0040105B</span><br><span class="line"><span class="symbol">.text:</span>0040105B loc_40105B:                             <span class="comment">; CODE XREF: _main+14↑j</span></span><br><span class="line"><span class="symbol">.text:</span>0040105B                 <span class="keyword">mov</span>     <span class="built_in">esp</span>, <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">0040105D</span>                 <span class="keyword">pop</span>     <span class="built_in">ebp</span></span><br><span class="line"><span class="symbol">.text:</span>0040105E                 <span class="keyword">retn</span></span><br><span class="line"><span class="symbol">.text:</span>0040105E _main           endp</span><br><span class="line"><span class="symbol">.text:</span>0040105E</span><br></pre></td></tr></table></figure>
+          <h1 id="Lab-9-1"><a href="#Lab-9-1" class="headerlink" title="Lab 9-1"></a>Lab 9-1</h1><h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><h3 id="函数主体分析"><a href="#函数主体分析" class="headerlink" title="函数主体分析"></a>函数主体分析</h3><p>函数的主要流程分析如下：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/04/16/lab6/#more" rel="contents">
+            <a class="btn" href="/2020/05/04/lab9/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -405,7 +424,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/sqlInjec_note/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/27/MS06-055/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -424,7 +443,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/04/16/sqlInjec_note/" itemprop="url">SQL Inject</a></h1>
+                <a class="post-title-link" href="/2020/04/27/MS06-055/" itemprop="url">MS06-055分析</a></h1>
         
 
         <div class="post-meta">
@@ -436,160 +455,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T20:17:18+08:00">
-                2020-04-16
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/web/" itemprop="url" rel="index">
-                    <span itemprop="name">web</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="有关SQL注入"><a href="#有关SQL注入" class="headerlink" title="有关SQL注入"></a>有关SQL注入</h1><h2 id="查看开发者使用哪种查询"><a href="#查看开发者使用哪种查询" class="headerlink" title="查看开发者使用哪种查询"></a>查看开发者使用哪种查询</h2><ol>
-<li>?id=1’–+</li>
-<li>?id=1–+</li>
-<li>?id=1’)–+</li>
-<li>?id=1”)–+</li>
-<li>?id=1”))-++</li>
-</ol>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/04/16/sqlInjec_note/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/16/noinfowp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ivoripuion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ivoripuion's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/16/noinfowp/" itemprop="url">noinfoleak</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-16T19:43:37+08:00">
-                2020-04-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-27T19:32:15+08:00">
+                2020-04-27
               </time>
             
 
@@ -649,11 +516,462 @@
 
       
         
-          <h1 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h1><p>漏洞存在在del这个函数，该函数将保存chunk的地址作为参数free掉：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">del_4009DE</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> index; <span class="comment">// [rsp+Ch] [rbp-4h]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">putchar</span>(<span class="string">'&gt;'</span>);</span><br><span class="line">  index = readnum_4008A7();</span><br><span class="line">  <span class="keyword">if</span> ( index &gt;= <span class="number">0</span> &amp;&amp; index &lt;= <span class="number">15</span> )</span><br><span class="line">    <span class="built_in">free</span>(arr[<span class="number">2</span> * index]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>在Windows 2000 SP0平台下， vgx.dll 版本为5.0.3014.1003，文件大小为1753160字节，漏洞函数地址为0x659D7B46，用于解析VML语言的_IE5_SHADETYPE_TEXT函数，：</p>
+<p><img src="/2020/04/27/MS06-055/info1.JPG" alt></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/04/16/noinfowp/#more" rel="contents">
+            <a class="btn" href="/2020/04/27/MS06-055/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/26/ms08-067%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/26/ms08-067%E5%88%86%E6%9E%90/" itemprop="url">ms08-067分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-26T00:29:24+08:00">
+                2020-04-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><p>漏洞在netapi32.dll中的导出函数NetpwNameCanonicalize的子函数CanonicalizePathName中。</p>
+<p>CanonicalizePathName函数对路径合并的后的字符进以下的一些处理：</p>
+<ol>
+<li>将字符串中的”/“转化成”&quot;：</li>
+</ol>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>5FDDA1F8 rep_slash_loop:                         <span class="comment">; CODE XREF: CanonicalizePathName+88↓j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA1F8                 <span class="keyword">cmp</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">2Fh</span> <span class="comment">; 将"/"转换成"\"</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA1FC                 <span class="keyword">jz</span>      slash_to_back_slash <span class="comment">; 复制"\"</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">.text:</span>5FDDA202 slash_to_back_forward:                  <span class="comment">; CODE XREF: CanonicalizePathName+E774↓j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA202                 <span class="keyword">inc</span>     <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA203                 <span class="keyword">inc</span>     <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA204                 <span class="keyword">cmp</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA208                 <span class="keyword">jnz</span>     short rep_slash_loop <span class="comment">; 将"/"转换成"\"</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">.text:</span>5FDE88EF slash_to_back_slash:                    <span class="comment">; CODE XREF: CanonicalizePathName+7C↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE88EF                 <span class="keyword">mov</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">5Ch</span> <span class="comment">; 复制"\"</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE88F4                 <span class="keyword">jmp</span>     slash_to_back_forward</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/26/ms08-067%E5%88%86%E6%9E%90/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/21/2020-4-21/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/21/2020-4-21/" itemprop="url">一道笔试题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-21T19:32:24+08:00">
+                2020-04-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9A%8F%E6%83%B3/" itemprop="url" rel="index">
+                    <span itemprop="name">随想</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>前几天华为实习生的一道笔试题，可能是我投安全岗的原因，编程题比较简单，记录下：</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/21/2020-4-21/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/19/glibcHeapExp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/19/glibcHeapExp/" itemprop="url">Glibc Heap Exp</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-19T22:06:03+08:00">
+                2020-04-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="Glibc-Heap-Exp"><a href="#Glibc-Heap-Exp" class="headerlink" title="Glibc Heap Exp"></a>Glibc Heap Exp</h1><h2 id="Glibc-Heap-Overview"><a href="#Glibc-Heap-Overview" class="headerlink" title="Glibc Heap Overview"></a>Glibc Heap Overview</h2><h3 id="GLibc-Heap"><a href="#GLibc-Heap" class="headerlink" title="GLibc Heap"></a>GLibc Heap</h3><ul>
+<li><p>负责维护动态分配memory的结构称为Heap</p>
+</li>
+<li><p>Libc里比较常用的部分是malloc，free，realloc</p>
+<ul>
+<li>C++的new，delete，底层是上述几个</li>
+</ul>
+</li>
+<li><p>配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]</p></li></ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/19/glibcHeapExp/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -695,7 +1013,7 @@
 
   
  <nav class="pagination">
-   <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="accessibility.prev_page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span>
+   <a class="extend prev" rel="prev" href="/page/6/"><i class="fa fa-angle-left" aria-label="accessibility.prev_page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/8/"><i class="fa fa-angle-right" aria-label="accessibility.next_page"></i></a>
  </nav>
 
           </div>
@@ -743,7 +1061,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">46</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -754,7 +1072,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">categories</span>
                 
               </div>
@@ -809,7 +1127,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

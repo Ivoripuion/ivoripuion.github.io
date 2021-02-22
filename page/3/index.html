@@ -216,6 +216,26 @@
         </li>
       
         
+        <li class="menu-item menu-item-《0-day》笔记">
+          <a href="/categories/note1" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《0 day》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《加密与解密》笔记">
+          <a href="/categories/note2" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《加密与解密》笔记
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-随想">
           <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
             
@@ -258,7 +278,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/07/lab11/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/22/0day-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -277,7 +297,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/06/07/lab11/" itemprop="url">恶意代码分析实战 Lab11</a></h1>
+                <a class="post-title-link" href="/2021/02/22/0day-2/" itemprop="url">note chapter 2</a></h1>
         
 
         <div class="post-meta">
@@ -289,8 +309,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-07T20:13:52+08:00">
-                2020-06-07
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-02-22T15:35:05+08:00">
+                2021-02-22
               </time>
             
 
@@ -312,8 +332,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/reverse/" itemprop="url" rel="index">
-                    <span itemprop="name">reverse</span>
+                  <a href="/categories/note1/" itemprop="url" rel="index">
+                    <span itemprop="name">note1</span>
                   </a>
                 </span>
 
@@ -350,11 +370,12 @@
 
       
         
-          <h1 id="Lab11-01"><a href="#Lab11-01" class="headerlink" title="Lab11-01"></a>Lab11-01</h1><h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><p>程序的主要流程如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  HMODULE hModule; <span class="comment">// [esp+Ch] [ebp-11Ch]</span></span><br><span class="line">  CHAR Filename; <span class="comment">// [esp+10h] [ebp-118h]</span></span><br><span class="line">  <span class="keyword">char</span> v6; <span class="comment">// [esp+11h] [ebp-117h]</span></span><br><span class="line">  <span class="keyword">char</span> v7; <span class="comment">// [esp+11Dh] [ebp-Bh]</span></span><br><span class="line">  <span class="keyword">char</span> *v8; <span class="comment">// [esp+120h] [ebp-8h]</span></span><br><span class="line">  LPVOID v9; <span class="comment">// [esp+124h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  hModule = GetModuleHandleA(<span class="number">0</span>);</span><br><span class="line">  Filename = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">memset</span>(&amp;v6, <span class="number">0</span>, <span class="number">0x10C</span>u);</span><br><span class="line">  v7 = <span class="number">0</span>;</span><br><span class="line">  v9 = get_dll_401080(hModule);                 <span class="comment">// //加载dll</span></span><br><span class="line">  GetModuleFileNameA(<span class="number">0</span>, &amp;Filename, <span class="number">0x10E</span>u);</span><br><span class="line">  v8 = <span class="built_in">strrchr</span>(&amp;Filename, <span class="number">92</span>);</span><br><span class="line">  *v8 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">strcat</span>(&amp;Filename, aMsgina32Dll_0);</span><br><span class="line">  set_reg_401000(&amp;Filename, <span class="number">0x104</span>u);            <span class="comment">// 设置注册表</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <h1 id="notes-about-chapter-2"><a href="#notes-about-chapter-2" class="headerlink" title="notes about chapter 2"></a>notes about chapter 2</h1><h2 id="from-2-1"><a href="#from-2-1" class="headerlink" title="from 2.1"></a>from 2.1</h2><ol>
+<li>每一个C++类成员都有一个this指针，在win中，这个指针一般使用ecx进行保存：<br><img src="/2021/02/22/0day-2/this%E6%8C%87%E9%92%88.JPG" alt="测试"></li>
+</ol>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/06/07/lab11/#more" rel="contents">
+            <a class="btn" href="/2021/02/22/0day-2/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -405,7 +426,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/04/note20200604/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/22/0day-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -424,7 +445,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/06/04/note20200604/" itemprop="url">note20200604</a></h1>
+                <a class="post-title-link" href="/2021/02/22/0day-1/" itemprop="url">note chapter 1</a></h1>
         
 
         <div class="post-meta">
@@ -436,8 +457,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-04T22:34:21+08:00">
-                2020-06-04
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-02-22T15:32:42+08:00">
+                2021-02-22
               </time>
             
 
@@ -459,8 +480,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/reverse/" itemprop="url" rel="index">
-                    <span itemprop="name">reverse</span>
+                  <a href="/categories/note1/" itemprop="url" rel="index">
+                    <span itemprop="name">note1</span>
                   </a>
                 </span>
 
@@ -497,18 +518,28 @@
 
       
         
-          <h1 id="notes-from-chapter-4"><a href="#notes-from-chapter-4" class="headerlink" title="notes from chapter 4"></a>notes from chapter 4</h1><h2 id="x86-64函数调用约定"><a href="#x86-64函数调用约定" class="headerlink" title="x86-64函数调用约定"></a>x86-64函数调用约定</h2><p>VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。</p>
-<ul>
-<li><p>参数1：RCX；</p>
+          <h1 id="Notes-for-chapter-one"><a href="#Notes-for-chapter-one" class="headerlink" title="Notes for chapter one"></a>Notes for chapter one</h1><h2 id="一些概念from-1-2："><a href="#一些概念from-1-2：" class="headerlink" title="一些概念from 1.2："></a>一些概念from 1.2：</h2><ol>
+<li>静态反汇编工具汇编工具看到的PE文件中的地址都是文件偏移（文件地址），这个是文件在磁盘上存放的相对于文件开头的偏移。</li>
+<li>装载基址：PE装载时的基地址，默认情况下（32位）：<ol>
+<li>exe的装载基址：0x00400000</li>
+<li>dll的装载基址：0x10000000  </li>
+<li>上述的基址可以通过编译选项改变</li>
+</ol>
 </li>
-<li><p>参数2：RDX；</p>
+<li>虚拟内存地址（VA）：PE文件指令被装入内存后的地址（IDA之类显示的地址）。</li>
+<li>相对虚拟地址（RVA）：虚拟内存地址相对于装载基址的偏移。RVA，VA，基址存在以下的计算：<ul>
+<li>VA=RVA+Image Base</li>
+</ul>
 </li>
-<li><p>参数3：R8；</p>
+<li>RVA和文件地址有很大的一致性，但是由于装载以后和一般存放在磁盘上内存的存放单位不同，会有差异。（P34 0x200和0x1000的区别）</li>
+<li>文件偏移地址与虚拟内存地址之间的换算关系可以用下面的公式来计算：<blockquote>
+<p>文件偏移地址 = 虚拟内存地址（VA）−装载基址（Image Base）−节偏移<br>= RVA -节偏移</p>
+</blockquote>
 </li>
-<li><p>参数4：R9；</p></li></ul>
+</ol>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/06/04/note20200604/#more" rel="contents">
+            <a class="btn" href="/2021/02/22/0day-1/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -559,7 +590,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/27/%E7%88%86%E7%A0%B4proxifier/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/11/18/note20200903/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -578,7 +609,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/" itemprop="url">爆破全局代理工具proxifier</a></h1>
+                <a class="post-title-link" href="/2020/11/18/note20200903/" itemprop="url">note20200903</a></h1>
         
 
         <div class="post-meta">
@@ -590,8 +621,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-27T21:00:56+08:00">
-                2020-05-27
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-11-18T22:13:50+08:00">
+                2020-11-18
               </time>
             
 
@@ -613,8 +644,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/reverse/" itemprop="url" rel="index">
-                    <span itemprop="name">reverse</span>
+                  <a href="/categories/note2/" itemprop="url" rel="index">
+                    <span itemprop="name">note2</span>
                   </a>
                 </span>
 
@@ -651,10 +682,19 @@
 
       
         
-          <h1 id="爆破全局代理工具proxifier"><a href="#爆破全局代理工具proxifier" class="headerlink" title="爆破全局代理工具proxifier"></a>爆破全局代理工具proxifier</h1><p>最近白嫖了一个gta5，联网模式得开全局代理配合v2ray之类的代理工具才能流畅游玩，结果打开电脑里老的proxifier说什么试用过期，得重新注册啥的，索性去官网下了个最新的正版，简单查看了下没有壳，那越过注册功能就是逆向入门级的一个爆破，简单记录下。</p>
+          <h1 id="专用加密软件"><a href="#专用加密软件" class="headerlink" title="专用加密软件"></a>专用加密软件</h1><h2 id="壳"><a href="#壳" class="headerlink" title="壳"></a>壳</h2><h3 id="压缩壳"><a href="#压缩壳" class="headerlink" title="压缩壳"></a>压缩壳</h3><ol>
+<li>UPX</li>
+<li>ASPack</li>
+</ol>
+<h3 id="加密壳"><a href="#加密壳" class="headerlink" title="加密壳"></a>加密壳</h3><ol>
+<li>ASProtect</li>
+<li>Armadillo</li>
+<li>EXECryptor</li>
+<li>Themida</li>
+</ol>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/#more" rel="contents">
+            <a class="btn" href="/2020/11/18/note20200903/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -705,7 +745,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/26/lab10/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/02/note20200821/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -724,7 +764,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/05/26/lab10/" itemprop="url">恶意代码分析实战 Lab10</a></h1>
+                <a class="post-title-link" href="/2020/09/02/note20200821/" itemprop="url">note20200821</a></h1>
         
 
         <div class="post-meta">
@@ -736,8 +776,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-26T23:08:13+08:00">
-                2020-05-26
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-09-02T22:27:32+08:00">
+                2020-09-02
               </time>
             
 
@@ -759,8 +799,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/reverse/" itemprop="url" rel="index">
-                    <span itemprop="name">reverse</span>
+                  <a href="/categories/note2/" itemprop="url" rel="index">
+                    <span itemprop="name">note2</span>
                   </a>
                 </span>
 
@@ -797,11 +837,10 @@
 
       
         
-          <h1 id="Lab10-01"><a href="#Lab10-01" class="headerlink" title="Lab10-01"></a>Lab10-01</h1><h2 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h2><p>查看程序的导入函数：</p>
-<p><img src="/2020/05/26/lab10/dbg1.JPG" alt></p>
+          <h1 id="Hook的分类"><a href="#Hook的分类" class="headerlink" title="Hook的分类"></a>Hook的分类</h1><h2 id="Address-Hook"><a href="#Address-Hook" class="headerlink" title="Address Hook"></a>Address Hook</h2><p>即修改某些函数的地址，他们可能存放在某个函数表中，可能是存在例程中，可能是在MSR寄存器中，也可能是某个特点函数指针。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/05/26/lab10/#more" rel="contents">
+            <a class="btn" href="/2020/09/02/note20200821/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -852,7 +891,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/08/07/CVE-2017-11882%E5%88%86%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -871,7 +910,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/" itemprop="url">指令替换技巧</a></h1>
+                <a class="post-title-link" href="/2020/08/07/CVE-2017-11882%E5%88%86%E6%9E%90/" itemprop="url">CVE-2017-11882分析</a></h1>
         
 
         <div class="post-meta">
@@ -883,8 +922,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-20T21:19:44+08:00">
-                2020-05-20
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-08-07T19:00:40+08:00">
+                2020-08-07
               </time>
             
 
@@ -906,8 +945,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E6%83%B3/" itemprop="url" rel="index">
-                    <span itemprop="name">随想</span>
+                  <a href="/categories/pwn/" itemprop="url" rel="index">
+                    <span itemprop="name">pwn</span>
                   </a>
                 </span>
 
@@ -944,10 +983,19 @@
 
       
         
-          <h2 id="指令替换技巧-from-《加密与解密》"><a href="#指令替换技巧-from-《加密与解密》" class="headerlink" title="指令替换技巧 from 《加密与解密》"></a>指令替换技巧 from 《加密与解密》</h2>
+          <h1 id="CVE-2017-11882分析"><a href="#CVE-2017-11882分析" class="headerlink" title="CVE-2017-11882分析"></a>CVE-2017-11882分析</h1><h2 id="漏洞简述"><a href="#漏洞简述" class="headerlink" title="漏洞简述"></a>漏洞简述</h2><ul>
+<li><p>漏洞成因：该漏洞出现在office的模块EQNEDT32.EXE中, 该模块为windows的公式编辑器, 使用OLE技术(对象链接与嵌入)将公式嵌入在office文档内。当公式编辑器EQNEDT32.EXE读入包含MathType的OLE数据，在拷贝公式字体名称时没有对名称长度进行校验，使得攻击者可以使用ROP调用模块内的<code>WinExec</code>函数执行任意指令。</p>
+</li>
+<li><p>影响版本：Microsoft Office 2007 Service Pack 3，Microsoft Office 2010 Service Pack 2，Microsoft Office 2013 Service Pack 1， Microsoft Office 2016</p>
+</li>
+<li><p>POC：<a href="https://github.com/Ridter/CVE-2017-11882" target="_blank" rel="noopener">https://github.com/Ridter/CVE-2017-11882</a></p>
+</li>
+<li><p>实验环境：Windows 7 Ultimate Service Pack 1；Microsoft Office 2010</p>
+</li>
+</ul>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/#more" rel="contents">
+            <a class="btn" href="/2020/08/07/CVE-2017-11882%E5%88%86%E6%9E%90/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -989,7 +1037,7 @@
 
   
  <nav class="pagination">
-   <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="accessibility.prev_page"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="accessibility.next_page"></i></a>
+   <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="accessibility.prev_page"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="accessibility.next_page"></i></a>
  </nav>
 
           </div>
@@ -1037,7 +1085,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">46</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -1048,7 +1096,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">categories</span>
                 
               </div>
@@ -1103,7 +1151,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>

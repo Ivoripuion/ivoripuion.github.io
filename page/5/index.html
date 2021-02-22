@@ -216,6 +216,26 @@
         </li>
       
         
+        <li class="menu-item menu-item-《0-day》笔记">
+          <a href="/categories/note1" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《0 day》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《加密与解密》笔记">
+          <a href="/categories/note2" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《加密与解密》笔记
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-随想">
           <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
             
@@ -258,7 +278,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/26/ms08-067%E5%88%86%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/13/note20200611/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -277,7 +297,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/04/26/ms08-067%E5%88%86%E6%9E%90/" itemprop="url">ms08-067分析</a></h1>
+                <a class="post-title-link" href="/2020/06/13/note20200611/" itemprop="url">note20200611</a></h1>
         
 
         <div class="post-meta">
@@ -289,8 +309,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-26T00:29:24+08:00">
-                2020-04-26
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-13T22:01:03+08:00">
+                2020-06-13
               </time>
             
 
@@ -312,8 +332,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
+                  <a href="/categories/note2/" itemprop="url" rel="index">
+                    <span itemprop="name">note2</span>
                   </a>
                 </span>
 
@@ -350,15 +370,14 @@
 
       
         
-          <h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><p>漏洞在netapi32.dll中的导出函数NetpwNameCanonicalize的子函数CanonicalizePathName中。</p>
-<p>CanonicalizePathName函数对路径合并的后的字符进以下的一些处理：</p>
-<ol>
-<li>将字符串中的”/“转化成”&quot;：</li>
+          <h1 id="notes-about-chapter-6"><a href="#notes-about-chapter-6" class="headerlink" title="notes about chapter 6"></a>notes about chapter 6</h1><h2 id="6-1-单项散列算法（hash）"><a href="#6-1-单项散列算法（hash）" class="headerlink" title="6.1 单项散列算法（hash）"></a>6.1 单项散列算法（hash）</h2><p>不可逆运算。</p>
+<h3 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><ol>
+<li>填充</li>
 </ol>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span>5FDDA1F8 rep_slash_loop:                         <span class="comment">; CODE XREF: CanonicalizePathName+88↓j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA1F8                 <span class="keyword">cmp</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">2Fh</span> <span class="comment">; 将"/"转换成"\"</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA1FC                 <span class="keyword">jz</span>      slash_to_back_slash <span class="comment">; 复制"\"</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">.text:</span>5FDDA202 slash_to_back_forward:                  <span class="comment">; CODE XREF: CanonicalizePathName+E774↓j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA202                 <span class="keyword">inc</span>     <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA203                 <span class="keyword">inc</span>     <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA204                 <span class="keyword">cmp</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span>5FDDA208                 <span class="keyword">jnz</span>     short rep_slash_loop <span class="comment">; 将"/"转换成"\"</span></span><br><span class="line"></span><br><span class="line"><span class="symbol">.text:</span>5FDE88EF slash_to_back_slash:                    <span class="comment">; CODE XREF: CanonicalizePathName+7C↑j</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE88EF                 <span class="keyword">mov</span>     <span class="built_in">word</span> <span class="built_in">ptr</span> [<span class="built_in">eax</span>], <span class="number">5Ch</span> <span class="comment">; 复制"\"</span></span><br><span class="line"><span class="symbol">.text:</span>5FDE88F4                 <span class="keyword">jmp</span>     slash_to_back_forward</span><br></pre></td></tr></table></figure>
+<p>填充消息使得其与448模512同余，即使本身已经满足长度也需要填充，填充方法：首先附加1个1，然后使用0填充。至少填充一位，至多填充512位（即本身已经满足的）。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/04/26/ms08-067%E5%88%86%E6%9E%90/#more" rel="contents">
+            <a class="btn" href="/2020/06/13/note20200611/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -409,7 +428,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/21/2020-4-21/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/09/lab12/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Ivoripuion">
@@ -428,7 +447,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/04/21/2020-4-21/" itemprop="url">一道笔试题</a></h1>
+                <a class="post-title-link" href="/2020/06/09/lab12/" itemprop="url">恶意代码分析实战 Lab12</a></h1>
         
 
         <div class="post-meta">
@@ -440,458 +459,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-21T19:32:24+08:00">
-                2020-04-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E6%83%B3/" itemprop="url" rel="index">
-                    <span itemprop="name">随想</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>前几天华为实习生的一道笔试题，可能是我投安全岗的原因，编程题比较简单，记录下：</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/04/21/2020-4-21/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/19/glibcHeapExp/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ivoripuion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ivoripuion's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/19/glibcHeapExp/" itemprop="url">Glibc Heap Exp</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-19T22:06:03+08:00">
-                2020-04-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="Glibc-Heap-Exp"><a href="#Glibc-Heap-Exp" class="headerlink" title="Glibc Heap Exp"></a>Glibc Heap Exp</h1><h2 id="Glibc-Heap-Overview"><a href="#Glibc-Heap-Overview" class="headerlink" title="Glibc Heap Overview"></a>Glibc Heap Overview</h2><h3 id="GLibc-Heap"><a href="#GLibc-Heap" class="headerlink" title="GLibc Heap"></a>GLibc Heap</h3><ul>
-<li><p>负责维护动态分配memory的结构称为Heap</p>
-</li>
-<li><p>Libc里比较常用的部分是malloc，free，realloc</p>
-<ul>
-<li>C++的new，delete，底层是上述几个</li>
-</ul>
-</li>
-<li><p>配置新的内存块，释放掉并回收不需要的部分，在配置内存的时候尽量避免[碎片化]</p></li></ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/04/19/glibcHeapExp/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/18/safeunlink/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ivoripuion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ivoripuion's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/18/safeunlink/" itemprop="url">突破safe unlink</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-18T14:56:47+08:00">
-                2020-04-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/pwn/" itemprop="url" rel="index">
-                    <span itemprop="name">pwn</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="notes-about-0day-chapter-15"><a href="#notes-about-0day-chapter-15" class="headerlink" title="notes about 0day chapter 15"></a>notes about 0day chapter 15</h1><h2 id="from-15-1"><a href="#from-15-1" class="headerlink" title="from 15.1"></a>from 15.1</h2><p>微软在之前堆的基础上增加了堆的安全校验：</p>
-<ol>
-<li>PEB random</li>
-<li>Safe Unlink</li>
-</ol>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2020/04/18/safeunlink/#more" rel="contents">
-              Read more &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/17/lab7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Ivoripuion">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/me.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Ivoripuion's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2020/04/17/lab7/" itemprop="url">恶意代码分析实战 Lab7</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-17T23:37:12+08:00">
-                2020-04-17
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-09T15:40:14+08:00">
+                2020-06-09
               </time>
             
 
@@ -951,12 +520,458 @@
 
       
         
-          <h1 id="Lab7-1"><a href="#Lab7-1" class="headerlink" title="Lab7-1"></a>Lab7-1</h1><h2 id="Q1：当计算机重启之后，这个程序如何保证它继续运行（达到持久化驻留）"><a href="#Q1：当计算机重启之后，这个程序如何保证它继续运行（达到持久化驻留）" class="headerlink" title="Q1：当计算机重启之后，这个程序如何保证它继续运行（达到持久化驻留）"></a>Q1：当计算机重启之后，这个程序如何保证它继续运行（达到持久化驻留）</h2><p>创建一个Malservice的服务，并且该服务具有开机自启动的权限。</p>
-<p>主函数简单跟一下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  SERVICE_TABLE_ENTRYA ServiceStartTable; <span class="comment">// [esp+0h] [ebp-10h]</span></span><br><span class="line">  <span class="keyword">int</span> v5; <span class="comment">// [esp+8h] [ebp-8h]</span></span><br><span class="line">  <span class="keyword">int</span> v6; <span class="comment">// [esp+Ch] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  ServiceStartTable.lpServiceName = aMalservice;</span><br><span class="line">  ServiceStartTable.lpServiceProc = createProcess_401040;</span><br><span class="line">  v5 = <span class="number">0</span>;</span><br><span class="line">  v6 = <span class="number">0</span>;</span><br><span class="line">  StartServiceCtrlDispatcherA(&amp;ServiceStartTable);</span><br><span class="line">  <span class="keyword">return</span> createProcess_401040();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <h1 id="Lab12-01"><a href="#Lab12-01" class="headerlink" title="Lab12-01"></a>Lab12-01</h1><h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><p>Lab12-01.exe首先导入了psapi.dll中的一些函数的地址<code>EnumProcessModules</code>，<code>GetModuleBaseNameA</code>以及<code>EnumProcesses</code>：</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">.text:</span><span class="number">00401115</span> C7 <span class="number">85</span> E8 FE FF FF <span class="number">00</span> <span class="number">00</span>+                <span class="keyword">mov</span>     [<span class="built_in">ebp</span>+var_118], <span class="number">0</span></span><br><span class="line"><span class="symbol">.text:</span>0040111F <span class="number">68</span> B0 <span class="number">60</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">push</span>    offset ProcName <span class="comment">; "EnumProcessModules"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401124</span> <span class="number">68</span> A4 <span class="number">60</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">push</span>    offset LibFileName <span class="comment">; "psapi.dll"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401129</span> FF <span class="number">15</span> <span class="number">24</span> <span class="number">50</span> <span class="number">40</span> <span class="number">00</span>                       <span class="keyword">call</span>    <span class="built_in">ds</span>:LoadLibraryA</span><br><span class="line"><span class="symbol">.text:</span>0040112F <span class="number">50</span>                                      <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; hModule</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401130</span> FF <span class="number">15</span> <span class="number">20</span> <span class="number">50</span> <span class="number">40</span> <span class="number">00</span>                       <span class="keyword">call</span>    <span class="built_in">ds</span>:GetProcAddress</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401136</span> A3 <span class="number">14</span> <span class="number">87</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">mov</span>     dword_408714, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span>0040113B <span class="number">68</span> <span class="number">90</span> <span class="number">60</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">push</span>    offset aGetmodulebasen <span class="comment">; "GetModuleBaseNameA"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401140</span> <span class="number">68</span> A4 <span class="number">60</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">push</span>    offset LibFileName <span class="comment">; "psapi.dll"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401145</span> FF <span class="number">15</span> <span class="number">24</span> <span class="number">50</span> <span class="number">40</span> <span class="number">00</span>                       <span class="keyword">call</span>    <span class="built_in">ds</span>:LoadLibraryA</span><br><span class="line"><span class="symbol">.text:</span>0040114B <span class="number">50</span>                                      <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; hModule</span></span><br><span class="line"><span class="symbol">.text:</span>0040114C FF <span class="number">15</span> <span class="number">20</span> <span class="number">50</span> <span class="number">40</span> <span class="number">00</span>                       <span class="keyword">call</span>    <span class="built_in">ds</span>:GetProcAddress</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401152</span> A3 0C <span class="number">87</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">mov</span>     dword_40870C, <span class="built_in">eax</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401157</span> <span class="number">68</span> <span class="number">80</span> <span class="number">60</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">push</span>    offset aEnumprocesses <span class="comment">; "EnumProcesses"</span></span><br><span class="line"><span class="symbol">.text:</span>0040115C <span class="number">68</span> A4 <span class="number">60</span> <span class="number">40</span> <span class="number">00</span>                          <span class="keyword">push</span>    offset LibFileName <span class="comment">; "psapi.dll"</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401161</span> FF <span class="number">15</span> <span class="number">24</span> <span class="number">50</span> <span class="number">40</span> <span class="number">00</span>                       <span class="keyword">call</span>    <span class="built_in">ds</span>:LoadLibraryA</span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401167</span> <span class="number">50</span>                                      <span class="keyword">push</span>    <span class="built_in">eax</span>             <span class="comment">; hModule</span></span><br><span class="line"><span class="symbol">.text:</span><span class="number">00401168</span> FF <span class="number">15</span> <span class="number">20</span> <span class="number">50</span> <span class="number">40</span> <span class="number">00</span>                       <span class="keyword">call</span>    <span class="built_in">ds</span>:GetProcAddress</span><br></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2020/04/17/lab7/#more" rel="contents">
+            <a class="btn" href="/2020/06/09/lab12/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/07/lab11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/06/07/lab11/" itemprop="url">恶意代码分析实战 Lab11</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-07T20:13:52+08:00">
+                2020-06-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/reverse/" itemprop="url" rel="index">
+                    <span itemprop="name">reverse</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="Lab11-01"><a href="#Lab11-01" class="headerlink" title="Lab11-01"></a>Lab11-01</h1><h2 id="简要分析"><a href="#简要分析" class="headerlink" title="简要分析"></a>简要分析</h2><p>程序的主要流程如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  HMODULE hModule; <span class="comment">// [esp+Ch] [ebp-11Ch]</span></span><br><span class="line">  CHAR Filename; <span class="comment">// [esp+10h] [ebp-118h]</span></span><br><span class="line">  <span class="keyword">char</span> v6; <span class="comment">// [esp+11h] [ebp-117h]</span></span><br><span class="line">  <span class="keyword">char</span> v7; <span class="comment">// [esp+11Dh] [ebp-Bh]</span></span><br><span class="line">  <span class="keyword">char</span> *v8; <span class="comment">// [esp+120h] [ebp-8h]</span></span><br><span class="line">  LPVOID v9; <span class="comment">// [esp+124h] [ebp-4h]</span></span><br><span class="line"></span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  hModule = GetModuleHandleA(<span class="number">0</span>);</span><br><span class="line">  Filename = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">memset</span>(&amp;v6, <span class="number">0</span>, <span class="number">0x10C</span>u);</span><br><span class="line">  v7 = <span class="number">0</span>;</span><br><span class="line">  v9 = get_dll_401080(hModule);                 <span class="comment">// //加载dll</span></span><br><span class="line">  GetModuleFileNameA(<span class="number">0</span>, &amp;Filename, <span class="number">0x10E</span>u);</span><br><span class="line">  v8 = <span class="built_in">strrchr</span>(&amp;Filename, <span class="number">92</span>);</span><br><span class="line">  *v8 = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">strcat</span>(&amp;Filename, aMsgina32Dll_0);</span><br><span class="line">  set_reg_401000(&amp;Filename, <span class="number">0x104</span>u);            <span class="comment">// 设置注册表</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/06/07/lab11/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/04/note20200604/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/06/04/note20200604/" itemprop="url">note20200604</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-04T22:34:21+08:00">
+                2020-06-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/note2/" itemprop="url" rel="index">
+                    <span itemprop="name">note2</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="notes-from-chapter-4"><a href="#notes-from-chapter-4" class="headerlink" title="notes from chapter 4"></a>notes from chapter 4</h1><h2 id="x86-64函数调用约定"><a href="#x86-64函数调用约定" class="headerlink" title="x86-64函数调用约定"></a>x86-64函数调用约定</h2><p>VS编译出的64程序只有寄存器快速调用约定：前4个参数使用寄存器传递，超过的参数放在栈中，入栈顺序从右至左，由函数平衡堆栈。</p>
+<ul>
+<li><p>参数1：RCX；</p>
+</li>
+<li><p>参数2：RDX；</p>
+</li>
+<li><p>参数3：R8；</p>
+</li>
+<li><p>参数4：R9；</p></li></ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/06/04/note20200604/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/27/%E7%88%86%E7%A0%B4proxifier/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/" itemprop="url">爆破全局代理工具proxifier</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-27T21:00:56+08:00">
+                2020-05-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/reverse/" itemprop="url" rel="index">
+                    <span itemprop="name">reverse</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h1 id="爆破全局代理工具proxifier"><a href="#爆破全局代理工具proxifier" class="headerlink" title="爆破全局代理工具proxifier"></a>爆破全局代理工具proxifier</h1><p>最近白嫖了一个gta5，联网模式得开全局代理配合v2ray之类的代理工具才能流畅游玩，结果打开电脑里老的proxifier说什么试用过期，得重新注册啥的，索性去官网下了个最新的正版，简单查看了下没有壳，那越过注册功能就是逆向入门级的一个爆破，简单记录下。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/05/27/%E7%88%86%E7%A0%B4proxifier/#more" rel="contents">
               Read more &raquo;
             </a>
           </div>
@@ -998,7 +1013,7 @@
 
   
  <nav class="pagination">
-   <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="accessibility.prev_page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="accessibility.next_page"></i></a>
+   <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="accessibility.prev_page"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="accessibility.next_page"></i></a>
  </nav>
 
           </div>
@@ -1046,7 +1061,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">33</span>
+                  <span class="site-state-item-count">46</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -1057,7 +1072,7 @@
               
               <div class="site-state-item site-state-categories">
                 
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">categories</span>
                 
               </div>
@@ -1112,7 +1127,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
