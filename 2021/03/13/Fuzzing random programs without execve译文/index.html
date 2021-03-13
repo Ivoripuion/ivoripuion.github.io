@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Fuzzing random programs without execve()原作者：lcamtuf 原文：https:&#x2F;&#x2F;lcamtuf.blogspot.com&#x2F;2014&#x2F;10&#x2F;fuzzing-binaries-without-execve.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Fuzzing random programs without execve() 译文">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2021&#x2F;03&#x2F;13&#x2F;Fuzzing%20random%20programs%20without%20execve%E8%AF%91%E6%96%87&#x2F;index.html">
+<meta property="og:site_name" content="Ivoripuion&#39;s blog">
+<meta property="og:description" content="Fuzzing random programs without execve()原作者：lcamtuf 原文：https:&#x2F;&#x2F;lcamtuf.blogspot.com&#x2F;2014&#x2F;10&#x2F;fuzzing-binaries-without-execve.html">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-03-13T02:50:07.626Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2021/03/13/Fuzzing random programs without execve译文/"/>
+
+
+
+
+
+  <title>Fuzzing random programs without execve() 译文 | Ivoripuion's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Ivoripuion's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-pwn">
+          <a href="/categories/pwn" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            pwn
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-web">
+          <a href="/categories/web" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            web
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-reverse">
+          <a href="/categories/reverse" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            reverse
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《0-day》笔记">
+          <a href="/categories/note1" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《0 day》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-《加密与解密》笔记">
+          <a href="/categories/note2" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            《加密与解密》笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-afl笔记">
+          <a href="/categories/AFL%E7%AC%94%E8%AE%B0" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            AFL笔记
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-随想">
+          <a href="/categories/%E9%9A%8F%E6%83%B3" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br />
+            
+            随想
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/13/Fuzzing%20random%20programs%20without%20execve%E8%AF%91%E6%96%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Ivoripuion">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/me.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Ivoripuion's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Fuzzing random programs without execve() 译文</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2021-03-13T10:49:28+08:00">
+                2021-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/AFL%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">AFL笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Fuzzing-random-programs-without-execve"><a href="#Fuzzing-random-programs-without-execve" class="headerlink" title="Fuzzing random programs without execve()"></a>Fuzzing random programs without execve()</h1><p>原作者：<strong>lcamtuf</strong></p>
+<p>原文：<a href="https://lcamtuf.blogspot.com/2014/10/fuzzing-binaries-without-execve.html" target="_blank" rel="noopener">https://lcamtuf.blogspot.com/2014/10/fuzzing-binaries-without-execve.html</a></p>
+<a id="more"></a>
+
+<p>对数据分析库进行fuzz的最常用方法就是找到一个能运行可疑函数的简单的二进制文件，并且让其保持一遍又一遍的运行————当然，每次运行过程中输入的随机变量都略有不同。在这样一种设置下，对库中明显的内存污染漏洞的检测就会很简单，像在子进程中使用<code>waitpid()</code>并核实其是否因为<code>SIGSEGV</code>,<code>SIGABRT</code>或其它相似的信号量而消亡。</p>
+<p>安全研究员喜欢上述方案的原因有两个。首先，它不需要对文档深入研究，了解底层库提供的API，就能够以一个更加直观的方式编写自定义的代码对解析器进行压力测试。其次，它使得fuzz流程变得可重复并且具有鲁棒性：程序运行在一个分离的进程中并以每个输入文件重新开始，因此不必担心库中的随机内存损坏错误会破坏模糊测试器本身的状态，或是对随后测试工具的运行产生奇怪的副作用。</p>
+<p>不幸的是，上述方案也会产生一个问题：对特别对简单的库来说，你可能会花费大部分的来等待<code>execve()</code>的运行、链接器以及所有的库初始化例程来完成其工作。我一直在想办法来最大限度地减少AFL中的这种开销，但是大部分我想出来的方法都很复杂。比如，编写一个自定义的ELF加载器并且在进程中运行程序，同时使用<code>mprotect()</code>来暂时锁定fuzzer本身的内存————但是诸如信号得处理将会变得一团糟。另外一个选择是在单个子进程中执行，对子进程的内存空间拍一个快照，稍后通过<code>/proc/pid/mem</code>来“倒带”该镜像————但是同样地，处理信号或者文件描述符需要消耗大量的脑细胞。</p>
+<p>幸运的是，Jann Horn想出了一个更简单的方法，并出人意料地给我发了一个AFL的补丁。这个方法归结为将一小段代码注入到被测试的二进制文件中————一个通过使用环境变量<code>LD_PRELOAD</code>、参数<code>PTRACE_PRLETEXT</code>、编译时插桩，或者仅仅提前重写ELF的二进制文件来实现的壮举。注入shim代码的目的是让<code>execve()</code>运行，越过链接器（理想情况下，使用<code>LD_BIND_NOW = 1</code>，这样所有的辛苦工作都能事先完成），然后在处理fuzzer生成的任何输入或进行其他有趣的的操作之前，尽早停止execve函数。实际上，在最简单的案例下，我们可以简单的停止在<code>main()</code>函数。</p>
+<p>只要设计在程序中的点达到了，我们的shim代码就会等待来自fuzzer的指令；当它接受到了<code>go</code>，就会调用<code>fork()</code>函数来创建一个已加载程序的复制；由于写时拷贝技术，这个创建复制的过程会非常的快，且与原进程的隔离度很高。在子进程中，注入的代码将控制权返还给原始二进制文件，从而使其能够处理fuzzer提供的输入数据（这样做会带来许多后果）。在父进程中，shim代码将创建的进程的PID传递给fuzzer,并返回到等待fuzzer指令的循环中。</p>
+<p>当然，在你开始在Unix上处理进程语义时（？），没有什么比它乍看起来更容易；这里给出一些我们必须在代码中解决的问题：</p>
+<ul>
+<li><p>文件描述符偏移量在被<code>fork()</code>创建的进程之间共享。这意味着在执行shim代码时打开的所有描述符都可能需要回退到它们的初始位置（以保证绝对位置不变）；如果我们在<code>main()</code>处停止这不会是一个大问题————由于<code>stdin</code>时描述符的来源，我们可以在fuzzer自身执行<code>lseek()</code>来回退<code>stdin</code>————但若我们将停住的地方对准更远的地方，这将会成为一个障碍。</p>
+</li>
+<li><p>同样的，有些类型的文件描述符无法修复。在访问管道、字符设备、套接字和类似的不可充值的I/O设备之前，shim代码必须先被执行。当然，这对<code>main()</code>函数停下来的情况不成问题。</p>
+</li>
+<li><p>复制线程的任务更加复杂并且需要shim代码跟踪所有的线程。因此，在简单的实现中，需要在二进制文件产生任何线程之前注入shim代码。（当然，线程在文件解析库中很少见，而在重量级工具中更常见）</p>
+</li>
+<li><p>fuzzer不再是被测试进程的直系父进程，而是祖父进程，它不能直接使用<code>waitpid()</code>函数；也没有其他简单的可移植的API来获取有关流程退出状态的通知。我们通过让shim代码等待然后发送状态码给fuzzer来解决该问题。从理论上讲，我们应该简单地使用<code>CLONE_PARENT</code>标志调用<code>clone()</code>的syscall，这将使得新进程继承原始的PPID。不幸的是，直接调用syscall会混淆glibc，因为在初始化的时候库会缓存<code>getid()</code>的结果————并且不会更新缓存，依赖PID的调用（诸如<code>abort()</code>或者<code>raise()</code>）会误入歧途。还有一个用于<code>clone()</code>调用的库封装程序，它会更新缓存的PID————但是封装程序很不好用，会一直弄乱进程的栈空间。</p>
+</li>
+</ul>
+<p>（说句公道话，<code>PTRACE_ATTACH</code>提供了一种临时接收进程并通知其退出状态，但是它以两种方式改变了流程的语义，这需要大量的代码来消除影响。）</p>
+<p>即便考虑到上述的问题，shim代码也不复杂，移动的的模块（？）也很少————与我之前想到的解决方案相比，这是一个令人欣慰的缓解方案。它通过读取文件描述符<code>198</code>的命令，使用文件描述符<code>199</code>来发送消息给父进程，并且仅执行最低限度的工作来完成任务。该代码略有删节的版本如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">__afl_forkserver:</span><br><span class="line"></span><br><span class="line"><span class="comment">/*告诉父进程正常运行*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*write(199,__afl_temp,4);*/</span></span><br><span class="line"></span><br><span class="line">pushl $<span class="number">4</span>          <span class="comment">/* length    */</span></span><br><span class="line">pushl $__afl_temp <span class="comment">/* data      */</span></span><br><span class="line">pushl $<span class="number">199</span>        <span class="comment">/* file desc */</span></span><br><span class="line">call  <span class="built_in">write</span></span><br><span class="line">addl  $<span class="number">12</span>, %esp</span><br><span class="line"></span><br><span class="line">__afl_fork_wait_loop:</span><br><span class="line"></span><br><span class="line"><span class="comment">/*通过从管道中读取来等待父进程的指令。这将进入循环知道父进程发送消息。如果读取失败将跳出。*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*int flag_1 = read(198,__afl_temp,4);*/</span></span><br><span class="line"></span><br><span class="line">pushl $<span class="number">4</span>          <span class="comment">/* length    */</span></span><br><span class="line">pushl $__afl_temp <span class="comment">/* data      */</span></span><br><span class="line">pushl $<span class="number">198</span>        <span class="comment">/* file desc */</span></span><br><span class="line">call  <span class="built_in">read</span></span><br><span class="line">addl  $<span class="number">12</span>, %esp</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">if(flag_1 &lt; 4) goto __afl_die;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">cmpl  $<span class="number">4</span>, %eax</span><br><span class="line">jne   __afl_die</span><br><span class="line"></span><br><span class="line"><span class="comment">/*唤醒，创建子进程*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">pid_t pid = fork();</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">if(pid &lt; 0) goto __afl_die;</span></span><br><span class="line"><span class="comment">else goto __afl_fork_resume;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">call fork</span><br><span class="line"></span><br><span class="line">cmpl $<span class="number">0</span>,%eax</span><br><span class="line">jl   __afl_die</span><br><span class="line">je   __afl_fork_resume</span><br><span class="line"></span><br><span class="line"><span class="comment">/*将PID写入管道，等待子进程。父进程会处理timeout以及SIGKILL信号。*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">__afl_fork_pid = pid;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">write(199,__afl_fork_pid,4);</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">pid_t tpid = waitpid(__afl_fork_pid,__afl_temp,2);</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">if(tpid &lt; 0) goto __afl_die;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">movl  %eax, __afl_fork_pid</span><br><span class="line"></span><br><span class="line">pushl $<span class="number">4</span>              <span class="comment">/* length    */</span></span><br><span class="line">pushl $__afl_fork_pid <span class="comment">/* data      */</span></span><br><span class="line">pushl $<span class="number">199</span>            <span class="comment">/* file desc */</span></span><br><span class="line">call  <span class="built_in">write</span></span><br><span class="line">addl  $<span class="number">12</span>, %esp</span><br><span class="line"></span><br><span class="line">pushl $<span class="number">2</span>             <span class="comment">/* WUNTRACED */</span></span><br><span class="line">pushl $__afl_temp    <span class="comment">/* status    */</span></span><br><span class="line">pushl __afl_fork_pid <span class="comment">/* PID       */</span></span><br><span class="line">call  waitpid</span><br><span class="line">addl  $<span class="number">12</span>, %esp</span><br><span class="line"></span><br><span class="line">cmpl  $<span class="number">0</span>, %eax</span><br><span class="line">jle   __afl_die</span><br><span class="line"></span><br><span class="line"><span class="comment">/*将等待信息写入管道，然后回到等待循环*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">write(199,__afl_temp,4);</span></span><br><span class="line"><span class="comment">goto __afl_fork_wait_loop;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">pushl $<span class="number">4</span>          <span class="comment">/* length    */</span></span><br><span class="line">pushl $__afl_temp <span class="comment">/* data      */</span></span><br><span class="line">pushl $<span class="number">199</span>        <span class="comment">/* file desc */</span></span><br><span class="line">call  <span class="built_in">write</span></span><br><span class="line">addl  $<span class="number">12</span>, %esp</span><br><span class="line"></span><br><span class="line">jmp __afl_fork_wait_loop</span><br><span class="line"></span><br><span class="line"><span class="comment">/*子进程中：关闭文件描述符*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">close(198);</span></span><br><span class="line"><span class="comment">close(199);</span></span><br><span class="line"><span class="comment">return ;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">pushl $<span class="number">198</span></span><br><span class="line">call  <span class="built_in">close</span></span><br><span class="line"></span><br><span class="line">pushl $<span class="number">199</span></span><br><span class="line">call  <span class="built_in">close</span></span><br><span class="line"></span><br><span class="line">addl  $<span class="number">8</span>, %esp</span><br><span class="line">ret</span><br></pre></td></tr></table></figure>
+
+<p>但话说回来，上述方案值得吗？答案是肯定的：在<code>main()</code>函数处停下来的逻辑已经使用到了afl 0.36b版本中，能够将许多针对图像库的模糊测试的速度提高两个或更多的数量级。考虑到我们仍然使用了<code>fork()</code>，这几乎是难以置信的，因为syscall是久负盛名的龟速运行。</p>
+<p>下一个挑战是将shim代码放到更远的地方，以便跳过任何常见的程序初始化步骤，比如读取配置文件————并在程序尝试读取我们正在处理的编译数据时停止一些指令。Jann’s原始的补丁中提供了一个依赖<code>ptrace()</code>来检测文件访问的解决方案；但我们一直在集思广益。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/03/05/afl-fuzz_main/" rel="next" title="afl-fuzz.c main函数简单流程">
+                <i class="fa fa-chevron-left"></i> afl-fuzz.c main函数简单流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/me.jpg"
+                alt="Ivoripuion" />
+            
+              <p class="site-author-name" itemprop="name">Ivoripuion</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">47</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Ivoripuion" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:1711268@mail.nankai.edu.cn" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          <div>
+            <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="210" height="110" src="//music.163.com/outchain/player?type=2&id=1406633327&auto=0&height=66"></iframe>
+          </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Fuzzing-random-programs-without-execve"><span class="nav-number">1.</span> <span class="nav-text">Fuzzing random programs without execve()</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Ivoripuion</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":false},"react":{"opacity":0.7},"log":false});</script></body>
+</html>
+
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
