@@ -1,0 +1,540 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>note chapter 5 | 米惜</title><meta name="keywords" content="笔记,漏洞分析"><meta name="author" content="Ivoripuion,carsge@tencent.com"><meta name="copyright" content="Ivoripuion"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="note chapter 5"><meta name="application-name" content="note chapter 5"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="note chapter 5"><meta property="og:url" content="http://example.com/2023/10/16/0day-5/index.html"><meta property="og:site_name" content="米惜"><meta property="og:description" content="notes about chapter 5from 5.1堆的一些特征：  堆是一种在程序运行时动态分配的内存。动态内存即是程序设计时不能预先决定的，需要在程序时用户给出。 堆在使用时由程序员用专用的函数进行申请，如：malloc，new等。对内存有可能申请成功，也可能失败。 一般用一个指针来使用申"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="http://example.com/img/avater.png"><meta property="article:author" content="Ivoripuion"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="http://example.com/img/avater.png"><meta name="description" content="notes about chapter 5from 5.1堆的一些特征：  堆是一种在程序运行时动态分配的内存。动态内存即是程序设计时不能预先决定的，需要在程序时用户给出。 堆在使用时由程序员用专用的函数进行申请，如：malloc，new等。对内存有可能申请成功，也可能失败。 一般用一个指针来使用申"><link rel="shortcut icon" href="/img/me.jpg"><link rel="canonical" href="http://example.com/2023/10/16/0day-5/"><link rel="preconnect" href="//cdn.cbd.int"/><link rel="preconnect" href="//hm.baidu.com"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.20/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?855d9db99474dd0e98e385c4b629eeee";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script>const GLOBAL_CONFIG = {
+  linkPageTop: undefined,
+  peoplecanvas: {"enable":true,"img":"https://upload-bbs.miyoushe.com/upload/2023/09/03/125766904/ee23df8517f3c3e3efc4145658269c06_5714860933110284659.png"},
+  postHeadAiDescription: {"enable":true,"gptName":"AnZhiYu","mode":"local","switchBtn":false,"btnLink":"https://afdian.net/item/886a79d4db6711eda42a52540025c377","randomNum":3,"basicWordCount":1000,"key":"xxxx","Referer":"https://xx.xx/"},
+  diytitle: {"enable":true,"leaveTitle":"(❁´◡`❁)","backTitle":"(●'◡'●)"},
+  LA51: undefined,
+  greetingBox: undefined,
+  twikooEnvId: '',
+  commentBarrageConfig:undefined,
+  root: '/',
+  preloader: {"source":3},
+  friends_vue_info: undefined,
+  navMusic: true,
+  mainTone: undefined,
+  authorStatus: {"skills":null},
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简","rightMenuMsgToTraditionalChinese":"转为繁体","rightMenuMsgToSimplifiedChinese":"转为简体"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":330},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    simplehomepage: true,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"copy":true,"copyrightEbable":false,"limitCount":50,"languages":{"author":"作者: Ivoripuion","link":"链接: ","source":"来源: 米惜","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。","copySuccess":"复制成功，复制和转载请标注本文地址"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#425AEF","bgDark":"#1f1f1f","position":"top-center"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+      css: 'https://cdn.cbd.int/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isAnchor: false,
+  shortcutKey: undefined,
+  autoDarkmode: true
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  configTitle: '米惜',
+  title: 'note chapter 5',
+  postAI: '',
+  pageFillDescription: 'notes about chapter 5, from 5.1, 空表, 快表, 堆块分配, 堆块释放, 堆块合并, from 5.2, exp 空表分配, exp 快表分配, from 5.3, dword shoot, exp from P191（dword shoot）, from 5.4, 一些常见的可以利用dword shoot攻击的地方（常见目标）堆的一些特征堆是一种在程序运行时动态分配的内存动态内存即是程序设计时不能预先决定的需要在程序时用户给出堆在使用时由程序员用专用的函数进行申请如等对内存有可能申请成功也可能失败一般用一个指针来使用申请得到的内存使用完毕后需要把堆指针传给堆释放函数回收这片内存不然就会导致内存泄漏释放函数如等现代操作系统处于一些基本的要求将堆数据结构分为堆块以及堆表堆块堆块分为两个部分块首和块身块首是一个堆块头部的几个字节用来标识这个堆块自身的信息如块的大小本块的空闲情况块身是紧跟在块首后面的部分也是最终分配给用户使用的数据区堆表堆表位于堆区的起始位置用于索引堆区中所有的堆块的重要信息包括堆块的的位置堆块的大小空闲还是占用等堆表的数据结构在设计时可能会考虑平衡二叉树等高级数据结构用于快速查找现代操作系统的堆表往往不止一种数据结构内存的分布大致如下中占用态的堆块被使用其的程序索引堆表只索引空闲态的堆表最重要的堆表有两种空闲双向链表空表快速单向链表快表空表空表的分布情况按照堆块的大小空表被分成有条空闲堆块的大小索引项把空闲堆块按照大小的不同链入不同的空表可以方便堆管理系统高效检索指定大小的空闲堆块需要注意的是空表索引的第一项所标识的空表相对比较特殊这条双向链表链入了所有大于等于字节的堆块小于这些堆块按照各自的大小在零号空表中升序地依次排列下去快表堆块的大小索引项快表不会发送堆块合并空闲块的块首被设置为占用态用来防止堆块合并快表总是被初始化为空而且每条快表最多只有个结点堆块分配快表分配从快表中找到大小匹配的空闲堆块将其设置为占用态将其从堆表中链出返回一个指向堆块块身的指针给程序使用普通空表分配首先寻找最优的空闲块分配若失败则寻找次优的空闲块分配即最小的能够满足要求的空闲块零号空表分配在零号空表中逆序寻找块在中反向查找最后一个块若满足需求则正向搜索能够满足需求的空闲堆块进行分配若最大都不满足就肯定没有满足的了堆块分配中的找零钱现象在空表中若无法找到匹配的最优堆块一个稍大的块被用于分配即从大块中按请求大小精确的割出一块进行分配然后给剩下的部分重新标注块首链入空表而块表由于只在精确匹配时分配所以不存在上述现象堆块释放将堆块状态改为空闲链入相应的堆表所有的释放块都链入堆表的末尾分配的时候也先从堆表末尾拿这里强调了一下快表最多只有项堆块合并当堆管理系统发现两个空闲堆块彼此相邻时就会进行堆块合并操作将两个块从空闲链表链出合并堆块调整合并后的大块的块首将新块重新链入空闲链表具体的堆块的分配以及释放根据内存大小的不同采取的策略也不同内存按照大小分为三类小块大块巨块不同的堆块对应上述的不同的堆分配和释放方式堆类型分配释放小块首先进行快表分配若快表分配失败进行普通空表分配若普通空表分配失败尝试堆缓存分配若堆缓存分配失败进行零号空表分配若零号空表分配失败进行内存紧缩后再尝试分配若仍然无法分配返回优先链入快表若快表满将其链入空表大块首先进行堆缓存进行分配若分配失败使用零号空表分配优先链入堆缓存若堆缓存满链入零号空表巨块用到虚分配不是从堆区分配本书不涉及直接释放无链入操作几个核心快表中的空闲快被设置为占用态不会发送堆块合并快表只有精确匹配才会分配不存在搜索次优解以及找零钱现象快表是单链表操作比双链表简单插入以及删除都很少用到很多指令分配以及释放使优先使用块表失败时才使用空表快表有项容易被填满本节概念性的内容居多所有的堆分配函数最终都是使用位于的函数进行分配占用态快的样子块首部空闲态块的样子块首部一些其余的细节堆块的大小包括了块首在内若请求字节实际会分配字节字节块首字节块身堆块单位为字节不足字节的部分按字节分配初始时不存在精确分配所以将使用次优块分配这个次优块就是尾快次优块分配发生后调整尾块块首信息并将指向新的快尾即两处修改这里主要修改的尾块块首里的大小信息以及将指向的地址后移空表分配空表位于偏移堆区的处可以看到除了第一个双字节字节的双向指针指向了一个堆块别的双向指针都指向了自身即这些空闲链表为空第一个即指向了堆中唯一的一个块即尾块定位到偏移的地方看尾堆这里的堆块其实从的偏移处就开始了不过链表会自动跳过字节的块首这个块的大小通过块首可以看到六次分配以后这些分配的块都是从尾块的开头不停地截取出来的此时偏移的状态可以看到块首信息的大小即为分配实际分配的大小字节字节堆单位此时尾块大小为当三次堆块释放掉以后被释放的堆块就会被链入空表此时指向释放后的块指向释放后的块指向释放后的空闲块再释放后此时就是相邻的空闲块发生堆块合并合并后的堆大小合并后的空闲堆的空表节点快表分配使用快表时尾块会往后偏移原先存放初始尾块的地方存放的是空表偏移此时查看空表的可以看到尾块偏移变成了此时的偏移的地方存放的是空表将创建的堆块释放以后这里有个疑惑链入块表的表从哪里切割下来的这里调试发现不是尾块可以看到链入快表的堆块是处于占用态的防止空闲块的合并攻击核心就是覆盖空闲块的字节的指向后一个块和前一个块的指针这样就可以实现任意地址填充将伪造的填充到指向的地址原理在堆块的使用的时候即将块从空闲态变成占用态将块的节点从块表中卸下时大致发生的函数三次释放以后的堆块状态状态如下空闲占用空闲占用空闲占用几个说明这里的虽然叫前向指针但是指向的是下一个空闲堆块的地址虽然叫后向指针但是指向前一个空闲堆块的地址的地址这应该与其是双向链表有关最后一个空闲块的下一个空闲块即使最开始的空闲块双向链表此时在分配一次的块就会将最后一个空闲块链出并将其前后空闲块的变动回到分配堆块之前将的和进行改动造成此时再分配就会造成即将的值写入地址指向的地方即向指向的地方写入显然这里不会指向啥所以就出错了一些常见的可以利用攻击的地方常见目标内存变量将某个变量的地址写入代码逻辑函数返回地址覆盖返回地址攻击异常处理机制函数指针中线程同步函数需要环境在本地的环境无法做实验待后续再说至此第章学习完毕',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-10-21 18:27:12',
+  postMainColor: '',
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#18171d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f7f9fe')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+          const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+          const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+          const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+          if (t === undefined) {
+            if (isLightMode) activateLightMode()
+            else if (isDarkMode) activateDarkMode()
+            else if (isNotSpecified || hasNoSupport) {
+              const now = new Date()
+              const hour = now.getHours()
+              const isNight = hour <= 6 || hour >= 18
+              isNight ? activateDarkMode() : activateLightMode()
+            }
+            window.matchMedia('(prefers-color-scheme: dark)').addListener(e => {
+              if (saveToLocal.get('theme') === undefined) {
+                e.matches ? activateDarkMode() : activateLightMode()
+              }
+            })
+          } else if (t === 'light') activateLightMode()
+          else activateDarkMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body data-type="anzhiyu"><div id="web_bg"></div><div id="an_music_bg"></div><div id="loading-box" onclick="document.getElementById(&quot;loading-box&quot;).classList.add(&quot;loaded&quot;)"><div class="loading-bg"><img class="loading-img nolazyload" alt="加载头像" src="https://raw.githubusercontent.com/Ivoripuion/images/master/avater.png"/><div class="loading-image-dot"></div></div></div><script>const preloader = {
+  endLoading: () => {
+    document.getElementById('loading-box').classList.add("loaded");
+  },
+  initLoading: () => {
+    document.getElementById('loading-box').classList.remove("loaded")
+  }
+}
+window.addEventListener('load',()=> { preloader.endLoading() })
+setTimeout(function(){preloader.endLoading();},10000)
+
+if (true) {
+  document.addEventListener('pjax:send', () => { preloader.initLoading() })
+  document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+}</script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"/><script async="async" src="https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}"></script><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><div id="nav-group"><span id="blog_name"><div class="back-home-button"><i class="anzhiyufont anzhiyu-icon-grip-vertical"></i><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://ivoripuion.github.io/" title="博客"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="博客"/><span class="back-menu-item-text">博客</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Ivoripuion" title="米惜的github"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/me.jpg" alt="米惜的github"/><span class="back-menu-item-text">米惜的github</span></a></div></div></div></div><a id="site-name" href="/" accesskey="h"><div class="title">米惜</div><i class="anzhiyufont anzhiyu-icon-house-chimney"></i></a></span><div class="mask-name-container"><div id="name-container"><a id="page-name" href="javascript:anzhiyu.scrollToDest(0, 500)">PAGE_NAME</a></div></div><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li></ul></div></div></div><div id="nav-right"><div class="nav-button" id="randomPost_button"><a class="site-page" onclick="toRandomPost()" title="随机前往一个文章" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-dice"></i></a></div><input id="center-console" type="checkbox"/><label class="widget" for="center-console" title="中控台" onclick="anzhiyu.switchConsole();"><i class="left"></i><i class="widget center"></i><i class="widget right"></i></label><div id="console"><div class="console-card-group-reward"><ul class="reward-all console-card"><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png" target="_blank"><img class="post-qr-code-img" alt="微信" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-weichat.png"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png" target="_blank"><img class="post-qr-code-img" alt="支付宝" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/qrcode-alipay.png"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div><div class="console-card-group"><div class="console-card-group-left"><div class="console-card" id="card-newest-comments"><div class="card-content"><div class="author-content-item-tips">互动</div><span class="author-content-item-title"> 最新评论</span></div><div class="aside-list"><span>正在加载中...</span></div></div></div><div class="console-card-group-right"><div class="console-card tags"><div class="card-content"><div class="author-content-item-tips">兴趣点</div><span class="author-content-item-title">寻找你感兴趣的领域</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/BAS/" style="font-size: 1.05rem;">BAS<sup>1</sup></a><a href="/tags/Java%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">Java安全<sup>2</sup></a><a href="/tags/Linux/" style="font-size: 1.05rem;">Linux<sup>5</sup></a><a href="/tags/Windows/" style="font-size: 1.05rem;">Windows<sup>9</sup></a><a href="/tags/fuzz/" style="font-size: 1.05rem;">fuzz<sup>6</sup></a><a href="/tags/pwn/" style="font-size: 1.05rem;">pwn<sup>1</sup></a><a href="/tags/%E4%B8%B4%E5%BA%8A/" style="font-size: 1.05rem;">临床<sup>2</sup></a><a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">二进制安全<sup>2</sup></a><a href="/tags/%E4%BA%91%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">云安全<sup>4</sup></a><a href="/tags/%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F/" style="font-size: 1.05rem;">信息隐藏<sup>1</sup></a><a href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" style="font-size: 1.05rem;">内存马<sup>1</sup></a><a href="/tags/%E5%88%91%E6%B3%95/" style="font-size: 1.05rem;">刑法<sup>1</sup></a><a href="/tags/%E5%89%A7%E6%9C%AC%E6%9D%80%E8%A7%A3%E6%9E%90/" style="font-size: 1.05rem;">剧本杀解析<sup>2</sup></a><a href="/tags/%E5%AD%98%E5%9C%A8%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">存在主义<sup>3</sup></a><a href="/tags/%E5%AE%9E%E6%88%98/" style="font-size: 1.05rem;">实战<sup>3</sup></a><a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 1.05rem;">实践<sup>5</sup></a><a href="/tags/%E5%BC%80%E5%8F%91/" style="font-size: 1.05rem;">开发<sup>1</sup></a><a href="/tags/%E6%96%87%E5%AD%A6%E9%89%B4%E8%B5%8F/" style="font-size: 1.05rem;">文学鉴赏<sup>1</sup></a><a href="/tags/%E6%97%A5%E8%AF%AD/" style="font-size: 1.05rem;">日语<sup>1</sup></a><a href="/tags/%E6%B3%95%E5%AD%A6/" style="font-size: 1.05rem;">法学<sup>1</sup></a><a href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" style="font-size: 1.05rem;">漏洞分析<sup>22</sup></a><a href="/tags/%E7%97%85%E6%AF%92%E6%A3%80%E6%B5%8B/" style="font-size: 1.05rem;">病毒检测<sup>2</sup></a><a href="/tags/%E7%AC%94%E8%AE%B0/" style="font-size: 1.05rem;">笔记<sup>54</sup></a><a href="/tags/%E7%B2%BE%E7%A5%9E%E5%88%86%E6%9E%90/" style="font-size: 1.05rem;">精神分析<sup>10</sup></a><a href="/tags/%E8%85%BE%E8%AE%AF%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">腾讯云主机安全<sup>1</sup></a><a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 1.05rem;">论文阅读<sup>1</sup></a><a href="/tags/%E9%80%86%E5%90%91/" style="font-size: 1.05rem;">逆向<sup>12</sup></a><a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 1.05rem;">随笔<sup>2</sup></a><a href="/tags/%E9%9D%9E%E9%81%93%E5%BE%B7%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">非道德主义<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 1.05rem;">面试题<sup>1</sup></a><a href="/tags/%E9%A9%AC%E5%85%8B%E6%80%9D%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">马克思主义<sup>3</sup></a></div></div><hr/></div></div><div class="console-card history"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-box-archiv"></i><span>文章</span></div><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/10/"><span class="card-archive-list-date">十月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">55</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/09/"><span class="card-archive-list-date">九月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/07/"><span class="card-archive-list-date">七月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">4</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/06/"><span class="card-archive-list-date">六月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/05/"><span class="card-archive-list-date">五月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/04/"><span class="card-archive-list-date">四月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/12/"><span class="card-archive-list-date">十二月 2022</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/11/"><span class="card-archive-list-date">十一月 2022</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li></ul></div><hr/></div></div></div><div class="button-group"><div class="console-btn-item"><a class="darkmode_switchbutton" title="显示模式切换" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-moon"></i></a></div><div class="console-btn-item" id="consoleHideAside" onclick="anzhiyu.hideAsideBtn()" title="边栏显示控制"><a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a></div><div class="console-btn-item on" id="consoleCommentBarrage" onclick="anzhiyu.switchCommentBarrage()" title="热评开关"><a class="commentBarrage"><i class="anzhiyufont anzhiyu-icon-message"></i></a></div><div class="console-btn-item" id="consoleMusic" onclick="anzhiyu.musicToggle()" title="音乐开关"><a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a></div></div><div class="console-mask" onclick="anzhiyu.hideConsole()" href="javascript:void(0);"></div></div><div class="nav-button" id="nav-totop"><a class="totopbtn" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i><span id="percent" onclick="anzhiyu.scrollToDest(0,500)">0</span></a></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);" title="切换"><i class="anzhiyufont anzhiyu-icon-bars"></i></a></div></div></div></nav></header><main id="blog-container"><div class="layout" id="content-inner"><div id="post"><div id="post-info"><div id="post-firstinfo"><div class="meta-firstline"><a class="post-meta-original">原创</a><span class="post-meta-categories"><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i><a class="post-meta-categories" href="/categories/0-Day-%E7%AC%94%E8%AE%B0/" itemprop="url">0 Day 笔记</a></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" tabindex="-1" itemprop="url"> <span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>漏洞分析</span></a></span></div></div><h1 class="post-title" itemprop="name headline">note chapter 5</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="2023-10-16T15:29:03.810Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" itemprop="dateCreated datePublished" datetime="2023-10-21T10:27:12.632Z" title="更新于 2023-10-21 18:27:12">2023-10-21</time></span></div><div class="meta-secondline"><span class="post-meta-separator"></span><span class="post-meta-wordcount"><i class="anzhiyufont anzhiyu-icon-file-word post-meta-icon" title="文章字数"></i><span class="post-meta-label" title="文章字数">字数总计:</span><span class="word-count" title="文章字数">2.6k</span><span class="post-meta-separator"></span><i class="anzhiyufont anzhiyu-icon-clock post-meta-icon" title="阅读时长"></i><span class="post-meta-label" title="阅读时长">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">       </span><span class="post-meta-position" title="作者IP属地为中国"><i class="anzhiyufont anzhiyu-icon-location-dot"></i>中国</span></div></div></div><article class="post-content" id="article-container" itemscope itemtype="http://example.com/2023/10/16/0day-5/"><header><a class="post-meta-categories" href="/categories/0-Day-%E7%AC%94%E8%AE%B0/" itemprop="url">0 Day 笔记</a><a href="/tags/%E7%AC%94%E8%AE%B0/" tabindex="-1" itemprop="url">笔记</a><a href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" tabindex="-1" itemprop="url">漏洞分析</a><h1 id="CrawlerTitle" itemprop="name headline">note chapter 5</h1><span itemprop="author" itemscope itemtype="http://schema.org/Person">Ivoripuion</span><time itemprop="dateCreated datePublished" datetime="2023-10-16T15:29:03.810Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time><time itemprop="dateCreated datePublished" datetime="2023-10-21T10:27:12.632Z" title="更新于 2023-10-21 18:27:12">2023-10-21</time></header><h1 id="notes-about-chapter-5"><a href="#notes-about-chapter-5" class="headerlink" title="notes about chapter 5"></a>notes about chapter 5</h1><h2 id="from-5-1"><a href="#from-5-1" class="headerlink" title="from 5.1"></a>from 5.1</h2><p>堆的一些特征：</p>
+<ol>
+<li>堆是一种在程序运行时动态分配的内存。动态内存即是程序设计时不能预先决定的，需要在程序时用户给出。</li>
+<li>堆在使用时由程序员用专用的函数进行申请，如：malloc，new等。对内存有可能申请成功，也可能失败。</li>
+<li>一般用一个指针来使用申请得到的内存。</li>
+<li>使用完毕后，需要把堆指针传给堆释放函数回收这片内存，不然就会导致内存泄漏。释放函数如：free，delete等。</li>
+</ol>
+<span id="more"></span>
+
+<p>现代操作系统处于一些基本的要求，将堆数据结构分为堆块以及堆表：</p>
+<ol>
+<li><strong>堆块</strong>：堆块分为两个部分：块首和块身。块首是一个堆块头部的几个字节，用来标识这个堆块自身的信息，如块的大小，本块的空闲情况；块身是紧跟在块首后面的部分，也是最终分配给用户使用的数据区。</li>
+<li><strong>堆表</strong>：堆表位于堆区的起始位置，用于索引堆区中所有的堆块的重要信息，包括堆块的的位置，堆块的大小，空闲还是占用等。堆表的数据结构在设计时可能会考虑平衡二叉树等高级数据结构用于快速查找，现代操作系统的堆表往往不止一种数据结构。</li>
+</ol>
+<p>内存的分布大致如下：<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/heap_page.JPG" alt="堆区"></p>
+<p>Windows中，占用态的堆块被使用其的程序索引，堆表只索引空闲态的堆表。最重要的堆表有两种：</p>
+<ol>
+<li>空闲双向链表Freelist（空表）。  </li>
+<li>快速单向链表Lookaside（快表）。</li>
+</ol>
+<h3 id="空表"><a href="#空表" class="headerlink" title="空表"></a>空表</h3><p>空表的分布情况：<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/freelist.JPG" alt="freelist">  </p>
+<p>按照堆块的大小，空表被分成有128条。<br>空闲堆块的大小&#x3D;索引项*8<br>把空闲堆块按照大小的不同链入不同的空表，可以方便堆管理系统高效检索指定大小的空闲堆块。需要注意的是，空表索引的第一项（free[0]）所标识的空表相对比较特殊。这条双向链表链入了所有大于等于1024 字节的堆块（小于512KB）。这些堆块按照各自的大小在零号空表中升序地依次排列下去。</p>
+<h3 id="快表"><a href="#快表" class="headerlink" title="快表"></a>快表</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/lookaside.JPG" alt="lookaside">  </p>
+<p>堆块的大小&#x3D;索引项*8<br>快表不会发送堆块合并，空闲块的块首被设置为占用态，用来防止堆块合并。<br>快表总是被初始化为空，而且每条快表最多只有 4 个结点。</p>
+<h3 id="堆块分配"><a href="#堆块分配" class="headerlink" title="堆块分配"></a>堆块分配</h3><ol>
+<li>快表分配：从快表中找到大小匹配的空闲堆块，将其设置为占用态，将其从堆表中链出，返回一个指向堆块块身的指针给程序使用。</li>
+<li>普通空表分配：首先寻找最优的空闲块分配，若失败，则寻找次优的空闲块分配，即最小的能够满足要求的空闲块。</li>
+<li>零号空表分配：在零号空表中逆序寻找块（在free[0]中反向查找最后一个块），若满足需求则正向搜索能够满足需求的空闲堆块进行分配。（若最大都不满足就肯定没有满足的了）</li>
+</ol>
+<p>堆块分配中的“找零钱”现象：在空表中若无法找到匹配的“最优”堆块，一个稍大的块被用于分配，即从大块中按请求大小精确的割出一块进行分配，然后给剩下的部分重新标注块首，链入空表。而块表由于只在精确匹配时分配，所以不存在上述现象。</p>
+<h3 id="堆块释放"><a href="#堆块释放" class="headerlink" title="堆块释放"></a>堆块释放</h3><p>将堆块状态改为空闲，链入相应的堆表。所有的释放块都链入堆表的末尾，分配的时候也先从堆表末尾拿。<br>这里强调了一下：快表最多只有4项。</p>
+<h3 id="堆块合并"><a href="#堆块合并" class="headerlink" title="堆块合并"></a>堆块合并</h3><p>当堆管理系统发现两个空闲堆块彼此相邻时，就会进行堆块合并操作：将两个块从空闲链表链出，合并堆块，调整合并后的大块的块首，将新块重新链入空闲链表。</p>
+<p>具体的堆块的分配以及释放，根据内存大小的不同，Windows采取的策略也不同。内存按照大小分为三类：</p>
+<ul>
+<li>小块：SIZE&lt;1KB</li>
+<li>大块：1KB&lt;SIZE&lt;512KB</li>
+<li>巨块：SIZE&gt;512KB</li>
+</ul>
+<p>不同的堆块对应上述的不同的堆分配和释放方式：     </p>
+<table>
+<thead>
+<tr>
+<th>堆类型</th>
+<th>分配</th>
+<th>释放</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>小块</td>
+<td>首先进行快表分配；若快表分配失败，进行普通空表分配；若普通空表分配失败尝试堆缓存分配；若堆缓存分配失败，进行零号空表分配；若零号空表分配失败，进行内存紧缩后再尝试分配；若仍然无法分配，返回NULL。</td>
+<td>优先链入快表；若快表满，将其链入空表。</td>
+</tr>
+<tr>
+<td>大块</td>
+<td>首先进行堆缓存进行分配；若分配失败，使用零号空表分配。</td>
+<td>优先链入堆缓存；若堆缓存满，链入零号空表。</td>
+</tr>
+<tr>
+<td>巨块</td>
+<td>用到虚分配（不是从堆区分配，本书不涉及）</td>
+<td>直接释放，无链入操作。</td>
+</tr>
+</tbody></table>
+<p><strong>几个核心</strong>：  </p>
+<ol>
+<li>快表中的空闲快被设置为占用态，不会发送堆块合并。  </li>
+<li>快表只有精确匹配才会分配，不存在搜索“次优解”以及“找零钱”现象。</li>
+<li>快表是单链表，操作比双链表简单，插入以及删除都很少用到很多指令。</li>
+<li>分配以及释放使优先使用块表，失败时才使用空表。</li>
+<li>快表有4项，容易被填满。</li>
+</ol>
+<p>本节概念性的内容居多。</p>
+<h2 id="from-5-2"><a href="#from-5-2" class="headerlink" title="from 5.2"></a>from 5.2</h2><p>所有的堆分配函数最终都是使用位于ntdll.dll的RtlAllocateHeap()函数进行分配。</p>
+<p>占用态快的样子：</p>
+<p>(self_size(2bytes)+previouschunk_size(2bytes)+segment_index(1bytes)+flags(1bytes)+unused_bytes(1bytes)+tag_index(1bytes))(块首部)+data    </p>
+<p>空闲态块的样子：</p>
+<p>(self_size(2bytes)+previouschunk_size(2bytes)+segment_index(1bytes)+flags(1bytes)+unused_bytes(1bytes)+tag_index(1bytes)+flink(4bytes)+blink(4bytes))(块首部)+data</p>
+<p>一些其余的细节：</p>
+<ol>
+<li>堆块的大小包括了块首在内，若请求32字节，实际会分配40字节：8字节块首+32字节块身</li>
+<li>堆块单位为8字节，不足8字节的部分按8字节分配</li>
+<li>初始时不存在精确分配，所以将使用“次优块”分配，这个次优块就是尾快。</li>
+<li>次优块分配发生后，调整尾块块首信息，并将freelist[0]指向新的快尾。（即两处修改，这里主要修改的尾块块首里的大小信息，以及将freelist[0]指向的地址后移）</li>
+</ol>
+<h3 id="exp-空表分配"><a href="#exp-空表分配" class="headerlink" title="exp 空表分配"></a>exp 空表分配</h3><p>空表位于偏移堆区的0x178处：<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/freelist1.JPG" alt="freelist">  </p>
+<p>可以看到除了第一个双字节字节的（8bytes）双向指针指向了一个堆块，别的双向指针都指向了自身，即这些空闲链表为空，第一个即Freelist[0]指向了堆中唯一的一个块，即尾块。<br>定位到偏移0x688的地方看尾堆：  </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/weidui1.JPG" alt="weidui"></p>
+<p>这里的堆块其实从0x680的偏移处就开始了，不过链表会自动跳过8字节的块首。这个块的大小通过块首可以看到：0x130。<br>六次分配以后，这些分配的块都是从尾块的开头不停地截取出来的。此时偏移0x688的状态：  </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/weikuai2.JPG" alt="weikuai"> </p>
+<p>可以看到块首信息的大小即为分配实际分配的大小（字节）&#x2F;4字节&#x3D;堆单位。<br>此时尾块大小为：0x130-0x2<em>4+0x4</em>2&#x3D;0x120。  </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/weikuai3.JPG" alt="weikuai"></p>
+<p>当三次堆块释放掉以后，被释放的堆块就会被链入空表：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/freelist3.JPG" alt="freelist">  </p>
+<p>此时，0x00390688指向h1释放后的块，0x003906A8指向h3释放后的块，0x003906C8指向h5释放后的空闲块。<br>再释放h4后，此时h3,4,5就是相邻的空闲块，发生堆块合并：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/bing_chunk.JPG" alt="合并堆">  </p>
+<p>合并后的堆大小：0x2+0x2+0x4&#x3D;0x8  </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/freelist4.JPG" alt="空表"></p>
+<p>合并后的空闲堆的空表节点：freelist[8]</p>
+<h3 id="exp-快表分配"><a href="#exp-快表分配" class="headerlink" title="exp 快表分配"></a>exp 快表分配</h3><p>使用快表时，尾块会往后偏移，原先存放初始尾块的地方存放的是空表（偏移0x688）,此时查看空表的freelist[0]，可以看到尾块偏移变成了0x1E90：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/weikuaisuoying.JPG" alt="weikuaisuoying">  </p>
+<p>此时的偏移0x680的地方存放的是空表。  </p>
+<p>将创建的堆块释放以后（这里有个疑惑，链入块表的表从哪里切割下来的，这里调试发现不是尾块）。<br>可以看到链入快表的堆块是处于占用态的防止空闲块的合并：  </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/lookaside1.JPG" alt="lookaside1">  </p>
+<h2 id="from-5-3"><a href="#from-5-3" class="headerlink" title="from 5.3"></a>from 5.3</h2><h3 id="dword-shoot"><a href="#dword-shoot" class="headerlink" title="dword shoot"></a>dword shoot</h3><p>dword shoot攻击核心就是覆盖空闲块的8字节的指向后一个块和前一个块的指针。这样就可以实现任意地址填充，将伪造的flink填充到blink指向的地址。</p>
+<p>原理：</p>
+<blockquote>
+<p>在堆块的使用的时候，即将块从空闲态变成占用态，将块的节点从块表中卸下时大致发生的函数：<br>int remove (ListNode * node)<br>{<br>    node -&gt; blink -&gt; flink &#x3D; node -&gt; flink;<br>    node -&gt; flink -&gt; blink &#x3D; node -&gt; blink;<br>    return 0;<br>}  </p>
+</blockquote>
+<h3 id="exp-from-P191（dword-shoot）"><a href="#exp-from-P191（dword-shoot）" class="headerlink" title="exp from P191（dword shoot）"></a>exp from P191（dword shoot）</h3><p>三次释放以后的堆块状态：<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/ds_1.JPG" alt="ds1"><br>h1,h2,h3,h4,h5,h6状态如下：  </p>
+<table>
+<thead>
+<tr>
+<th>index</th>
+<th>addr</th>
+<th>size(8bytes)</th>
+<th>flag</th>
+<th>flink</th>
+<th>blink</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>h1</td>
+<td>0x00390680</td>
+<td>2</td>
+<td>空闲</td>
+<td>0x003906A8</td>
+<td>0x00390188</td>
+</tr>
+<tr>
+<td>h2</td>
+<td>0x00390690</td>
+<td>2</td>
+<td>占用</td>
+<td>————</td>
+<td>————</td>
+</tr>
+<tr>
+<td>h3</td>
+<td>0x003906A0</td>
+<td>2</td>
+<td>空闲</td>
+<td>0x003906C8</td>
+<td>0x00390688</td>
+</tr>
+<tr>
+<td>h4</td>
+<td>0x003906B0</td>
+<td>2</td>
+<td>占用</td>
+<td>————</td>
+<td>————</td>
+</tr>
+<tr>
+<td>h5</td>
+<td>0x003906C0</td>
+<td>2</td>
+<td>空闲</td>
+<td>0x00380188</td>
+<td>0x003906A8</td>
+</tr>
+<tr>
+<td>h6</td>
+<td>0x003906D0</td>
+<td>2</td>
+<td>占用</td>
+<td>————</td>
+<td>————</td>
+</tr>
+</tbody></table>
+<p>几个说明：</p>
+<ol>
+<li>这里的flink虽然叫前向指针但是指向的是下一个空闲堆块+8的地址，blink虽然叫后向指针但是指向前一个空闲堆块的地址+8的地址，这应该与其是双向链表有关。</li>
+<li>最后一个空闲块（h5）的下一个空闲块即使最开始的空闲块（双向链表）。</li>
+</ol>
+<p>此时在分配一次8bytes的块，就会将最后一个空闲块链出，并将其前后空闲块的flink，blink变动：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/ds_2.JPG" alt="ds2">  </p>
+<p>回到分配堆块之前，将h5的flink和blink进行改动造成dword shoot： </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/ds_3.JPG" alt="ds3">  </p>
+<p>此时再分配就会造成：  </p>
+<p>h5-&gt;blink-&gt;flink&#x3D;h5-&gt;flink<br>即将h5flink的值写入blink地址指向的地方，即向0x00000000指向的地方写入0x44444444。  </p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/ds_4.JPG" alt="ds4">  </p>
+<p>显然这里0x00000000不会指向啥，所以就出错了。  </p>
+<h2 id="from-5-4"><a href="#from-5-4" class="headerlink" title="from 5.4"></a>from 5.4</h2><h3 id="一些常见的可以利用dword-shoot攻击的地方（常见目标）"><a href="#一些常见的可以利用dword-shoot攻击的地方（常见目标）" class="headerlink" title="一些常见的可以利用dword shoot攻击的地方（常见目标）"></a>一些常见的可以利用dword shoot攻击的地方（常见目标）</h3><ol>
+<li>内存变量。将某个变量的地址写入flink。</li>
+<li>代码逻辑。</li>
+<li>函数返回地址。覆盖返回地址。</li>
+<li>攻击异常处理机制。</li>
+<li>函数指针。</li>
+<li>PEB中线程同步函数。</li>
+</ol>
+<p>5.5需要win2000环境，在本地的win2003环境无法做实验，待后续再说。</p>
+<p>至此第5章学习完毕。</p>
+</article><div class="post-copyright"><div class="copyright-cc-box"><i class="anzhiyufont anzhiyu-icon-copyright"></i></div><div class="post-copyright__author_box"><a class="post-copyright__author_img" href="/" title="头像"><img class="post-copyright__author_img_back" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/avater.png" title="头像" alt="头像"><img class="post-copyright__author_img_front" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/avater.png" title="头像" alt="头像"></a><div class="post-copyright__author_name">Ivoripuion</div><div class="post-copyright__author_desc">开心就好</div></div><div class="post-copyright__post__info"><a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="http://example.com/2023/10/16/0day-5/">原创</a><a class="post-copyright-title"><span onclick="rm.copyPageUrl('http://example.com/2023/10/16/0day-5/')">note chapter 5</span></a></div><div class="post-tools" id="post-tools"><div class="post-tools-left"><div class="rewardLeftButton"></div><div class="shareRight"><div class="share-link mobile"><div class="share-qrcode"><div class="share-button" title="使用手机访问这篇文章"><i class="anzhiyufont anzhiyu-icon-qrcode"></i></div><div class="share-main"><div class="share-main-all"><div id="qrcode" title="http://example.com/2023/10/16/0day-5/"></div><div class="reward-dec">使用手机访问这篇文章</div></div></div></div></div><div class="share-link weibo"><a class="share-button" target="_blank" href="https://service.weibo.com/share/share.php?title=undefined&amp;url=http://example.com/2023/10/16/0day-5/&amp;pic=undefined" rel="external nofollow noreferrer noopener"><i class="anzhiyufont anzhiyu-icon-weibo"></i></a></div><div class="share-link copyurl"><div class="share-button" id="post-share-url" title="复制链接" onclick="rm.copyPageUrl()"><i class="anzhiyufont anzhiyu-icon-link"></i></div></div></div></div></div><div class="post-copyright__notice"><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">米惜</a>！</span></div></div><div class="post-tools-right"><div class="tag_share"><div class="post-meta__box"><div class="post-meta__box__tag-list"><a class="post-meta__box__tags" href="/tags/%E7%AC%94%E8%AE%B0/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>笔记<span class="tagsPageCount">54</span></a><a class="post-meta__box__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/"><span class="tags-punctuation"> <i class="anzhiyufont anzhiyu-icon-tag"></i></span>漏洞分析<span class="tagsPageCount">22</span></a></div></div></div><div class="post_share"><div class="social-share" data-image="/img/avater.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"/><script src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer="defer"></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/10/16/0day-4/"><img class="prev-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">note chapter 4</div></div></a></div><div class="next-post pull-right"><a href="/2023/10/16/0day-6/"><img class="next-cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">note chapter 6</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="anzhiyufont anzhiyu-icon-thumbs-up fa-fw" style="font-size: 1.5rem; margin-right: 4px"></i><span>喜欢这篇文章的人也看了</span></div><div class="relatedPosts-list"><div><a href="/2023/10/16/0day-1/" title="note chapter 1"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2023-10-16</div><div class="title">note chapter 1</div></div></a></div><div><a href="/2023/10/16/0day-10/" title="note chapter 10"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2023-10-16</div><div class="title">note chapter 10</div></div></a></div><div><a href="/2023/10/16/0day-11/" title="note chapter 11"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2023-10-16</div><div class="title">note chapter 11</div></div></a></div><div><a href="/2023/10/16/0day-12/" title="note chapter 12"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2023-10-16</div><div class="title">note chapter 12</div></div></a></div><div><a href="/2023/10/16/0day-14/" title="note chapter 14"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2023-10-16</div><div class="title">note chapter 14</div></div></a></div><div><a href="/2023/10/16/0day-13/" title="note chapter 13"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/" alt="cover"><div class="content is-center"><div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days fa-fw"></i> 2023-10-16</div><div class="title">note chapter 13</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/avater.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-status"><img class="g-status" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/state.png" ait="status"/></div></div><div class="author-info__description"></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Ivoripuion</h1><div class="author-info__desc">开心就好</div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/Ivoripuion" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/13703678" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-bars"></i><span>文章目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#notes-about-chapter-5"><span class="toc-number">1.</span> <span class="toc-text">notes about chapter 5</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#from-5-1"><span class="toc-number">1.1.</span> <span class="toc-text">from 5.1</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A9%BA%E8%A1%A8"><span class="toc-number">1.1.1.</span> <span class="toc-text">空表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BF%AB%E8%A1%A8"><span class="toc-number">1.1.2.</span> <span class="toc-text">快表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%9D%97%E5%88%86%E9%85%8D"><span class="toc-number">1.1.3.</span> <span class="toc-text">堆块分配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%9D%97%E9%87%8A%E6%94%BE"><span class="toc-number">1.1.4.</span> <span class="toc-text">堆块释放</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%9D%97%E5%90%88%E5%B9%B6"><span class="toc-number">1.1.5.</span> <span class="toc-text">堆块合并</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#from-5-2"><span class="toc-number">1.2.</span> <span class="toc-text">from 5.2</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-%E7%A9%BA%E8%A1%A8%E5%88%86%E9%85%8D"><span class="toc-number">1.2.1.</span> <span class="toc-text">exp 空表分配</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-%E5%BF%AB%E8%A1%A8%E5%88%86%E9%85%8D"><span class="toc-number">1.2.2.</span> <span class="toc-text">exp 快表分配</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#from-5-3"><span class="toc-number">1.3.</span> <span class="toc-text">from 5.3</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#dword-shoot"><span class="toc-number">1.3.1.</span> <span class="toc-text">dword shoot</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exp-from-P191%EF%BC%88dword-shoot%EF%BC%89"><span class="toc-number">1.3.2.</span> <span class="toc-text">exp from P191（dword shoot）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#from-5-4"><span class="toc-number">1.4.</span> <span class="toc-text">from 5.4</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%BA%9B%E5%B8%B8%E8%A7%81%E7%9A%84%E5%8F%AF%E4%BB%A5%E5%88%A9%E7%94%A8dword-shoot%E6%94%BB%E5%87%BB%E7%9A%84%E5%9C%B0%E6%96%B9%EF%BC%88%E5%B8%B8%E8%A7%81%E7%9B%AE%E6%A0%87%EF%BC%89"><span class="toc-number">1.4.1.</span> <span class="toc-text">一些常见的可以利用dword shoot攻击的地方（常见目标）</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-history"></i><span>最近发布</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/10/16/%E4%B8%80%E7%A7%8D%E5%9F%BA%E4%BA%8EPE%E6%96%87%E4%BB%B6%E7%9A%84%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F%E6%96%B9%E6%B3%95%E7%9A%84%E7%A0%94%E7%A9%B6%E4%B8%8E%E5%AE%9E%E7%8E%B0/" title="一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）">一种基于PE文件的信息隐藏方法的研究与实现（信息隐藏相关）</a><time datetime="2023-10-16T15:29:03.909Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/10/16/%E4%B8%80%E4%BE%8BRAT%E6%9C%A8%E9%A9%AC%E5%88%86%E6%9E%90/" title="一例RAT木马分析">一例RAT木马分析</a><time datetime="2023-10-16T15:29:03.908Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/10/16/%E7%94%9F%E8%BE%B0%E7%BA%B2%E6%A1%88/" title="生辰纲案">生辰纲案</a><time datetime="2023-10-16T15:29:03.904Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/10/16/%E5%8A%A0%E8%A7%A3%E5%AF%86%E7%AC%AC%E4%B8%80%E7%AF%87%E7%AC%94%E8%AE%B0/" title="加密与解密第一篇笔记">加密与解密第一篇笔记</a><time datetime="2023-10-16T15:29:03.900Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/10/16/%E7%88%86%E7%A0%B4proxifier/" title="爆破全局代理工具proxifier">爆破全局代理工具proxifier</a><time datetime="2023-10-16T15:29:03.887Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"></div><div id="footer-type-tips"></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="http://ivoripuion.github.io" title="2023@Ivoripuion">2023@Ivoripuion</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">文章</div><div class="length-num">79</div></a><a href="/tags/" title="tag"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/" title="category"><div class="headline">分类</div><div class="length-num">11</div></a></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="显示模式"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>显示模式</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://ivoripuion.github.io/" title="博客"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="博客"/><span class="back-menu-item-text">博客</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Ivoripuion" title="米惜的github"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/me.jpg" alt="米惜的github"/><span class="back-menu-item-text">米惜的github</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/BAS/" style="font-size: 0.88rem;">BAS<sup>1</sup></a><a href="/tags/Java%E5%AE%89%E5%85%A8/" style="font-size: 0.88rem;">Java安全<sup>2</sup></a><a href="/tags/Linux/" style="font-size: 0.88rem;">Linux<sup>5</sup></a><a href="/tags/Windows/" style="font-size: 0.88rem;">Windows<sup>9</sup></a><a href="/tags/fuzz/" style="font-size: 0.88rem;">fuzz<sup>6</sup></a><a href="/tags/pwn/" style="font-size: 0.88rem;">pwn<sup>1</sup></a><a href="/tags/%E4%B8%B4%E5%BA%8A/" style="font-size: 0.88rem;">临床<sup>2</sup></a><a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" style="font-size: 0.88rem;">二进制安全<sup>2</sup></a><a href="/tags/%E4%BA%91%E5%AE%89%E5%85%A8/" style="font-size: 0.88rem;">云安全<sup>4</sup></a><a href="/tags/%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F/" style="font-size: 0.88rem;">信息隐藏<sup>1</sup></a><a href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" style="font-size: 0.88rem;">内存马<sup>1</sup></a><a href="/tags/%E5%88%91%E6%B3%95/" style="font-size: 0.88rem;">刑法<sup>1</sup></a><a href="/tags/%E5%89%A7%E6%9C%AC%E6%9D%80%E8%A7%A3%E6%9E%90/" style="font-size: 0.88rem;">剧本杀解析<sup>2</sup></a><a href="/tags/%E5%AD%98%E5%9C%A8%E4%B8%BB%E4%B9%89/" style="font-size: 0.88rem;">存在主义<sup>3</sup></a><a href="/tags/%E5%AE%9E%E6%88%98/" style="font-size: 0.88rem;">实战<sup>3</sup></a><a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 0.88rem;">实践<sup>5</sup></a><a href="/tags/%E5%BC%80%E5%8F%91/" style="font-size: 0.88rem;">开发<sup>1</sup></a><a href="/tags/%E6%96%87%E5%AD%A6%E9%89%B4%E8%B5%8F/" style="font-size: 0.88rem;">文学鉴赏<sup>1</sup></a><a href="/tags/%E6%97%A5%E8%AF%AD/" style="font-size: 0.88rem;">日语<sup>1</sup></a><a href="/tags/%E6%B3%95%E5%AD%A6/" style="font-size: 0.88rem;">法学<sup>1</sup></a><a href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" style="font-size: 0.88rem;">漏洞分析<sup>22</sup></a><a href="/tags/%E7%97%85%E6%AF%92%E6%A3%80%E6%B5%8B/" style="font-size: 0.88rem;">病毒检测<sup>2</sup></a><a href="/tags/%E7%AC%94%E8%AE%B0/" style="font-size: 0.88rem;">笔记<sup>54</sup></a><a href="/tags/%E7%B2%BE%E7%A5%9E%E5%88%86%E6%9E%90/" style="font-size: 0.88rem;">精神分析<sup>10</sup></a><a href="/tags/%E8%85%BE%E8%AE%AF%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%89%E5%85%A8/" style="font-size: 0.88rem;">腾讯云主机安全<sup>1</sup></a><a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 0.88rem;">论文阅读<sup>1</sup></a><a href="/tags/%E9%80%86%E5%90%91/" style="font-size: 0.88rem;">逆向<sup>12</sup></a><a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 0.88rem;">随笔<sup>2</sup></a><a href="/tags/%E9%9D%9E%E9%81%93%E5%BE%B7%E4%B8%BB%E4%B9%89/" style="font-size: 0.88rem;">非道德主义<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 0.88rem;">面试题<sup>1</sup></a><a href="/tags/%E9%A9%AC%E5%85%8B%E6%80%9D%E4%B8%BB%E4%B9%89/" style="font-size: 0.88rem;">马克思主义<sup>3</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="anzhiyufont anzhiyu-icon-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="anzhiyufont anzhiyu-icon-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8030065748" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://music.163.com/#/playlist?id=8030065748&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.20/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.4/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
+var HoldLog = console.log;
+console.log = function () {};
+let now1 = new Date();
+queueMicrotask(() => {
+  const Log = function () {
+    HoldLog.apply(console, arguments);
+  }; //在恢复前输出日志
+  const grt = new Date("01/01/2022 00:00:00"); //此处修改你的建站时间或者网站上线时间
+  now1.setTime(now1.getTime() + 250);
+  const days = (now1 - grt) / 1000 / 60 / 60 / 24;
+  const dnum = Math.floor(days);
+  const ascll = [
+    `欢迎使用安知鱼!`,
+    `生活明朗, 万物可爱`,
+    `
+        
+       █████╗ ███╗   ██╗███████╗██╗  ██╗██╗██╗   ██╗██╗   ██╗
+      ██╔══██╗████╗  ██║╚══███╔╝██║  ██║██║╚██╗ ██╔╝██║   ██║
+      ███████║██╔██╗ ██║  ███╔╝ ███████║██║ ╚████╔╝ ██║   ██║
+      ██╔══██║██║╚██╗██║ ███╔╝  ██╔══██║██║  ╚██╔╝  ██║   ██║
+      ██║  ██║██║ ╚████║███████╗██║  ██║██║   ██║   ╚██████╔╝
+      ╚═╝  ╚═╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝   ╚═╝    ╚═════╝
+        
+        `,
+    "已上线",
+    dnum,
+    "天",
+    "©2022 By 安知鱼 V1.6.8",
+  ];
+  const ascll2 = [`NCC2-036`, `调用前置摄像头拍照成功，识别为【小笨蛋】.`, `Photo captured: `, `🤪`];
+
+  setTimeout(
+    Log.bind(
+      console,
+      `\n%c${ascll[0]} %c ${ascll[1]} %c ${ascll[2]} %c${ascll[3]}%c ${ascll[4]}%c ${ascll[5]}\n\n%c ${ascll[6]}\n`,
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      "color:#425AEF",
+      "",
+      "color:#425AEF",
+      ""
+    )
+  );
+  setTimeout(
+    Log.bind(
+      console,
+      `%c ${ascll2[0]} %c ${ascll2[1]} %c \n${ascll2[2]} %c\n${ascll2[3]}\n`,
+      "color:white; background-color:#4fd953",
+      "",
+      "",
+      'background:url("https://npm.elemecdn.com/anzhiyu-blog@1.1.6/img/post/common/tinggge.gif") no-repeat;font-size:450%'
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c WELCOME %c 你好，小笨蛋.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(
+      console,
+      "%c ⚡ Powered by 安知鱼 %c 你正在访问 Ivoripuion 的博客.",
+      "color:white; background-color:#f0ad4e",
+      ""
+    )
+  );
+
+  setTimeout(Log.bind(console, "%c W23-12 %c 你已打开控制台.", "color:white; background-color:#4f90d9", ""));
+
+  setTimeout(
+    console.warn.bind(console, "%c S013-782 %c 你现在正处于监控中.", "color:white; background-color:#d9534f", "")
+  );
+});</script><script async src="/anzhiyu/random.js"></script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="post"></div><script>var visitorMail = "visitor@anheyu.com";
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><script src="/js/anzhiyu/right_click_menu.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+  // removeEventListener scroll 
+  anzhiyu.removeGlobalFnEvent('pjax')
+  anzhiyu.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
