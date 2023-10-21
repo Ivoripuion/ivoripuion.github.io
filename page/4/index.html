@@ -66,7 +66,7 @@
   isHome: true,
   isHighlightShrink: false,
   isToc: false,
-  postUpdate: '2023-10-21 18:42:55',
+  postUpdate: '2023-10-21 19:03:32',
   postMainColor: '',
 }</script><noscript><style type="text/css">
   #nav {
@@ -276,45 +276,131 @@ if (true) {
         语言学习
       </a>
     </div>
-    </div><div class="category-bar-next" id="category-bar-next" onclick="anzhiyu.scrollCategoryBarToRight()"><i class="anzhiyufont anzhiyu-icon-angle-double-right"></i></div><a class="catalog-more" href="/categories/">更多</a></div></div></div><div class="recent-post-item lastestpost-item" onclick="pjax.loadUrl('/2023/10/16/blast_wechat/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">reverse</div><a class="unvisited-post" href="/2023/10/16/blast_wechat/" title="破解微信单项实例">未读</a></div><a class="article-title" href="/2023/10/16/blast_wechat/" title="破解微信单项实例">破解微信单项实例</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.837Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E5%AE%9E%E6%88%98/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>实战</span></a><a class="article-meta__tags" href="/tags/%E9%80%86%E5%90%91/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>逆向</span></a></span></div><div class="content">破解微信单项实例微信只能运行一个实在有点繁琐，所以简单爆破一下。
+    </div><div class="category-bar-next" id="category-bar-next" onclick="anzhiyu.scrollCategoryBarToRight()"><i class="anzhiyufont anzhiyu-icon-angle-double-right"></i></div><a class="catalog-more" href="/categories/">更多</a></div></div></div><div class="recent-post-item lastestpost-item" onclick="pjax.loadUrl('/2023/10/16/%E7%94%9F%E8%BE%B0%E7%BA%B2%E6%A1%88/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">随想</div><a class="unvisited-post" href="/2023/10/16/%E7%94%9F%E8%BE%B0%E7%BA%B2%E6%A1%88/" title="生辰纲案">未读</a></div><a class="article-title" href="/2023/10/16/%E7%94%9F%E8%BE%B0%E7%BA%B2%E6%A1%88/" title="生辰纲案">生辰纲案</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.904Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E6%B3%95%E5%AD%A6/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>法学</span></a><a class="article-meta__tags" href="/tags/%E5%88%91%E6%B3%95/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>刑法</span></a></span></div><div class="content">晁盖等八人抢劫生辰纲案大一时写的一篇论文，感觉挺有意思，今天整理博客，一并上传。
+关键词：刑事案件 黑社会组织 抢劫 有持续的社会危害
 
 
-分析关键函数一般控制软件只运行单个实例会使用找进程名称(FindWindow)，设置锁(CreateMutex)之类的函数，具体的在《加密与解密》中都有详细介绍了，这里就不赘述。
-微信没加壳，直接IDA看WinMain函数，刚开始是一段查询系统版本以及检查程序更新的函数：
-
-在往后就可以找到关键的函数，可以看到微信整体打开是调用WeChatWin.dll中的StartWachat函数的：
-
-由于在Wechat.exe程序中没有找到有效的控制单个程序实例的函数，所以再看看WeChatWin.dll中的导入函数，可以看到导入了CreateMutexW函数以及FindWindow函数：
-
-查看CreateMutexW函数上下文可以判断这个应该就是控制程序单个实例的关键函数：
-
-而调用FindWindowW函数的上下文就更加明显了：
-
-使用OD载入程序，在CreateMutexW下断点，触断后单步看。
-设置的锁即控制单个实例的锁：
-
-根据OD中最后三个字节”715”可以判断出这里的调用CreateMutexW就是上面的控制单 ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">随想</div><a class="unvisited-post" href="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/" title="APT分析及TTPs提取">未读</a></div><a class="article-title" href="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/" title="APT分析及TTPs提取">APT分析及TTPs提取</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.834Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/%E4%BA%91%E5%AE%89%E5%85%A8/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>云安全</span></a></span></div><div class="content">APT分析及TTPs提取
-转自project #，写的很不错，做个笔记（抄一下加深印象）。
+基本案情晁盖是山东郓城县东溪村人，乃东溪村保正，本乡财主。吴用，山东菏泽市郓城县东溪村人。刘唐，东潞州人氏。刘唐为劫取生辰纲一事，夜走郓城县往投晁盖，途中酒后醉卧灵官庙，为巡查的县都头雷横抓获并带往东溪村晁盖庄，晁盖得知详由，并开始着手领导组织劫取生辰纲。晁盖吴用自幼结交，晁盖因吴用聪明过人便教唆其出谋策划劫取的全部过程，吴用欣然同意。公孙胜，蓟州人氏。其通过某些非法途径获知生辰纲一事，便投奔晁盖以期望伙同一起抢劫生辰纲。阮小二，阮小五，阮小七梁山泊旁边石碣村人。白胜，是黄泥冈东十里路安乐村闲汉。吴用召集阮氏三兄弟和白胜一起参与了此次抢劫案。杨志，武举出身，曾任殿帅府制使，因失陷花石纲丢官，后为梁中书赏识，派其护送此次生辰纲。
+案发当日，天气较热，杨志因有一定的江湖经验，指导黄泥岗乃是非之地不宜久留。所以在同行护送生辰纲的其余几人想要在黄泥岗停歇一会时便催使他们不要歇息，这也导致了同行护送的其他人对杨志心存不满。当护送一行人基本不想在继续护送时，白 ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">随想</div><a class="unvisited-post" href="/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/" title="指令替换技巧">未读</a></div><a class="article-title" href="/2020/05/20/%E6%8C%87%E4%BB%A4%E6%9B%BF%E6%8D%A2%E6%8A%80%E5%B7%A7/" title="指令替换技巧">指令替换技巧</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2020-05-20T13:19:44.000Z" title="发表于 2020-05-20 21:19:44">2020-05-20</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a></span></div><div class="content">指令替换技巧 from 《加密与解密》
 
 
 
-攻击事件这里专指网络空间安全领域的攻击事件，即在未经授权情况下对计算机系统或计算机资源进行访问、使用、更改、破坏的活动。 根据事件的烈度以及影响范围，可分为以下几类：
 
-常规攻击；
+功能
+指令
+机器码
+指令长度(byte)
 
-常规攻击一般呈线性，时间复杂度低，杂音少，可直接推出攻击目的。如：非定向钓鱼，端口，服务扫描，SQL注入，拒绝服务攻击，会话劫持，中间人攻击，凭证重放等。这类事件影响小，危害可控且可在短时间内排查修复。
 
-Botnet;
 
-僵尸网络特点是大规模攻击，并且涉及到RAT。如：Neucurs，Gafgyt，Mirai，僵尸网络上的垃圾邮件，Ddos等。
+替换1字节
+nop
+90
+1
 
-恶意软件；
 
-恶意软件一般指勒索，挖矿以及病毒木马。涉及钱包，矿池；目的不同，且包含RAT；不同的入口，也会出现标志性的工具和利用。如：WannaCry，Bad Rabbit，大量MiktoTik路由器被感染进行恶意挖矿等。
+替换2字节
+nopnop
+9090
+11
 
-APT
 
-APT攻击时间复杂度高，多个行为，多个身份，使用的软件有loader，Downloader，RAT，Malware等。知名APT ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/afl-fuzz_main/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/afl-fuzz_main/" title="afl-fuzz.c main函数简单流程">未读</a></div><a class="article-title" href="/2023/10/16/afl-fuzz_main/" title="afl-fuzz.c main函数简单流程">afl-fuzz.c main函数简单流程</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.833Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">afl-fuzz.c main函数简单流程（关键步骤省略）预处理
+替换2字节
+mov edi,edi
+8B FF
+2
+
+
+替换2字节
+push eaxpop eax
+5058
+11
+
+
+替换2字节
+inc eaxdec eax
+4048
+11
+
+
+替换2字节
+jmp xx
+eb00
+2
+
+
+寄存器清零
+mov eax,0x00000000
+B8 00 00 00 00
+5
+
+
+寄存器清零
+push 0pop eax
+6A 0058
+21
+
+
+寄存器清零
+sub eax,eax&#x2F;xor eax,eax
+2B C0&#x2F;33 C0
+2
+
+
+测试寄存器的值是否为0
+cmp eax,0x00000000je label
+83 F8 0074xx&#x2F;0F84xxxxxxxx
+32&#x2F;6
+
+
+测试寄存器的值是否为0
+or eax,eax&#x2F;test eax,eaxje label
+0B C0&#x2F;85 C074xx&#x2F;0F84xxxxx ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/afl_main2/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/afl_main2/" title="afl-fuzz.c细节分析之perform_dry_run函数分析">未读</a></div><a class="article-title" href="/2023/10/16/afl_main2/" title="afl-fuzz.c细节分析之perform_dry_run函数分析">afl-fuzz.c细节分析之perform_dry_run函数分析</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.829Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">afl-fuzz.c细节分析之perform_dry_run函数分析123456789/*直接运行所有的初始testcase来确保程序按照预期运行，这个操作只会进行一次。    */static void perform_dry_run(char** argv)&#123;    ......    while(q)&#123;        ......    &#125;&#125;
+
+
+
+取队列，并设置cal_failures为0：
+12struct queue_entry* q = queue;u32 cal_failures = 0;
+
+读取环境变量AFL_SKIP_CRASHES为skip_crashes：
+1u8* skip_crashes = getenv(&quot;AFL_SKIP_CRASHES&quot;);
+
+然后是进入队列的循环：
+123while(q)&#123;    ......&#125;
+
+循环内容如下：
+打开当前testcase，并判断是否可读：
+123456789fd = open(q-&gt;fname, O_RDONLY);         ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/afl_main3/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/afl_main3/" title="afl-fuzz.c细节分析之主循环分析">未读</a></div><a class="article-title" href="/2023/10/16/afl_main3/" title="afl-fuzz.c细节分析之主循环分析">afl-fuzz.c细节分析之主循环分析</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.830Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">afl-fuzz.c细节分析之主循环分析cull_queue阶段afl的dry run环节结束后就会进入cull_queue()：
+1cull_queue();
+
+
+
+cull_queue函数分析该函数用于精简队列。
+若处于dumb模式或者没有发现更优的样例就返回：
+1if (dumb_mode || !score_changed) return;
+
+将标记位score_changed改为0：
+1score_changed = 0;
+
+设置temp_v数组中的值为0xff：
+1memset(temp_v, 255, MAP_SIZE &gt;&gt; 3);
+
+设置queued_favored和pending_favored为0：
+12queued_favored  = 0;pending_favored = 0;
+
+遍历queue，将所有样例的favored设置为0：
+123456q = queue;while (q) &#123;    q-&gt;favored = 0;    q = q-&gt;next;&#125;
+
+若对某条分支信息，top_rated[i]存在（存在fa ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/afl-as/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/afl-as/" title="afl-as粗析">未读</a></div><a class="article-title" href="/2023/10/16/afl-as/" title="afl-as粗析">afl-as粗析</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.831Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">afl-as.c粗析查看main函数，关键的就一句：
+1if (!just_version) add_instrumentation();
+
+即在汇编文件中添加插桩代码。
+
+
+该函数中关键部分：
+12345678910if (!pass_thru &amp;&amp; !skip_intel &amp;&amp; !skip_app &amp;&amp; !skip_csect &amp;&amp; instr_ok &amp;&amp;    instrument_next &amp;&amp; line[0] == &#x27;\t&#x27; &amp;&amp; isalpha(line[1])) &#123;  fprintf(outf, use_64bit ? trampoline_fmt_64 : trampoline_fmt_32,          R(MAP_SIZE));  instrument_next = 0;  ins_lines++;&#125;
+
+即通过汇编判断当前是不是一个分支语句或者函数，然后根据环境是x86还是x86-64添加汇编代码trampol ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/afl-fuzz_main/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/afl-fuzz_main/" title="afl-fuzz.c main函数简单流程">未读</a></div><a class="article-title" href="/2023/10/16/afl-fuzz_main/" title="afl-fuzz.c main函数简单流程">afl-fuzz.c main函数简单流程</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.833Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">afl-fuzz.c main函数简单流程（关键步骤省略）预处理
 打印afl程序信息；
 
 1SAYF(cCYA &quot;afl-fuzz &quot; cBRI VERSION cRST &quot; by &lt;lcamtuf@google.com&gt;\n&quot;);
@@ -337,82 +423,101 @@ APT攻击时间复杂度高，多个行为，多个身份，使用的软件有lo
 i：输入语料文件夹，对应变量in_dir；
 o：fuzz输出文件夹，对应变量out_dir；
 M，S：多线程模式下的Master和Server，Master会采取强制确定性变异，然后进行随进行变异，而Server会采取dumb mode进行fuzz，即不进行确定性变异；
-f：用来进行fuzz的文件，对应变量 ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/afl-as/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/afl-as/" title="afl-as粗析">未读</a></div><a class="article-title" href="/2023/10/16/afl-as/" title="afl-as粗析">afl-as粗析</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.831Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">afl-as.c粗析查看main函数，关键的就一句：
-1if (!just_version) add_instrumentation();
-
-即在汇编文件中添加插桩代码。
-
-
-该函数中关键部分：
-12345678910if (!pass_thru &amp;&amp; !skip_intel &amp;&amp; !skip_app &amp;&amp; !skip_csect &amp;&amp; instr_ok &amp;&amp;    instrument_next &amp;&amp; line[0] == &#x27;\t&#x27; &amp;&amp; isalpha(line[1])) &#123;  fprintf(outf, use_64bit ? trampoline_fmt_64 : trampoline_fmt_32,          R(MAP_SIZE));  instrument_next = 0;  ins_lines++;&#125;
-
-即通过汇编判断当前是不是一个分支语句或者函数，然后根据环境是x86还是x86-64添加汇编代码trampol ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/afl_main3/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/afl_main3/" title="afl-fuzz.c细节分析之主循环分析">未读</a></div><a class="article-title" href="/2023/10/16/afl_main3/" title="afl-fuzz.c细节分析之主循环分析">afl-fuzz.c细节分析之主循环分析</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.830Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">afl-fuzz.c细节分析之主循环分析cull_queue阶段afl的dry run环节结束后就会进入cull_queue()：
-1cull_queue();
+f：用来进行fuzz的文件，对应变量 ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">随想</div><a class="unvisited-post" href="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/" title="APT分析及TTPs提取">未读</a></div><a class="article-title" href="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/" title="APT分析及TTPs提取">APT分析及TTPs提取</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.834Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/%E4%BA%91%E5%AE%89%E5%85%A8/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>云安全</span></a></span></div><div class="content">APT分析及TTPs提取
+转自project #，写的很不错，做个笔记（抄一下加深印象）。
 
 
 
-cull_queue函数分析该函数用于精简队列。
-若处于dumb模式或者没有发现更优的样例就返回：
-1if (dumb_mode || !score_changed) return;
+攻击事件这里专指网络空间安全领域的攻击事件，即在未经授权情况下对计算机系统或计算机资源进行访问、使用、更改、破坏的活动。 根据事件的烈度以及影响范围，可分为以下几类：
 
-将标记位score_changed改为0：
-1score_changed = 0;
+常规攻击；
 
-设置temp_v数组中的值为0xff：
-1memset(temp_v, 255, MAP_SIZE &gt;&gt; 3);
+常规攻击一般呈线性，时间复杂度低，杂音少，可直接推出攻击目的。如：非定向钓鱼，端口，服务扫描，SQL注入，拒绝服务攻击，会话劫持，中间人攻击，凭证重放等。这类事件影响小，危害可控且可在短时间内排查修复。
 
-设置queued_favored和pending_favored为0：
-12queued_favored  = 0;pending_favored = 0;
+Botnet;
 
-遍历queue，将所有样例的favored设置为0：
-123456q = queue;while (q) &#123;    q-&gt;favored = 0;    q = q-&gt;next;&#125;
+僵尸网络特点是大规模攻击，并且涉及到RAT。如：Neucurs，Gafgyt，Mirai，僵尸网络上的垃圾邮件，Ddos等。
 
-若对某条分支信息，top_rated[i]存在（存在fa ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/afl_main2/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/afl_main2/" title="afl-fuzz.c细节分析之perform_dry_run函数分析">未读</a></div><a class="article-title" href="/2023/10/16/afl_main2/" title="afl-fuzz.c细节分析之perform_dry_run函数分析">afl-fuzz.c细节分析之perform_dry_run函数分析</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.829Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">afl-fuzz.c细节分析之perform_dry_run函数分析123456789/*直接运行所有的初始testcase来确保程序按照预期运行，这个操作只会进行一次。    */static void perform_dry_run(char** argv)&#123;    ......    while(q)&#123;        ......    &#125;&#125;
+恶意软件；
 
+恶意软件一般指勒索，挖矿以及病毒木马。涉及钱包，矿池；目的不同，且包含RAT；不同的入口，也会出现标志性的工具和利用。如：WannaCry，Bad Rabbit，大量MiktoTik路由器被感染进行恶意挖矿等。
 
+APT
 
-取队列，并设置cal_failures为0：
-12struct queue_entry* q = queue;u32 cal_failures = 0;
+APT攻击时间复杂度高，多个行为，多个身份，使用的软件有loader，Downloader，RAT，Malware等。知名APT ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2022/12/04/BAS-CALDERA%E4%BD%93%E9%AA%8C/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">随想</div><a class="unvisited-post" href="/2022/12/04/BAS-CALDERA%E4%BD%93%E9%AA%8C/" title="BAS_CALDERA体验">未读</a></div><a class="article-title" href="/2022/12/04/BAS-CALDERA%E4%BD%93%E9%AA%8C/" title="BAS_CALDERA体验">BAS_CALDERA体验</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2022-12-03T16:13:40.000Z" title="发表于 2022-12-04 00:13:40">2022-12-04</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/BAS/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>BAS</span></a></span></div><div class="content">caldera试用简介caldera由MITRE团队开发，成立于2015年，第一版发行于2017年，主要用于攻击模拟，主要用于：
 
-读取环境变量AFL_SKIP_CRASHES为skip_crashes：
-1u8* skip_crashes = getenv(&quot;AFL_SKIP_CRASHES&quot;);
-
-然后是进入队列的循环：
-123while(q)&#123;    ......&#125;
-
-循环内容如下：
-打开当前testcase，并判断是否可读：
-123456789fd = open(q-&gt;fname, O_RDONLY);         ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/2020-4-21/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">随想</div><a class="unvisited-post" href="/2023/10/16/2020-4-21/" title="一道笔试题">未读</a></div><a class="article-title" href="/2023/10/16/2020-4-21/" title="一道笔试题">一道笔试题</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.825Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>面试题</span></a></span></div><div class="content">前几天华为实习生的一道笔试题，可能是我投安全岗的原因，编程题比较简单，记录下：
-
-12345678910111213141516171819202122232425262728293031#include&lt;iostream&gt;using namespace std;int main() &#123;	int num;	cin &gt;&gt; num;	char **p = new char*[num];	for (int i = 0; i &lt; num; i++)		p[i] = new char[9];	for (int i = 0; i &lt; num; i++) &#123;		for (int j = 0; j &lt; 9; j++) &#123;			char tmp;			cin &gt;&gt; tmp;			p[i][j] = tmp;		&#125;	&#125;	for (int i = 0; i &lt; num; i++) &#123;		if ((p[i][0]-48)) &#123;			for (int j = 1; j &lt; 9; ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/0day-25/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">0 Day 笔记</div><a class="unvisited-post" href="/2023/10/16/0day-25/" title="note chapter 25">未读</a></div><a class="article-title" href="/2023/10/16/0day-25/" title="note chapter 25">note chapter 25</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.823Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>漏洞分析</span></a></span></div><div class="content">notes about chapter 25from 25.2下断点的技巧畸形RetAddr断点所谓畸形 RetAddr断点，就是将POC中溢出后覆盖的函数返回地址修改为一个非法地址（例如 0xFFFFFFFF），在调试POC时能够触发一个非法内存访问的错误，使得调试器中断下来。
-
-
-条件断点条件断点是一个带有条件表达式的普通INT3 断点。当调试器遇到这类断点时，它将计算表达式的值，如果结果非零或者表达式无效，将暂停被调试程序。
-od中在地址shfit f2即可。
-举例：
-调试记事本时，UNICODE [[ESP+4]]&#x3D;&#x3D;”c:\test.txt”，表示当进入CreateFileW 函数后，如果第一个参数lpFileName为unicode 字符串”c:\test.txt”时则暂停被调试的程序。
-消息断点消息断点是调试UI程序时的常用技巧。有时需要分析类似一个按钮被单击后程序的处理过程，就需要设置消息断点。消息断点其实是属于条件断点的，只不过是用消息来做表达式的。
-内存断点调试过程更关心的是一些重要数据在内存中的读取、访问等操作，那就需要内存断点的支持了。
-“M ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/0day-15/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">0 Day 笔记</div><a class="unvisited-post" href="/2023/10/16/0day-15/" title="note chapter 15">未读</a></div><a class="article-title" href="/2023/10/16/0day-15/" title="note chapter 15">note chapter 15</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.822Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>漏洞分析</span></a></span></div><div class="content">notes about 0day chapter 15from 15.1微软在之前堆的基础上增加了堆的安全校验：
-
-PEB random
-Safe Unlink
+自动化突防和模拟训练
+在网络侧识别脆弱点
+降低培训员工的开销
+高亮防御中的差距
+减少防御团队所需要的资源
+给防御的研究者和开发者提供一个平台
+解答有关检测和响应的问题
 
 
 
-Safe Unlink机制：
-Windows sp2之前链表的拆卸操作：
-123456int remove (ListNode * node)&#123;    node -&gt; blink -&gt; flink = node -&gt; flink;     node -&gt; flink -&gt; blink = node -&gt; blink;     return 0;&#125;
+caldera也与ATT&amp;CK框架相映射，使用了ATT&amp;CK中的许多例子作为测试样例。
+核心结构caldera主要分为server端和agent。
+server端server端分为核心系统以及插件两大部分，主要由python开发：
 
 
-SP2在进行删除操作时，将提前验证堆块前向指针和后向指针的完整性，以防止发生DWORD SHOOT：
-1234567891011121314int safe_remove (ListNode * node)&#123;    if( (node-&gt;blink-&gt;flink==node)&amp;&amp;(node-&gt;flink-&gt;blink==node) )    &#123;         ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/0day-14/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">0 Day 笔记</div><a class="unvisited-post" href="/2023/10/16/0day-14/" title="note chapter 14">未读</a></div><a class="article-title" href="/2023/10/16/0day-14/" title="note chapter 14">note chapter 14</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.821Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>漏洞分析</span></a></span></div><div class="content">notes about chapter 14from 14.1开启SEHOP：
-手工在注册表中HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SessionManager\kernel找到DisableExceptionChainValidation项，将该值设置为0，即可启用SEHOP。
+核心系统：一个具备很多功能的C2服务器控制台。
 
 
-SEHOP的原理对SEH链进行检查，检查链表的最后一项是否为系统固定的终极异常处理函数，若是则表明SEH链完整，否则就有可能发生SEH覆盖攻击。
-验证代码：
-1234567891011121314151617181920212223242526272829303132if (process_flags &amp; 0x40 == 0) &#123;   //如果没有 SEH 记录则不进行检测    if (record != 0xFFFFFFFF) &#123;        //开始检测         do &#123;            if (record &lt; stack_bottom || record &gt; sta ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/3/#content-inner"><i class="anzhiyufont anzhiyu-icon-chevron-left fa-fw" style="font-weight: inherit; font-size: 1rem;"></i><div class="pagination_tips_prev">上页</div></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/#content-inner">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#content-inner">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/#content-inner">8</a><a class="extend next" rel="next" href="/page/5/#content-inner"><div class="pagination_tips_next">下页</div><i style="font-weight: inherit; font-size: 1rem;" class="anzhiyufont anzhiyu-icon-chevron-right fa-fw"></i></a><div class="toPageGroup"><input id="toPageText" oninput="value=value.replace(/[^0-9]/g,'')" maxlength="3" onkeyup="this.value=this.value.replace(/[^u4e00-u9fa5w]/g,'')" aria-label="toPage"><a id="toPageButton" onclick="anzhiyu.toPage()"><i class="anzhiyufont anzhiyu-icon-angles-right" style="font-weight: inherit; font-size: 1rem;"></i></a></div></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/avater.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-status"><img class="g-status" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/state.png" ait="status"/></div></div><div class="author-info__description"></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Ivoripuion</h1><div class="author-info__desc">开心就好</div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/Ivoripuion" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/13703678" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget"><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/BAS/" style="font-size: 1.05rem;">BAS<sup>1</sup></a><a href="/tags/Java%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">Java安全<sup>2</sup></a><a href="/tags/Linux/" style="font-size: 1.05rem;">Linux<sup>5</sup></a><a href="/tags/Windows/" style="font-size: 1.05rem;">Windows<sup>9</sup></a><a href="/tags/fuzz/" style="font-size: 1.05rem;">fuzz<sup>6</sup></a><a href="/tags/pwn/" style="font-size: 1.05rem;">pwn<sup>1</sup></a><a href="/tags/%E4%B8%B4%E5%BA%8A/" style="font-size: 1.05rem;">临床<sup>2</sup></a><a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">二进制安全<sup>2</sup></a><a href="/tags/%E4%BA%91%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">云安全<sup>4</sup></a><a href="/tags/%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F/" style="font-size: 1.05rem;">信息隐藏<sup>1</sup></a><a href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" style="font-size: 1.05rem;">内存马<sup>1</sup></a><a href="/tags/%E5%88%91%E6%B3%95/" style="font-size: 1.05rem;">刑法<sup>1</sup></a><a href="/tags/%E5%89%A7%E6%9C%AC%E6%9D%80%E8%A7%A3%E6%9E%90/" style="font-size: 1.05rem;">剧本杀解析<sup>2</sup></a><a href="/tags/%E5%AD%98%E5%9C%A8%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">存在主义<sup>3</sup></a><a href="/tags/%E5%AE%9E%E6%88%98/" style="font-size: 1.05rem;">实战<sup>3</sup></a><a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 1.05rem;">实践<sup>5</sup></a><a href="/tags/%E5%BC%80%E5%8F%91/" style="font-size: 1.05rem;">开发<sup>1</sup></a><a href="/tags/%E6%96%87%E5%AD%A6%E9%89%B4%E8%B5%8F/" style="font-size: 1.05rem;">文学鉴赏<sup>1</sup></a><a href="/tags/%E6%97%A5%E8%AF%AD/" style="font-size: 1.05rem;">日语<sup>1</sup></a><a href="/tags/%E6%B3%95%E5%AD%A6/" style="font-size: 1.05rem;">法学<sup>1</sup></a><a href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" style="font-size: 1.05rem;">漏洞分析<sup>22</sup></a><a href="/tags/%E7%97%85%E6%AF%92%E6%A3%80%E6%B5%8B/" style="font-size: 1.05rem;">病毒检测<sup>2</sup></a><a href="/tags/%E7%AC%94%E8%AE%B0/" style="font-size: 1.05rem;">笔记<sup>54</sup></a><a href="/tags/%E7%B2%BE%E7%A5%9E%E5%88%86%E6%9E%90/" style="font-size: 1.05rem;">精神分析<sup>10</sup></a><a href="/tags/%E8%85%BE%E8%AE%AF%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">腾讯云主机安全<sup>1</sup></a><a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 1.05rem;">论文阅读<sup>1</sup></a><a href="/tags/%E9%80%86%E5%90%91/" style="font-size: 1.05rem;">逆向<sup>12</sup></a><a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 1.05rem;">随笔<sup>2</sup></a><a href="/tags/%E9%9D%9E%E9%81%93%E5%BE%B7%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">非道德主义<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 1.05rem;">面试题<sup>1</sup></a><a href="/tags/%E9%A9%AC%E5%85%8B%E6%80%9D%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">马克思主义<sup>3</sup></a></div></div><hr/><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
+
+插件：为caldera添加更多特性和功能的独立存储库。
+
+
+插件中包含了agent部分功能的使用。
+agent端caldera的agent端有多种形式，包括反弹shell（Manx）、go编写的（Sandcat）、python（Ragdoll）编写的，均支持windows以及linux平台：
+
+
+
+
+agent的主要功能就是接受下发的命令，执行剧本：
+
+具体功能caldera的攻击模拟 ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/blast_wechat/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">reverse</div><a class="unvisited-post" href="/2023/10/16/blast_wechat/" title="破解微信单项实例">未读</a></div><a class="article-title" href="/2023/10/16/blast_wechat/" title="破解微信单项实例">破解微信单项实例</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.837Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E5%AE%9E%E6%88%98/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>实战</span></a><a class="article-meta__tags" href="/tags/%E9%80%86%E5%90%91/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>逆向</span></a></span></div><div class="content">破解微信单项实例微信只能运行一个实在有点繁琐，所以简单爆破一下。
+
+
+分析关键函数一般控制软件只运行单个实例会使用找进程名称(FindWindow)，设置锁(CreateMutex)之类的函数，具体的在《加密与解密》中都有详细介绍了，这里就不赘述。
+微信没加壳，直接IDA看WinMain函数，刚开始是一段查询系统版本以及检查程序更新的函数：
+
+在往后就可以找到关键的函数，可以看到微信整体打开是调用WeChatWin.dll中的StartWachat函数的：
+
+由于在Wechat.exe程序中没有找到有效的控制单个程序实例的函数，所以再看看WeChatWin.dll中的导入函数，可以看到导入了CreateMutexW函数以及FindWindow函数：
+
+查看CreateMutexW函数上下文可以判断这个应该就是控制程序单个实例的关键函数：
+
+而调用FindWindowW函数的上下文就更加明显了：
+
+使用OD载入程序，在CreateMutexW下断点，触断后单步看。
+设置的锁即控制单个实例的锁：
+
+根据OD中最后三个字节”715”可以判断出这里的调用CreateMutexW就是上面的控制单 ...</div></div></div><div class="recent-post-item" onclick="pjax.loadUrl('/2023/10/16/efuzz/')"><div class="recent-post-info no-cover"><div class="recent-post-info-top"><div class="recent-post-info-top-tips"><div class="article-categories-original">AFL笔记</div><a class="unvisited-post" href="/2023/10/16/efuzz/" title="efuzz论文笔记">未读</a></div><a class="article-title" href="/2023/10/16/efuzz/" title="efuzz论文笔记">efuzz论文笔记</a></div><div class="article-meta-wrap"><span class="post-meta-date"><i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px; display:none"></i><span class="article-meta-label">发表于</span><time datetime="2023-10-16T15:29:03.843Z" title="发表于 2023-10-16 23:29:03">2023-10-16</time></span><span class="article-meta tags"><a class="article-meta__tags" href="/tags/%E7%AC%94%E8%AE%B0/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>笔记</span></a><a class="article-meta__tags" href="/tags/fuzz/" event.cancelbubble onclick="window.event.cancelBubble=true;"><span> <i class="anzhiyufont anzhiyu-icon-hashtag"></i>fuzz</span></a></span></div><div class="content">efuzz论文阅读(能量调度部分)引子：王志等分析僵尸网络控制命令时，提出了BBL覆盖率的概念，用来描述一个BBL被执行路径覆盖的频繁程度。
+
+
+BBL覆盖率————描述一个BBL被执行路径覆盖的频繁程度论文《基于覆盖率分析的僵尸网络控制命令发掘方法》部分内容阅读笔记。
+基本块的覆盖率与覆盖次数
+定义：基本块被执行轨迹的覆盖
+
+如果在程序执行的过程中，某些基本块被执行，则称这些被执行的基本块被执行轨迹覆盖。
+
+基本块被执行轨迹覆盖的信息内容
+
+基本块被执行轨迹覆盖的信息包括两部分：覆盖率和覆盖次数。
+
+覆盖率Pbb
+
+Pbb描述的是一个基本块被执行轨迹覆盖的频繁程度，定义如下：
+Pbb &#x3D; Ncover&#x2F;Nall
+Nall是当前已捕获的执行轨迹总数，Ncover是覆盖该基本块的执行轨迹数量。
+
+覆盖次数VBB
+
+覆盖次数VBB描述的是基本块在不同执行轨迹中被执行的频繁程度，是一个向量：
+VBB &#x3D; (VT1,VT2,……,VTn)
+VT1，VT2，……，VTn表示基本块BB在执行轨迹T1，T2，……，Tn中被覆盖的次数。
+能量调度算法受上述思想的启发，文章 ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/3/#content-inner"><i class="anzhiyufont anzhiyu-icon-chevron-left fa-fw" style="font-weight: inherit; font-size: 1rem;"></i><div class="pagination_tips_prev">上页</div></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/#content-inner">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/#content-inner">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/#content-inner">8</a><a class="extend next" rel="next" href="/page/5/#content-inner"><div class="pagination_tips_next">下页</div><i style="font-weight: inherit; font-size: 1rem;" class="anzhiyufont anzhiyu-icon-chevron-right fa-fw"></i></a><div class="toPageGroup"><input id="toPageText" oninput="value=value.replace(/[^0-9]/g,'')" maxlength="3" onkeyup="this.value=this.value.replace(/[^u4e00-u9fa5w]/g,'')" aria-label="toPage"><a id="toPageButton" onclick="anzhiyu.toPage()"><i class="anzhiyufont anzhiyu-icon-angles-right" style="font-weight: inherit; font-size: 1rem;"></i></a></div></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-content"><div class="author-info__sayhi" id="author-info__sayhi" onclick="anzhiyu.changeSayHelloText()"></div><div class="author-info-avatar"><img class="avatar-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/avater.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-status"><img class="g-status" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/state.png" ait="status"/></div></div><div class="author-info__description"></div><div class="author-info__bottom-group"><a class="author-info__bottom-group-left" href="/"><h1 class="author-info__name">Ivoripuion</h1><div class="author-info__desc">开心就好</div></a><div class="card-info-social-icons is-center"><a class="social-icon faa-parent animated-hover" href="https://github.com/Ivoripuion" target="_blank" title="Github"><i class="anzhiyufont anzhiyu-icon-github"></i></a><a class="social-icon faa-parent animated-hover" href="https://space.bilibili.com/13703678" target="_blank" title="BiliBili"><i class="anzhiyufont anzhiyu-icon-bilibili"></i></a></div></div></div></div><div class="sticky_layout"><div class="card-widget"><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/BAS/" style="font-size: 1.05rem;">BAS<sup>1</sup></a><a href="/tags/Java%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">Java安全<sup>2</sup></a><a href="/tags/Linux/" style="font-size: 1.05rem;">Linux<sup>5</sup></a><a href="/tags/Windows/" style="font-size: 1.05rem;">Windows<sup>9</sup></a><a href="/tags/fuzz/" style="font-size: 1.05rem;">fuzz<sup>6</sup></a><a href="/tags/pwn/" style="font-size: 1.05rem;">pwn<sup>1</sup></a><a href="/tags/%E4%B8%B4%E5%BA%8A/" style="font-size: 1.05rem;">临床<sup>2</sup></a><a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">二进制安全<sup>2</sup></a><a href="/tags/%E4%BA%91%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">云安全<sup>4</sup></a><a href="/tags/%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F/" style="font-size: 1.05rem;">信息隐藏<sup>1</sup></a><a href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" style="font-size: 1.05rem;">内存马<sup>1</sup></a><a href="/tags/%E5%88%91%E6%B3%95/" style="font-size: 1.05rem;">刑法<sup>1</sup></a><a href="/tags/%E5%89%A7%E6%9C%AC%E6%9D%80%E8%A7%A3%E6%9E%90/" style="font-size: 1.05rem;">剧本杀解析<sup>2</sup></a><a href="/tags/%E5%AD%98%E5%9C%A8%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">存在主义<sup>3</sup></a><a href="/tags/%E5%AE%9E%E6%88%98/" style="font-size: 1.05rem;">实战<sup>3</sup></a><a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 1.05rem;">实践<sup>5</sup></a><a href="/tags/%E5%BC%80%E5%8F%91/" style="font-size: 1.05rem;">开发<sup>1</sup></a><a href="/tags/%E6%96%87%E5%AD%A6%E9%89%B4%E8%B5%8F/" style="font-size: 1.05rem;">文学鉴赏<sup>1</sup></a><a href="/tags/%E6%97%A5%E8%AF%AD/" style="font-size: 1.05rem;">日语<sup>1</sup></a><a href="/tags/%E6%B3%95%E5%AD%A6/" style="font-size: 1.05rem;">法学<sup>1</sup></a><a href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" style="font-size: 1.05rem;">漏洞分析<sup>22</sup></a><a href="/tags/%E7%97%85%E6%AF%92%E6%A3%80%E6%B5%8B/" style="font-size: 1.05rem;">病毒检测<sup>2</sup></a><a href="/tags/%E7%AC%94%E8%AE%B0/" style="font-size: 1.05rem;">笔记<sup>54</sup></a><a href="/tags/%E7%B2%BE%E7%A5%9E%E5%88%86%E6%9E%90/" style="font-size: 1.05rem;">精神分析<sup>10</sup></a><a href="/tags/%E8%85%BE%E8%AE%AF%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%89%E5%85%A8/" style="font-size: 1.05rem;">腾讯云主机安全<sup>1</sup></a><a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 1.05rem;">论文阅读<sup>1</sup></a><a href="/tags/%E9%80%86%E5%90%91/" style="font-size: 1.05rem;">逆向<sup>12</sup></a><a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 1.05rem;">随笔<sup>2</sup></a><a href="/tags/%E9%9D%9E%E9%81%93%E5%BE%B7%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">非道德主义<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 1.05rem;">面试题<sup>1</sup></a><a href="/tags/%E9%A9%AC%E5%85%8B%E6%80%9D%E4%B8%BB%E4%B9%89/" style="font-size: 1.05rem;">马克思主义<sup>3</sup></a></div></div><hr/><div class="card-archives"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-archive"></i><span>归档</span><a class="card-more-btn" href="/archives/" title="查看更多">
     <i class="anzhiyufont anzhiyu-icon-angle-right"></i></a></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/10/"><span class="card-archive-list-date">十月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">55</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/09/"><span class="card-archive-list-date">九月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/07/"><span class="card-archive-list-date">七月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">4</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/06/"><span class="card-archive-list-date">六月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/05/"><span class="card-archive-list-date">五月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">3</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/04/"><span class="card-archive-list-date">四月 2023</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/12/"><span class="card-archive-list-date">十二月 2022</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">1</span><span>篇</span></div></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/11/"><span class="card-archive-list-date">十一月 2022</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">2</span><span>篇</span></div></a></li></ul></div><hr/><div class="card-webinfo"><div class="item-headline"><i class="anzhiyufont anzhiyu-icon-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="webinfo-item-title"><i class="anzhiyufont anzhiyu-icon-file-lines"></i><div class="item-name">文章总数 :</div></div><div class="item-count">79</div></div><div class="webinfo-item"><div class="webinfo-item-title"><i class="anzhiyufont anzhiyu-icon-font"></i><div class="item-name">全站字数 :</div></div><div class="item-count">325.8k</div></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"></div><div id="footer-bar"><div class="footer-bar-links"><div class="footer-bar-left"><div id="footer-bar-tips"></div><div id="footer-type-tips"></div></div><div class="footer-bar-right"><a class="footer-bar-link" target="_blank" rel="noopener" href="http://ivoripuion.github.io" title="2023@Ivoripuion">2023@Ivoripuion</a></div></div></div></footer></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="sidebar-site-data site-data is-center"><a href="/archives/" title="archive"><div class="headline">文章</div><div class="length-num">79</div></a><a href="/tags/" title="tag"><div class="headline">标签</div><div class="length-num">31</div></a><a href="/categories/" title="category"><div class="headline">分类</div><div class="length-num">11</div></a></div><span class="sidebar-menu-item-title">功能</span><div class="sidebar-menu-item"><a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="显示模式"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span>显示模式</span></a></div><div class="back-menu-list-groups"><div class="back-menu-list-group"><div class="back-menu-list-title">网页</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://ivoripuion.github.io/" title="博客"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/favicon.ico" alt="博客"/><span class="back-menu-item-text">博客</span></a></div></div><div class="back-menu-list-group"><div class="back-menu-list-title">项目</div><div class="back-menu-list"><a class="back-menu-item" target="_blank" rel="noopener" href="https://github.com/Ivoripuion" title="米惜的github"><img class="back-menu-item-icon" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/img/me.jpg" alt="米惜的github"/><span class="back-menu-item-text">米惜的github</span></a></div></div></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 文章</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/archives/"><i class="anzhiyufont anzhiyu-icon-box-archive faa-tada" style="font-size: 0.9em;"></i><span> 隧道</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/categories/"><i class="anzhiyufont anzhiyu-icon-shapes faa-tada" style="font-size: 0.9em;"></i><span> 分类</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags faa-tada" style="font-size: 0.9em;"></i><span> 标签</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 友链</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/link/"><i class="anzhiyufont anzhiyu-icon-link faa-tada" style="font-size: 0.9em;"></i><span> 友人帐</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 我的</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/music/"><i class="anzhiyufont anzhiyu-icon-music faa-tada" style="font-size: 0.9em;"></i><span> 音乐馆</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><span> 关于</span></a><ul class="menus_item_child"><li><a class="site-page child faa-parent animated-hover" href="/about/"><i class="anzhiyufont anzhiyu-icon-paper-plane faa-tada" style="font-size: 0.9em;"></i><span> 关于本人</span></a></li><li><a class="site-page child faa-parent animated-hover" href="/essay/"><i class="anzhiyufont anzhiyu-icon-lightbulb faa-tada" style="font-size: 0.9em;"></i><span> 闲言碎语</span></a></li><li><a class="site-page child faa-parent animated-hover" href="javascript:toRandomPost()"><i class="anzhiyufont anzhiyu-icon-shoe-prints1 faa-tada" style="font-size: 0.9em;"></i><span> 随便逛逛</span></a></li></ul></div></div><span class="sidebar-menu-item-title">标签</span><div class="card-tags"><div class="item-headline"></div><div class="card-tag-cloud"><a href="/tags/BAS/" style="font-size: 0.88rem;">BAS<sup>1</sup></a><a href="/tags/Java%E5%AE%89%E5%85%A8/" style="font-size: 0.88rem;">Java安全<sup>2</sup></a><a href="/tags/Linux/" style="font-size: 0.88rem;">Linux<sup>5</sup></a><a href="/tags/Windows/" style="font-size: 0.88rem;">Windows<sup>9</sup></a><a href="/tags/fuzz/" style="font-size: 0.88rem;">fuzz<sup>6</sup></a><a href="/tags/pwn/" style="font-size: 0.88rem;">pwn<sup>1</sup></a><a href="/tags/%E4%B8%B4%E5%BA%8A/" style="font-size: 0.88rem;">临床<sup>2</sup></a><a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%AE%89%E5%85%A8/" style="font-size: 0.88rem;">二进制安全<sup>2</sup></a><a href="/tags/%E4%BA%91%E5%AE%89%E5%85%A8/" style="font-size: 0.88rem;">云安全<sup>4</sup></a><a href="/tags/%E4%BF%A1%E6%81%AF%E9%9A%90%E8%97%8F/" style="font-size: 0.88rem;">信息隐藏<sup>1</sup></a><a href="/tags/%E5%86%85%E5%AD%98%E9%A9%AC/" style="font-size: 0.88rem;">内存马<sup>1</sup></a><a href="/tags/%E5%88%91%E6%B3%95/" style="font-size: 0.88rem;">刑法<sup>1</sup></a><a href="/tags/%E5%89%A7%E6%9C%AC%E6%9D%80%E8%A7%A3%E6%9E%90/" style="font-size: 0.88rem;">剧本杀解析<sup>2</sup></a><a href="/tags/%E5%AD%98%E5%9C%A8%E4%B8%BB%E4%B9%89/" style="font-size: 0.88rem;">存在主义<sup>3</sup></a><a href="/tags/%E5%AE%9E%E6%88%98/" style="font-size: 0.88rem;">实战<sup>3</sup></a><a href="/tags/%E5%AE%9E%E8%B7%B5/" style="font-size: 0.88rem;">实践<sup>5</sup></a><a href="/tags/%E5%BC%80%E5%8F%91/" style="font-size: 0.88rem;">开发<sup>1</sup></a><a href="/tags/%E6%96%87%E5%AD%A6%E9%89%B4%E8%B5%8F/" style="font-size: 0.88rem;">文学鉴赏<sup>1</sup></a><a href="/tags/%E6%97%A5%E8%AF%AD/" style="font-size: 0.88rem;">日语<sup>1</sup></a><a href="/tags/%E6%B3%95%E5%AD%A6/" style="font-size: 0.88rem;">法学<sup>1</sup></a><a href="/tags/%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90/" style="font-size: 0.88rem;">漏洞分析<sup>22</sup></a><a href="/tags/%E7%97%85%E6%AF%92%E6%A3%80%E6%B5%8B/" style="font-size: 0.88rem;">病毒检测<sup>2</sup></a><a href="/tags/%E7%AC%94%E8%AE%B0/" style="font-size: 0.88rem;">笔记<sup>54</sup></a><a href="/tags/%E7%B2%BE%E7%A5%9E%E5%88%86%E6%9E%90/" style="font-size: 0.88rem;">精神分析<sup>10</sup></a><a href="/tags/%E8%85%BE%E8%AE%AF%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%89%E5%85%A8/" style="font-size: 0.88rem;">腾讯云主机安全<sup>1</sup></a><a href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/" style="font-size: 0.88rem;">论文阅读<sup>1</sup></a><a href="/tags/%E9%80%86%E5%90%91/" style="font-size: 0.88rem;">逆向<sup>12</sup></a><a href="/tags/%E9%9A%8F%E7%AC%94/" style="font-size: 0.88rem;">随笔<sup>2</sup></a><a href="/tags/%E9%9D%9E%E9%81%93%E5%BE%B7%E4%B8%BB%E4%B9%89/" style="font-size: 0.88rem;">非道德主义<sup>1</sup></a><a href="/tags/%E9%9D%A2%E8%AF%95%E9%A2%98/" style="font-size: 0.88rem;">面试题<sup>1</sup></a><a href="/tags/%E9%A9%AC%E5%85%8B%E6%80%9D%E4%B8%BB%E4%B9%89/" style="font-size: 0.88rem;">马克思主义<sup>3</sup></a></div></div><hr/></div></div><div id="rightside"><div id="rightside-config-hide"><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="anzhiyufont anzhiyu-icon-gear"></i></button><button id="go-up" type="button" title="回到顶部"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div></div><div id="nav-music"><a id="nav-music-hoverTips" onclick="anzhiyu.musicToggle()" accesskey="m">播放音乐</a><div id="console-music-bg"></div><meting-js id="8030065748" server="netease" type="playlist" mutex="true" preload="none" theme="var(--anzhiyu-main)" data-lrctype="0" order="random"></meting-js></div><div id="rightMenu"><div class="rightMenu-group rightMenu-small"><div class="rightMenu-item" id="menu-backward"><i class="anzhiyufont anzhiyu-icon-arrow-left"></i></div><div class="rightMenu-item" id="menu-forward"><i class="anzhiyufont anzhiyu-icon-arrow-right"></i></div><div class="rightMenu-item" id="menu-refresh"><i class="anzhiyufont anzhiyu-icon-arrow-rotate-right" style="font-size: 1rem;"></i></div><div class="rightMenu-item" id="menu-top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></div></div><div class="rightMenu-group rightMenu-line rightMenuPlugin"><div class="rightMenu-item" id="menu-copytext"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制选中文本</span></div><div class="rightMenu-item" id="menu-pastetext"><i class="anzhiyufont anzhiyu-icon-paste"></i><span>粘贴文本</span></div><a class="rightMenu-item" id="menu-commenttext"><i class="anzhiyufont anzhiyu-icon-comment-medical"></i><span>引用到评论</span></a><div class="rightMenu-item" id="menu-newwindow"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开</span></div><div class="rightMenu-item" id="menu-copylink"><i class="anzhiyufont anzhiyu-icon-link"></i><span>复制链接地址</span></div><div class="rightMenu-item" id="menu-copyimg"><i class="anzhiyufont anzhiyu-icon-images"></i><span>复制此图片</span></div><div class="rightMenu-item" id="menu-downloadimg"><i class="anzhiyufont anzhiyu-icon-download"></i><span>下载此图片</span></div><div class="rightMenu-item" id="menu-newwindowimg"><i class="anzhiyufont anzhiyu-icon-window-restore"></i><span>新窗口打开图片</span></div><div class="rightMenu-item" id="menu-search"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>站内搜索</span></div><div class="rightMenu-item" id="menu-searchBaidu"><i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i><span>百度搜索</span></div><div class="rightMenu-item" id="menu-music-toggle"><i class="anzhiyufont anzhiyu-icon-play"></i><span>播放音乐</span></div><div class="rightMenu-item" id="menu-music-back"><i class="anzhiyufont anzhiyu-icon-backward"></i><span>切换到上一首</span></div><div class="rightMenu-item" id="menu-music-forward"><i class="anzhiyufont anzhiyu-icon-forward"></i><span>切换到下一首</span></div><div class="rightMenu-item" id="menu-music-playlist" onclick="window.open(&quot;https://music.163.com/#/playlist?id=8030065748&quot;, &quot;_blank&quot;);" style="display: none;"><i class="anzhiyufont anzhiyu-icon-radio"></i><span>查看所有歌曲</span></div><div class="rightMenu-item" id="menu-music-copyMusicName"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制歌名</span></div></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item menu-link" id="menu-randomPost"><i class="anzhiyufont anzhiyu-icon-shuffle"></i><span>随便逛逛</span></a><a class="rightMenu-item menu-link" href="/categories/"><i class="anzhiyufont anzhiyu-icon-cube"></i><span>博客分类</span></a><a class="rightMenu-item menu-link" href="/tags/"><i class="anzhiyufont anzhiyu-icon-tags"></i><span>文章标签</span></a></div><div class="rightMenu-group rightMenu-line rightMenuOther"><a class="rightMenu-item" id="menu-copy" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-copy"></i><span>复制地址</span></a><a class="rightMenu-item" id="menu-commentBarrage" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-message"></i><span class="menu-commentBarrage-text">关闭热评</span></a><a class="rightMenu-item" id="menu-darkmode" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i><span class="menu-darkmode-text">深色模式</span></a><a class="rightMenu-item" id="menu-translate" href="javascript:void(0);"><i class="anzhiyufont anzhiyu-icon-language"></i><span>轉為繁體</span></a></div></div><div id="rightmenu-mask"></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.cbd.int/@fancyapps/ui@5.0.20/dist/fancybox/fancybox.umd.js"></script><script src="https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" type="module"></script><script src="https://cdn.cbd.int/vanilla-lazyload@17.8.4/dist/lazyload.iife.min.js"></script><script src="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"></script><canvas id="universe"></canvas><script async src="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"></script><script>// 消除控制台打印
 var HoldLog = console.log;
 console.log = function () {};
@@ -493,7 +598,7 @@ queueMicrotask(() => {
   });
 }
 </script><div class="js-pjax"><input type="hidden" name="page-type" id="page-type" value="anzhiyu"></div><script>var visitorMail = "visitor@anheyu.com";
-</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><script src="/js/anzhiyu/right_click_menu.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+</script><script async data-pjax src="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/waterfall/waterfall.js"></script><script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script><script src="/js/anzhiyu/right_click_menu.js"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css"><script id="click-heart" src="https://cdn.cbd.int/butterfly-extsrc@1.1.3/dist/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js"></script><script src="https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js"></script><script src="https://cdn.cbd.int/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
 var pjax = new Pjax({
   elements: 'a:not([target="_blank"])',
   selectors: pjaxSelectors,
@@ -555,4 +660,4 @@ document.addEventListener('pjax:error', e => {
   if (e.request.status === 404) {
     pjax.loadUrl('/404.html')
   }
-})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div></body></html>
+})</script><script charset="UTF-8" src="https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"></script></div><div id="popup-window"><div class="popup-window-title">通知</div><div class="popup-window-divider"></div><div class="popup-window-content"><div class="popup-tip">你好呀</div><div class="popup-link"><i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i></div></div></div><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"left","width":225,"height":450},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
