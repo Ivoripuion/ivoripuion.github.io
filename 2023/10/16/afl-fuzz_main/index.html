@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>afl-fuzz.c main函数简单流程 | 米惜</title><meta name="keywords" content="笔记,fuzz"><meta name="author" content="Ivoripuion,carsge@tencent.com"><meta name="copyright" content="Ivoripuion"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="afl-fuzz.c main函数简单流程"><meta name="application-name" content="afl-fuzz.c main函数简单流程"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="afl-fuzz.c main函数简单流程"><meta property="og:url" content="http://example.com/2023/10/16/afl-fuzz_main/index.html"><meta property="og:site_name" content="米惜"><meta property="og:description" content="afl-fuzz.c main函数简单流程（关键步骤省略）预处理 打印afl程序信息；  1SAYF(cCYA &amp;quot;afl-fuzz &amp;quot; cBRI VERSION cRST &amp;quot; by &amp;lt;lcamtuf@google.com&amp;gt;\n&amp;quot;);   检查文件是"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="http://example.com/cover/afl.png"><meta property="article:author" content="Ivoripuion"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="http://example.com/cover/afl.png"><meta name="description" content="afl-fuzz.c main函数简单流程（关键步骤省略）预处理 打印afl程序信息；  1SAYF(cCYA &amp;quot;afl-fuzz &amp;quot; cBRI VERSION cRST &amp;quot; by &amp;lt;lcamtuf@google.com&amp;gt;\n&amp;quot;);   检查文件是"><link rel="shortcut icon" href="/img/me.jpg"><link rel="canonical" href="http://example.com/2023/10/16/afl-fuzz_main/"><link rel="preconnect" href="//cdn.cbd.int"/><link rel="preconnect" href="//hm.baidu.com"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.20/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>afl-fuzz.c main函数简单流程 | 米惜</title><meta name="keywords" content="笔记,fuzz"><meta name="author" content="Ivoripuion,carsge@tencent.com"><meta name="copyright" content="Ivoripuion"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="afl-fuzz.c main函数简单流程"><meta name="application-name" content="afl-fuzz.c main函数简单流程"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="afl-fuzz.c main函数简单流程"><meta property="og:url" content="http://example.com/2023/10/16/afl-fuzz_main/index.html"><meta property="og:site_name" content="米惜"><meta property="og:description" content="afl-fuzz.c main函数简单流程（关键步骤省略）预处理 打印afl程序信息；  1SAYF(cCYA &amp;quot;afl-fuzz &amp;quot; cBRI VERSION cRST &amp;quot; by &amp;lt;lcamtuf@google.com&amp;gt;\n&amp;quot;);     检查文"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="http://example.com/cover/afl.png"><meta property="article:author" content="Ivoripuion"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="http://example.com/cover/afl.png"><meta name="description" content="afl-fuzz.c main函数简单流程（关键步骤省略）预处理 打印afl程序信息；  1SAYF(cCYA &amp;quot;afl-fuzz &amp;quot; cBRI VERSION cRST &amp;quot; by &amp;lt;lcamtuf@google.com&amp;gt;\n&amp;quot;);     检查文"><link rel="shortcut icon" href="/img/me.jpg"><link rel="canonical" href="http://example.com/2023/10/16/afl-fuzz_main/"><link rel="preconnect" href="//cdn.cbd.int"/><link rel="preconnect" href="//hm.baidu.com"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.20/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
 (function() {
   var hm = document.createElement("script");
   hm.src = "https://hm.baidu.com/hm.js?855d9db99474dd0e98e385c4b629eeee";
@@ -214,15 +214,19 @@ if (true) {
 <li>打印afl程序信息；</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SAYF(cCYA <span class="string">&quot;afl-fuzz &quot;</span> cBRI VERSION cRST <span class="string">&quot; by &lt;lcamtuf@google.com&gt;\n&quot;</span>);</span><br></pre></td></tr></table></figure>
+
 <span id="more"></span>
+
 <ul>
 <li>检查文件是否存在；</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">doc_path = access(DOC_PATH, F_OK) ? <span class="string">&quot;docs&quot;</span> : DOC_PATH;   </span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>设置一个种子，方便后续随机量的设置；</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gettimeofday(&amp;tv, &amp;tz);</span><br><span class="line">srandom(tv.tv_sec ^ tv.tv_usec ^ getpid());</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li><p>根据命令行初始化并检查一些参数；</p>
 <ol>
@@ -245,22 +249,27 @@ if (true) {
 </li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setup_signal_handlers();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>检查ASAN设置：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">check_asan_opts();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>修正fuzzer ID：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (sync_id) fix_up_sync();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>检查输入输出文件夹：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="built_in">strcmp</span>(in_dir, out_dir))</span><br><span class="line">    FATAL(<span class="string">&quot;Input and output directories can&#x27;t be the same&quot;</span>);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>若设置了dumb mode则检查与其冲突的模式：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (dumb_mode) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (crash_mode) FATAL(<span class="string">&quot;-C and -n are mutually exclusive&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (qemu_mode)  FATAL(<span class="string">&quot;-Q and -n are mutually exclusive&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li><p>一些环境变量的设置以及检查。</p>
 </li>
@@ -268,48 +277,60 @@ if (true) {
 </li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">save_cmdline(argc, argv);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>调整banner的展示效果(将fuzzer id写上)：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fix_up_banner(argv[optind]);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>检查是否在TTY终端：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">check_if_tty();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>查询<code>/proc/stat</code>得知内核信息并打印：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">get_core_count();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>构建绑定到特定核心的进程列表：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">ifdef</span> HAVE_AFFINITY</span></span><br><span class="line">    bind_to_free_cpu();</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span> <span class="comment">/* HAVE_AFFINITY */</span></span></span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>检查crash的转存以及CPU的管理者(主要通过检查<code>/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor</code>这类的设备文件)：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">check_crash_handling(); </span><br><span class="line">check_cpu_governor();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>检查环境变量<code>AFL_POST_LIBRARY</code>，该环境变量用于对变异后的testcases格式进行修正，如计算校验和等：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setup_post();</span><br></pre></td></tr></table></figure>
+
 <p>使用后会进行如下编译：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared -Wall -O3 post_library.so.c -o post_library.so</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>设置共享内存块以及virgin_bits(用来记录总分支路径信息:Regions yet untouched by fuzzing)：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setup_shm();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>扩展路径记录的表：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">init_count_class16();</span><br></pre></td></tr></table></figure>
+
 <h2 id="喂数据"><a href="#喂数据" class="headerlink" title="喂数据"></a>喂数据</h2><ul>
 <li>设置输出文件夹和文件描述符：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setup_dirs_fds();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>读取测试用例进入队列中，包括对输入文件夹权限、内容等的检查：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">read_testcases();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>自动载入token，即检查输入文件夹中是否有token文件夹，有则载入。这里查阅<a target="_blank" rel="noopener" href="https://blog.csdn.net/baizhi2361/article/details/101084440">资料</a>后：<ul>
 <li>使用token是用来执行bitflip时降低消耗资源的一种策略，即将一个token代表一系列变异后覆盖路径未变化的语料。</li>
@@ -317,74 +338,93 @@ if (true) {
 </li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load_auto();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>在输出文件中为输入文件(变异后的)创建硬链接，以”id:”开头：<code>#  define CASE_PREFIX &quot;id:&quot;</code>，并根据其进行适当的调整：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pivot_inputs();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>若存在token文件夹则载入该文件夹：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (extras_dir) load_extras(extras_dir);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>若没有设置”-t”的参数，则找到一个合理的”timeout”值，以防止不断地收缩这个”timeout”值：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!timeout_given) find_timeout();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>若未设置输出文件夹，则为输出数据设置输出文件夹：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!out_file) setup_stdio_file();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>检查目标程序的存在，且不是一个shell脚本，通过检查ELF头来判断是否为一个ELF文件，可以通过设置”AFL_SKIP_BIN_CHECK”环境变量来跳过该项检查：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">check_binary(argv[optind]);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>获取当前时间为开始时间：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start_time = get_cur_time();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>判断是否为qemu模式的fuzz：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (qemu_mode)</span><br><span class="line">    use_argv = get_qemu_argv(argv[<span class="number">0</span>], argv + optind, argc - optind);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    use_argv = argv + optind;</span><br></pre></td></tr></table></figure>
+
 <h2 id="执行fuzz（具体步骤后续详细分析）"><a href="#执行fuzz（具体步骤后续详细分析）" class="headerlink" title="执行fuzz（具体步骤后续详细分析）"></a>执行fuzz（具体步骤后续详细分析）</h2><ul>
 <li>dry run，将种子文件直接作为输入文件喂给目标程序：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">perform_dry_run(use_argv);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>从队列中找到最合适的testcase，赋值给top_rated[]，并且设置q-&gt;favored：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cull_queue();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>处理完初始语料后显示提示信息：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show_init_stats();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>找到队列开始的位置：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">seek_to = find_start_position();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>更新统计信息文件：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">write_stats_file(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>自动保存token：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">save_auto();</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>contrl+C，结束fuzz：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (stop_soon) <span class="keyword">goto</span> stop_fuzzing;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>不在TTy终端也结束fuzz：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">if</span> (!not_on_tty) &#123;</span><br><span class="line">      sleep(<span class="number">4</span>);</span><br><span class="line">      start_time += <span class="number">4000</span>;</span><br><span class="line">      <span class="keyword">if</span> (stop_soon) <span class="keyword">goto</span> stop_fuzzing;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>fuzz_one循环：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>收尾工作，包括关闭文件描述符，销毁队列、token文件夹等：</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">fclose(plot_file);</span><br><span class="line">destroy_queue();</span><br><span class="line">destroy_extras();</span><br><span class="line">ck_free(target_path);</span><br><span class="line">ck_free(sync_id);</span><br><span class="line"></span><br><span class="line">alloc_report();</span><br><span class="line"></span><br><span class="line">OKF(<span class="string">&quot;We&#x27;re done here. Have a nice day!\n&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">exit</span>(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+
 <p>参考链接：</p>
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/487f5e451325">https://www.jianshu.com/p/487f5e451325</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wxh0000mm/article/details/108828040">https://blog.csdn.net/wxh0000mm/article/details/108828040</a></p>
