@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>APT分析及TTPs提取 | 米惜</title><meta name="keywords" content="笔记,云安全"><meta name="author" content="Ivoripuion,carsge@tencent.com"><meta name="copyright" content="Ivoripuion"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="APT分析及TTPs提取"><meta name="application-name" content="APT分析及TTPs提取"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="APT分析及TTPs提取"><meta property="og:url" content="http://example.com/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/index.html"><meta property="og:site_name" content="米惜"><meta property="og:description" content="APT分析及TTPs提取 转自project #，写的很不错，做个笔记（抄一下加深印象）。    攻击事件这里专指网络空间安全领域的攻击事件，即在未经授权情况下对计算机系统或计算机资源进行访问、使用、更改、破坏的活动。 根据事件的烈度以及影响范围，可分为以下几类：  常规攻击；  常规攻击一般呈线性"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="http://example.com/cover/%E4%BA%91%E5%AE%89%E5%85%A8.jpg"><meta property="article:author" content="Ivoripuion"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="http://example.com/cover/%E4%BA%91%E5%AE%89%E5%85%A8.jpg"><meta name="description" content="APT分析及TTPs提取 转自project #，写的很不错，做个笔记（抄一下加深印象）。    攻击事件这里专指网络空间安全领域的攻击事件，即在未经授权情况下对计算机系统或计算机资源进行访问、使用、更改、破坏的活动。 根据事件的烈度以及影响范围，可分为以下几类：  常规攻击；  常规攻击一般呈线性"><link rel="shortcut icon" href="/img/me.jpg"><link rel="canonical" href="http://example.com/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/"><link rel="preconnect" href="//cdn.cbd.int"/><link rel="preconnect" href="//hm.baidu.com"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.20/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><title>APT分析及TTPs提取 | 米惜</title><meta name="keywords" content="笔记,云安全"><meta name="author" content="Ivoripuion,carsge@tencent.com"><meta name="copyright" content="Ivoripuion"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#f7f9fe"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-touch-fullscreen" content="yes"><meta name="apple-mobile-web-app-title" content="APT分析及TTPs提取"><meta name="application-name" content="APT分析及TTPs提取"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="#f7f9fe"><meta property="og:type" content="article"><meta property="og:title" content="APT分析及TTPs提取"><meta property="og:url" content="http://example.com/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/index.html"><meta property="og:site_name" content="米惜"><meta property="og:description" content="APT分析及TTPs提取 转自project #，写的很不错，做个笔记（抄一下加深印象）。   攻击事件这里专指网络空间安全领域的攻击事件，即在未经授权情况下对计算机系统或计算机资源进行访问、使用、更改、破坏的活动。 根据事件的烈度以及影响范围，可分为以下几类：  常规攻击；  常规攻击一般呈线性，"><meta property="og:locale" content="zh-CN"><meta property="og:image" content="http://example.com/cover/%E4%BA%91%E5%AE%89%E5%85%A8.jpg"><meta property="article:author" content="Ivoripuion"><meta property="article:tag"><meta name="twitter:card" content="summary"><meta name="twitter:image" content="http://example.com/cover/%E4%BA%91%E5%AE%89%E5%85%A8.jpg"><meta name="description" content="APT分析及TTPs提取 转自project #，写的很不错，做个笔记（抄一下加深印象）。   攻击事件这里专指网络空间安全领域的攻击事件，即在未经授权情况下对计算机系统或计算机资源进行访问、使用、更改、破坏的活动。 根据事件的烈度以及影响范围，可分为以下几类：  常规攻击；  常规攻击一般呈线性，"><link rel="shortcut icon" href="/img/me.jpg"><link rel="canonical" href="http://example.com/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/"><link rel="preconnect" href="//cdn.cbd.int"/><link rel="preconnect" href="//hm.baidu.com"/><meta name="google-site-verification" content="xxx"/><meta name="baidu-site-verification" content="code-xxx"/><meta name="msvalidate.01" content="xxx"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.cbd.int/@fancyapps/ui@5.0.20/dist/fancybox/fancybox.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
 (function() {
   var hm = document.createElement("script");
   hm.src = "https://hm.baidu.com/hm.js?855d9db99474dd0e98e385c4b629eeee";
@@ -214,26 +214,25 @@ if (true) {
 <p>转自<a target="_blank" rel="noopener" href="https://projectsharp.org/2020/02/23/APT%20%E5%88%86%E6%9E%90%E5%8F%8A%20TTPs%20%E6%8F%90%E5%8F%96/">project #</a>，写的很不错，做个笔记（抄一下加深印象）。</p>
 </blockquote>
 <span id="more"></span>
-
 <h2 id="攻击事件"><a href="#攻击事件" class="headerlink" title="攻击事件"></a>攻击事件</h2><p>这里专指网络空间安全领域的攻击事件，即在<strong>未经授权情况下</strong>对计算机系统或计算机资源进行访问、使用、更改、破坏的活动。 根据事件的烈度以及影响范围，可分为以下几类：</p>
 <ol>
 <li>常规攻击；</li>
 </ol>
 <p>常规攻击一般呈线性，时间复杂度低，杂音少，可直接推出攻击目的。如：非定向钓鱼，端口，服务扫描，SQL注入，拒绝服务攻击，会话劫持，中间人攻击，凭证重放等。这类事件影响小，危害可控且可在短时间内排查修复。</p>
-<ol start="2">
+<ol>
 <li>Botnet;</li>
 </ol>
 <p>僵尸网络特点是大规模攻击，并且涉及到RAT。如：Neucurs，Gafgyt，Mirai，僵尸网络上的垃圾邮件，Ddos等。</p>
-<ol start="3">
+<ol>
 <li>恶意软件；</li>
 </ol>
 <p>恶意软件一般指勒索，挖矿以及病毒木马。涉及钱包，矿池；目的不同，且包含RAT；不同的入口，也会出现标志性的工具和利用。如：WannaCry，Bad Rabbit，大量MiktoTik路由器被感染进行恶意挖矿等。</p>
-<ol start="4">
+<ol>
 <li>APT</li>
 </ol>
 <p>APT攻击时间复杂度高，多个行为，多个身份，使用的软件有loader，Downloader，RAT，Malware等。知名APT组织：海莲花，摩诃草，APT28，Lazarus Group等。APT的目标通常是监视网络活动并窃取数据，而不是破坏网络或系统。</p>
 <h3 id="攻击事件的核心元素"><a href="#攻击事件的核心元素" class="headerlink" title="攻击事件的核心元素"></a>攻击事件的核心元素</h3><p>首先是很经典的钻石模型：</p>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record1.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record1.png" alt></p>
 <p>钻石模型最简表述：<strong>攻击者借助基础设施针对受害者部署能力</strong>。</p>
 <p>钻石模型中，每个攻击事件都包含四个核心元素：攻击者（Adversary），受害者（Victim），能力（Infrastructure），基础设施（Capability）。</p>
 <ul>
@@ -266,8 +265,8 @@ if (true) {
 <li>目标价值高；</li>
 <li>时间复杂度高；</li>
 </ol>
-<h3 id="APT入侵的方式"><a href="#APT入侵的方式" class="headerlink" title="APT入侵的方式"></a>APT入侵的方式</h3><p>APT攻击入侵的方式主要有：鱼叉式钓鱼、IM、水坑攻击、钓鱼网站、1&#x2F;N day漏洞、0 day漏洞和物理接触。入侵包括载荷投递和突破防御两个阶段，各种入侵方式的成本如下图：</p>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record2.png"></p>
+<h3 id="APT入侵的方式"><a href="#APT入侵的方式" class="headerlink" title="APT入侵的方式"></a>APT入侵的方式</h3><p>APT攻击入侵的方式主要有：鱼叉式钓鱼、IM、水坑攻击、钓鱼网站、1/N day漏洞、0 day漏洞和物理接触。入侵包括载荷投递和突破防御两个阶段，各种入侵方式的成本如下图：</p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record2.png" alt></p>
 <p>入侵金字塔，从下到上，入侵成本和危害程度逐层递增。</p>
 <ul>
 <li><p>鱼叉式钓鱼邮件和即时通讯软件：最常见，入侵成本最低的攻击方式。攻击者常以鱼叉邮件作为攻击入口，精心构造邮件标题、正文和附件用来投递恶意网址、伪装文件或者含有漏洞exp的文档。IM与鱼叉邮件钓鱼类似。</p>
@@ -276,7 +275,7 @@ if (true) {
 </li>
 <li><p>防御边界的渗透攻击：针对的是受害系统、业务的防御边界，进行常规的渗透攻击，如常见的SQL注入，文件上传，XSS，CSRF等。跨站请求伪造等。此类入侵方式较常规网络攻击并无不同，入侵的目的是突破防御边界，找到稳定且隐蔽的入口，渗透攻击在APT攻击中也是比较常见的。</p>
 </li>
-<li><p>漏洞利用：漏洞利用的目的有两点：未授权安装、运行代码和规避杀软检测。其中，0 day漏洞危害和成本要远大于1&#x2F;N day漏洞。各种APT攻击中，出现过许多操作系统漏洞、路由器或交换机网络设备漏洞，以及office，Flash，PDF等应用漏洞。此种攻击往往搭配其他手法，组合进行入侵。例如容器漏洞在渗透攻击中的利用，以及Office漏洞在钓鱼中的利用（如海莲花常使用的利用合法WPS可执行程序加载恶意DLL）。</p>
+<li><p>漏洞利用：漏洞利用的目的有两点：未授权安装、运行代码和规避杀软检测。其中，0 day漏洞危害和成本要远大于1/N day漏洞。各种APT攻击中，出现过许多操作系统漏洞、路由器或交换机网络设备漏洞，以及office，Flash，PDF等应用漏洞。此种攻击往往搭配其他手法，组合进行入侵。例如容器漏洞在渗透攻击中的利用，以及Office漏洞在钓鱼中的利用（如海莲花常使用的利用合法WPS可执行程序加载恶意DLL）。</p>
 </li>
 <li><p>供应链攻击：在突破上游供应商后，在极短的时间内进行资产摸排、更改、下发、劫持。又同时可以顺利筛选、控制下游目标。典型的例子如 XSHELL 、CCleaner、华硕软件更新劫持等攻击事件。</p>
 </li>
@@ -304,7 +303,7 @@ if (true) {
 </ol>
 <p>各大厂商的APT报告都是以攻击者能力切入的，所以看到的大量篇幅都是恶意软件技术报告。</p>
 <h4 id="通过攻击者“基础设施”切入分析"><a href="#通过攻击者“基础设施”切入分析" class="headerlink" title="通过攻击者“基础设施”切入分析"></a>通过攻击者“基础设施”切入分析</h4><p>基于基础设施的分析方法是C2关联分析，是描述事件上下文最有效的方法。</p>
-<p>样本中多少会暴露一些基础设施信息；或是IP，或是域名。通过WHOIS信息来发现统一注册者的不同域名。进一步研究可以得到针对不同攻击者的恶意软件信息（相似&#x2F;相同的基础设施）。</p>
+<p>样本中多少会暴露一些基础设施信息；或是IP，或是域名。通过WHOIS信息来发现统一注册者的不同域名。进一步研究可以得到针对不同攻击者的恶意软件信息（相似/相同的基础设施）。</p>
 <p>C2关联期望分析得到的结果：</p>
 <ol>
 <li>与该基础设施有联系的受害者；</li>
@@ -320,28 +319,28 @@ if (true) {
 <li>hash；</li>
 </ol>
 <p>指样本文件的哈希值。通常用于提供对特定恶意软件样本或涉及入侵的文件的唯一标识。hash值是分析人员最容易拿到的IoC，但是哈希值很容易改变，文件中更改一个字节，都会影响文件哈希。很多情况下不值得跟踪。</p>
-<ol start="2">
+<ol>
 <li>IP；</li>
 </ol>
 <p>绝大多数恶意软件都有网络行为，其中一定会涉及IP，但是如果攻击者使用匿名代理或者Tor，IP十分容易改变。</p>
-<ol start="3">
+<ol>
 <li>域名；</li>
 </ol>
 <p>域名和IP类似，但是域名需要注册，要付出一定的费用。因为DNS解析需要时间，即使使用DNS服务商提供的免费域名服务，但是还会有时间成本。所以，域名稍比IP稳定一点。</p>
-<ol start="4">
-<li>网络&#x2F;主机特征；</li>
+<ol>
+<li>网络/主机特征；</li>
 </ol>
 <p>指C2上，比较有区分度的特征以及恶意样本中，携带的攻击者主机的一些特征。</p>
-<ol start="5">
+<ol>
 <li>工具；</li>
 </ol>
 <p>APT攻击中，为了达到某种目的，攻击者往往会使用、研发、定制一些工具。比如APT 28使用的<br>DealersChoice、Xagent。攻击者定制、自研一些工具，肯定要花费一定的成本。如果对攻击套件进行准确识别，攻击者只能放弃目前所使用的工具，这样无疑加大了下次攻击的成本。</p>
-<ol start="6">
+<ol>
 <li>TTPs；</li>
 </ol>
-<p>Tactics，Techniques，and Procedures（战术、技术、过程）。是对攻击者攻击行为，战略战术层次的描述。IP&#x2F;域名可以更改，网络主机特征也容易消除、工具可以重新开发。但是攻击的战略战术往往很难改变，如果能识别出TTP特征，攻击者要么放弃攻击，要么指定新的战术。这对攻击者将是致命的打击。</p>
+<p>Tactics，Techniques，and Procedures（战术、技术、过程）。是对攻击者攻击行为，战略战术层次的描述。IP/域名可以更改，网络主机特征也容易消除、工具可以重新开发。但是攻击的战略战术往往很难改变，如果能识别出TTP特征，攻击者要么放弃攻击，要么指定新的战术。这对攻击者将是致命的打击。</p>
 <p>IoC金字塔：</p>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record3.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record3.png" alt></p>
 <p>IoC金字塔中，由下到上获取难度一次增高，攻击者改变难度和价值也是增高的。</p>
 <h2 id="TTPs提取"><a href="#TTPs提取" class="headerlink" title="TTPs提取"></a>TTPs提取</h2><p>TTP: Tactics, Techniques, and Procedures（战术、技术、过程）。</p>
 <ul>
@@ -359,16 +358,16 @@ if (true) {
 <li>战略特征包含目标群体、攻击入口和载荷投递；</li>
 </ol>
 <p>如图所示：</p>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record4.jpg"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record4.jpg" alt></p>
 <blockquote>
-<p>从基础设施以及能力角度进行考虑，加上TTPs的战略&#x2F;技术。</p>
+<p>从基础设施以及能力角度进行考虑，加上TTPs的战略/技术。</p>
 </blockquote>
 <ul>
-<li>战略&#x2F;战术：包含目标群体、攻击入口和载荷投递方式和释放流程。攻击入口、载荷投递方式和释放流程可以在样本分析中进行总结。</li>
+<li>战略/战术：包含目标群体、攻击入口和载荷投递方式和释放流程。攻击入口、载荷投递方式和释放流程可以在样本分析中进行总结。</li>
 </ul>
 <p>事件四个核心元素，攻击者、受害者、能力、基础设施。上文提及的通过能力和基础设施切入进行事件分析。此外，还可以通过受害者进行切入分析，得到攻击者的一些战略信息。例如，攻击者为了提高成功率，会贴合受害者定制一些攻击邮件或者文件，通过其中精心构造的邮件名、正文、附件内容，可以反推受害者群体，以此揣摩攻击者的战略目的。</p>
 <ul>
-<li><p>基础设施：基础设施分为 C2、网络特征、主机特征。因为会有基础设施重用的情况，C2 列表一定要有；再者就是URL的网络特征以及样本中携带的主机特征。主机特征有很多，例如样本生成的开发&#x2F;打包工具语言、配置，PDB 调试文件路径、源码路径可以看出攻击者的一些习惯；样本、签名证书的生成时间推断攻击者所在地区、如果数据量大的话，还能根据节假日、休息日推断所在国家。如果有文档类样本，还会有文档所有者、修改者这些攻击者个人信息。</p>
+<li><p>基础设施：基础设施分为 C2、网络特征、主机特征。因为会有基础设施重用的情况，C2 列表一定要有；再者就是URL的网络特征以及样本中携带的主机特征。主机特征有很多，例如样本生成的开发/打包工具语言、配置，PDB 调试文件路径、源码路径可以看出攻击者的一些习惯；样本、签名证书的生成时间推断攻击者所在地区、如果数据量大的话，还能根据节假日、休息日推断所在国家。如果有文档类样本，还会有文档所有者、修改者这些攻击者个人信息。</p>
 </li>
 <li><p>技术：技术特征分为加解密、攻击技术、对抗技术、C2技术。技术特征太多了，加密算法、使用的工具、持续部署的方案、漏洞利用、C2 通信方式、反杀软、行为隐藏。。。。。。工具使用，代码重用这些情况都可能导致技术上的重叠。</p>
 </li>
@@ -396,10 +395,8 @@ if (true) {
 <h4 id="攻击总是线性的"><a href="#攻击总是线性的" class="headerlink" title="攻击总是线性的"></a>攻击总是线性的</h4><p>攻击者不可能隔空，也不可能不借助外有资源和能力达成攻击目的。</p>
 <p>例子：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">攻击者投递含有 cve-2017-11882 的钓鱼邮件，受害者打开了钓鱼文件，漏洞利用成功，文档从远程拉取执行了后门。</span><br></pre></td></tr></table></figure>
-
 <p>分离：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">outlook     -&gt;</span><br><span class="line">Explorer    -&gt;</span><br><span class="line">office      -&gt;</span><br><span class="line">EQNEDT32    -&gt;</span><br><span class="line">[NET]       -&gt;</span><br><span class="line">Explorer    -&gt;</span><br><span class="line">Payload</span><br></pre></td></tr></table></figure>
-
 <p><strong>攻击在观测空间内的动作一定是呈线性关系的。操作的对象、攻击的动作一定是有明确的目的和明显的前后关系。</strong></p>
 <h4 id="APT-分析单位"><a href="#APT-分析单位" class="headerlink" title="APT 分析单位"></a>APT 分析单位</h4><p>事件为APT分析的最小单位，而不是样本。</p>
 <p>样本分析 ∈ 事件分析</p>
@@ -411,7 +408,7 @@ if (true) {
 <p>为了表述事件链图。指定以下场景：</p>
 <p>APT 组织对某机构进行攻击：<br>攻击者通过google hacking搜寻到所属该单位的某雇员，通过社交平台找到其163邮箱。<br>对该员工发送钓鱼邮件，其中包含163邮箱钓鱼网站。<br>雇员查看钓鱼网站，泄漏了自己163邮箱密码。<br>攻击者登陆邮箱，查看往来信件，锁定高价值目标。<br>向高价值目标发送钓鱼邮件，其中包含有漏洞利用的文档。<br>文档被打开，主机被感染，窃取到机密文件</p>
 <p>该例子的事件链图：</p>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record5.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record5.png" alt></p>
 <p>入侵的上下文用实线连接，事件之间的上下文用虚线连接。就构成了基于杀伤链的事件链图。</p>
 <blockquote>
 <p>这里的话，按照作者意思，事件链图每个事件中的KILL CHAIN中前6个不需要都有，但是第七个(攻击成功或者进一步行动)必须存在。</p>
@@ -421,13 +418,13 @@ if (true) {
 </ul>
 <p>特征矩阵着重对APT活动技术上面进行描述。</p>
 <p>两个活动A和B，将特征矩阵由A到B进行映射，相同颜色部分标识相同特征。区域的颜色标识特征的置信度。当置信度达到一定阈值后。我们就可以将两个活动关联起来，认为是同一攻击组织所为。</p>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record7.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record7.png" alt></p>
 <p>不同的IoC的更改难易程度不同，所以各种IoC的价值也不同。</p>
 <p>作者参照Pyramid of Pain制作了Pyramid of Features：</p>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record8.jpg"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record8.jpg" alt></p>
 <p>金字塔上的特征有下到上，特征的改变难度越高、价值越高，使得在分析时，权重和置信度也越高。</p>
 <p>如果特征上，置信度叠加不高，就可以在事件链图中进行匹配：</p>
-<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record9.png"></p>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/APT%E5%88%86%E6%9E%90%E5%8F%8ATTPs%E6%8F%90%E5%8F%96/record9.png" alt></p>
 <p>A是所掌握的某组织的事件链图，B是独立攻击的事件链图。</p>
 <p>红色部分为匹配到的相同特征，如果特征置信度达不到一定阈值。可以观察A攻击的上下文，与所掌握B的信息是否相符。如果上下文重合度高。可以增加B∈A的可能性。</p>
 <p>TTP是有生命周期的。APT攻击在对抗中升级，技术、战术特征会在一段时间后变的面目全非。</p>
