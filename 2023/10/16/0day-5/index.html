@@ -218,7 +218,6 @@ if (true) {
 <li>使用完毕后，需要把堆指针传给堆释放函数回收这片内存，不然就会导致内存泄漏。释放函数如：free，delete等。</li>
 </ol>
 <span id="more"></span>
-
 <p>现代操作系统处于一些基本的要求，将堆数据结构分为堆块以及堆表：</p>
 <ol>
 <li><strong>堆块</strong>：堆块分为两个部分：块首和块身。块首是一个堆块头部的几个字节，用来标识这个堆块自身的信息，如块的大小，本块的空闲情况；块身是紧跟在块首后面的部分，也是最终分配给用户使用的数据区。</li>
@@ -231,9 +230,9 @@ if (true) {
 <li>快速单向链表Lookaside（快表）。</li>
 </ol>
 <h3 id="空表"><a href="#空表" class="headerlink" title="空表"></a>空表</h3><p>空表的分布情况：<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/freelist.JPG" alt="freelist">  </p>
-<p>按照堆块的大小，空表被分成有128条。<br>空闲堆块的大小&#x3D;索引项*8<br>把空闲堆块按照大小的不同链入不同的空表，可以方便堆管理系统高效检索指定大小的空闲堆块。需要注意的是，空表索引的第一项（free[0]）所标识的空表相对比较特殊。这条双向链表链入了所有大于等于1024 字节的堆块（小于512KB）。这些堆块按照各自的大小在零号空表中升序地依次排列下去。</p>
+<p>按照堆块的大小，空表被分成有128条。<br>空闲堆块的大小=索引项*8<br>把空闲堆块按照大小的不同链入不同的空表，可以方便堆管理系统高效检索指定大小的空闲堆块。需要注意的是，空表索引的第一项（free[0]）所标识的空表相对比较特殊。这条双向链表链入了所有大于等于1024 字节的堆块（小于512KB）。这些堆块按照各自的大小在零号空表中升序地依次排列下去。</p>
 <h3 id="快表"><a href="#快表" class="headerlink" title="快表"></a>快表</h3><p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/lookaside.JPG" alt="lookaside">  </p>
-<p>堆块的大小&#x3D;索引项*8<br>快表不会发送堆块合并，空闲块的块首被设置为占用态，用来防止堆块合并。<br>快表总是被初始化为空，而且每条快表最多只有 4 个结点。</p>
+<p>堆块的大小=索引项*8<br>快表不会发送堆块合并，空闲块的块首被设置为占用态，用来防止堆块合并。<br>快表总是被初始化为空，而且每条快表最多只有 4 个结点。</p>
 <h3 id="堆块分配"><a href="#堆块分配" class="headerlink" title="堆块分配"></a>堆块分配</h3><ol>
 <li>快表分配：从快表中找到大小匹配的空闲堆块，将其设置为占用态，将其从堆表中链出，返回一个指向堆块块身的指针给程序使用。</li>
 <li>普通空表分配：首先寻找最优的空闲块分配，若失败，则寻找次优的空闲块分配，即最小的能够满足要求的空闲块。</li>
@@ -249,6 +248,7 @@ if (true) {
 <li>巨块：SIZE&gt;512KB</li>
 </ul>
 <p>不同的堆块对应上述的不同的堆分配和释放方式：     </p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -257,7 +257,8 @@ if (true) {
 <th>释放</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>小块</td>
 <td>首先进行快表分配；若快表分配失败，进行普通空表分配；若普通空表分配失败尝试堆缓存分配；若堆缓存分配失败，进行零号空表分配；若零号空表分配失败，进行内存紧缩后再尝试分配；若仍然无法分配，返回NULL。</td>
 <td>优先链入快表；若快表满，将其链入空表。</td>
@@ -272,7 +273,9 @@ if (true) {
 <td>用到虚分配（不是从堆区分配，本书不涉及）</td>
 <td>直接释放，无链入操作。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p><strong>几个核心</strong>：  </p>
 <ol>
 <li>快表中的空闲快被设置为占用态，不会发送堆块合并。  </li>
@@ -299,13 +302,13 @@ if (true) {
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/weidui1.JPG" alt="weidui"></p>
 <p>这里的堆块其实从0x680的偏移处就开始了，不过链表会自动跳过8字节的块首。这个块的大小通过块首可以看到：0x130。<br>六次分配以后，这些分配的块都是从尾块的开头不停地截取出来的。此时偏移0x688的状态：  </p>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/weikuai2.JPG" alt="weikuai"> </p>
-<p>可以看到块首信息的大小即为分配实际分配的大小（字节）&#x2F;4字节&#x3D;堆单位。<br>此时尾块大小为：0x130-0x2<em>4+0x4</em>2&#x3D;0x120。  </p>
+<p>可以看到块首信息的大小即为分配实际分配的大小（字节）/4字节=堆单位。<br>此时尾块大小为：0x130-0x2<em>4+0x4</em>2=0x120。  </p>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/weikuai3.JPG" alt="weikuai"></p>
 <p>当三次堆块释放掉以后，被释放的堆块就会被链入空表：</p>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/freelist3.JPG" alt="freelist">  </p>
 <p>此时，0x00390688指向h1释放后的块，0x003906A8指向h3释放后的块，0x003906C8指向h5释放后的空闲块。<br>再释放h4后，此时h3,4,5就是相邻的空闲块，发生堆块合并：</p>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/bing_chunk.JPG" alt="合并堆">  </p>
-<p>合并后的堆大小：0x2+0x2+0x4&#x3D;0x8  </p>
+<p>合并后的堆大小：0x2+0x2+0x4=0x8  </p>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/freelist4.JPG" alt="空表"></p>
 <p>合并后的空闲堆的空表节点：freelist[8]</p>
 <h3 id="exp-快表分配"><a href="#exp-快表分配" class="headerlink" title="exp 快表分配"></a>exp 快表分配</h3><p>使用快表时，尾块会往后偏移，原先存放初始尾块的地方存放的是空表（偏移0x688）,此时查看空表的freelist[0]，可以看到尾块偏移变成了0x1E90：</p>
@@ -316,9 +319,10 @@ if (true) {
 <h2 id="from-5-3"><a href="#from-5-3" class="headerlink" title="from 5.3"></a>from 5.3</h2><h3 id="dword-shoot"><a href="#dword-shoot" class="headerlink" title="dword shoot"></a>dword shoot</h3><p>dword shoot攻击核心就是覆盖空闲块的8字节的指向后一个块和前一个块的指针。这样就可以实现任意地址填充，将伪造的flink填充到blink指向的地址。</p>
 <p>原理：</p>
 <blockquote>
-<p>在堆块的使用的时候，即将块从空闲态变成占用态，将块的节点从块表中卸下时大致发生的函数：<br>int remove (ListNode * node)<br>{<br>    node -&gt; blink -&gt; flink &#x3D; node -&gt; flink;<br>    node -&gt; flink -&gt; blink &#x3D; node -&gt; blink;<br>    return 0;<br>}  </p>
+<p>在堆块的使用的时候，即将块从空闲态变成占用态，将块的节点从块表中卸下时大致发生的函数：<br>int remove (ListNode * node)<br>{<br>    node -&gt; blink -&gt; flink = node -&gt; flink;<br>    node -&gt; flink -&gt; blink = node -&gt; blink;<br>    return 0;<br>}  </p>
 </blockquote>
 <h3 id="exp-from-P191（dword-shoot）"><a href="#exp-from-P191（dword-shoot）" class="headerlink" title="exp from P191（dword shoot）"></a>exp from P191（dword shoot）</h3><p>三次释放以后的堆块状态：<br><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/ds_1.JPG" alt="ds1"><br>h1,h2,h3,h4,h5,h6状态如下：  </p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -330,7 +334,8 @@ if (true) {
 <th>blink</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>h1</td>
 <td>0x00390680</td>
 <td>2</td>
@@ -376,9 +381,11 @@ if (true) {
 <td>2</td>
 <td>占用</td>
 <td>————</td>
-<td>————</td>
+<td>————  </td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <p>几个说明：</p>
 <ol>
 <li>这里的flink虽然叫前向指针但是指向的是下一个空闲堆块+8的地址，blink虽然叫后向指针但是指向前一个空闲堆块的地址+8的地址，这应该与其是双向链表有关。</li>
@@ -389,7 +396,7 @@ if (true) {
 <p>回到分配堆块之前，将h5的flink和blink进行改动造成dword shoot： </p>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/ds_3.JPG" alt="ds3">  </p>
 <p>此时再分配就会造成：  </p>
-<p>h5-&gt;blink-&gt;flink&#x3D;h5-&gt;flink<br>即将h5flink的值写入blink地址指向的地方，即向0x00000000指向的地方写入0x44444444。  </p>
+<p>h5-&gt;blink-&gt;flink=h5-&gt;flink<br>即将h5flink的值写入blink地址指向的地方，即向0x00000000指向的地方写入0x44444444。  </p>
 <p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onerror="this.onerror=null,this.src=&quot;/img/404.jpg&quot;" data-lazy-src="/2023/10/16/0day-5/ds_4.JPG" alt="ds4">  </p>
 <p>显然这里0x00000000不会指向啥，所以就出错了。  </p>
 <h2 id="from-5-4"><a href="#from-5-4" class="headerlink" title="from 5.4"></a>from 5.4</h2><h3 id="一些常见的可以利用dword-shoot攻击的地方（常见目标）"><a href="#一些常见的可以利用dword-shoot攻击的地方（常见目标）" class="headerlink" title="一些常见的可以利用dword shoot攻击的地方（常见目标）"></a>一些常见的可以利用dword shoot攻击的地方（常见目标）</h3><ol>
